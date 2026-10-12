@@ -180,6 +180,22 @@ par deploy-env.yml puis le compose de l'env). Attribution : voir
 `data/core/liquipedia/ATTRIBUTION.md` (CC-BY-SA 3.0 texte ; images
 © Microsoft, même régime que le dataset aoe2techtree).
 
+La fiche de chaque map porte aussi `game_versions` (les onglets
+`tabs static` de la page — les versions du jeu pour lesquelles la
+map existe : AoE2, AoM, AoE3, AoE4..., avec leur page wiki) et des
+**tags de requête** normalisés dans `tags` : `terrain:land|hybrid|water`,
+`water`, `walled`, `nomad`, `tc:<n>`. Les tags sont indexés dans
+Mongo (index multikey sur `tags`, index couvert `(entity_id, locale)` —
+ créés par le sync via `ensure_indexes`) et requêtables via
+`FactionContentService.query_by_tags` (ex. toutes les maps hybrides
+nomades : `query_by_tags(["terrain:hybrid", "nomad"], entity_prefix="map:aoe2:")`).
+Les listes de maps par guilde (scope guilde + globales, la majeure
+partie étant des maps publiques partagées) passent par
+`FactionContentService.list_map_content` : la liste résolue est
+cachée en Redis par guilde+locale (TTL 1 h), invalidée par le
+tracker d'entités à chaque `store` — les maps publiques ne sont
+lues qu'une fois par guilde, pas une fois par map.
+
 ## Mappings de providers (ids propres)
 
 Chaque provider a ses ids propres (civ ids, map names) qui peuvent être
