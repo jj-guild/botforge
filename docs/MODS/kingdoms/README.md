@@ -196,6 +196,36 @@ cachée en Redis par guilde+locale (TTL 1 h), invalidée par le
 tracker d'entités à chaque `store` — les maps publiques ne sont
 lues qu'une fois par guilde, pas une fois par map.
 
+## Contrat des listes : 25 éléments et le two-pattern select/par-id
+
+Discord limite un sélect à **25 options** — la plateforme le respecte
+par conception, avec **deux patterns distincts, jamais de pagination**
+(une pagination de sélect masque silencieusement les options au-delà
+de la page et ses boutons de page concurrencent le sync) :
+
+1. **Sélect natif** quand la liste tient dans la limite : les jeux et
+   les mods actifs (<= 25 par convention plateforme), les map pools
+   non supprimés d'une guilde (<= 25), les membres d'un map pool
+   (<= 25, `MAX_POOL_MAPS`).
+2. **Par-id** au-delà : un bouton ouvre une modale où l'on colle l'id
+   (`map:public:arena`, `pool:<guild_id>:<slug>`) ; pour les maps,
+   l'**import en masse** (une map par ligne : id, nom anglais avec
+   underscores ou URL Liquipedia, refus si un échec) couvre l'init
+   d'un pool complet.
+
+Quand un sélect n'est pas disponible (catalogue de maps > 25), la
+réponse **explique les alternatives** : bouton « Ajouter une map
+(id) », ou le bouton « Ajouter à un map pool » **du post de chaque
+map** (toujours visible, il opère par id).
+
+Ids des entrées (convention scope-first, l'id porte la visibilité,
+pas le jeu) : maps `map:public:<slug>` / `map:<guild_id>:<slug>`,
+pools `pool:public:<slug>` / `pool:<guild_id>:<slug>`. Les templates
+des composants persistants matchent ces ids avec `.+` — **jamais**
+`[^:]+` (les ids contiennent des deux-points, le clic mourrait en
+silence : c'est la cause racine historique des « boutons qui ne
+répondent pas »).
+
 ## Mappings de providers (ids propres)
 
 Chaque provider a ses ids propres (civ ids, map names) qui peuvent être
