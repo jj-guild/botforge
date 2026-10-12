@@ -159,6 +159,27 @@ uniques, tech tree, textes d'aide — tout ce qui évolue à chaque maj).
 Attribution : voir `data/core/aoe2techtree/ATTRIBUTION.md` (MIT +
 notice Microsoft Game Content Usage Rules, affichée en tête de post).
 
+## Enrichissement maps Liquipedia (#247)
+
+Les pages map de Liquipedia (`https://liquipedia.net/ageofempires/`)
+ont une infobox structurée (`{{Infobox map}}` : type de terrain
+Land/Hybrid/Water, murs, nomade, nombre de TC, joueurs, créateur,
+période, image). Le job de sync
+`python -m kingdoms.core.games.aoe2.liquipedia_cli <season_yaml>`
+la récupère via l'API MediaWiki officielle (pas de scraping HTML,
+User-Agent identifiant + contact, 1 req/2 s et `action=parse`
+1 req/30 s) et stocke, par map du catalogue : une ligne `summary`
+calculée, l'`image_url` directe (pas de hotlink), et l'infobox
+complète dans `liquipedia_infobox` (clés minuscules, brute —
+exploitable par des filtres/panneaux futurs). Le sync est
+idempotent et reprenable (empreinte `liquipedia_page_sha` par map,
+commit par map). Le contact requis par les conditions d'usage de
+l'API est la variable d'environnement GitHub **non-secrète**
+`LIQUIPEDIA_CONTACT` (déclarée sur chaque GitHub environment, lue
+par deploy-env.yml puis le compose de l'env). Attribution : voir
+`data/core/liquipedia/ATTRIBUTION.md` (CC-BY-SA 3.0 texte ; images
+© Microsoft, même régime que le dataset aoe2techtree).
+
 ## Mappings de providers (ids propres)
 
 Chaque provider a ses ids propres (civ ids, map names) qui peuvent être
