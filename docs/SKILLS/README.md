@@ -31,10 +31,6 @@ browse the table below to see what the agents know how to do.
 | [ci-monitoring](../../.agents/skills/ci-monitoring/SKILL.md) | Monitor CI, find root causes, push focused fixes |
 | [github-polling](../../.agents/skills/github-polling/SKILL.md) | Poll GitHub statuses every 10-30s instead of a fixed worst-case sleep |
 | [discord-ui](../../.agents/skills/discord-ui/SKILL.md) | Build any Discord message through the kingdoms-services UI SDK — bricks, archetypes, guards, i18n |
-| [discord-components](../../.agents/skills/discord-components/SKILL.md) | Build Discord components with discord.py / Components V2 — each component, the silent wire traps, the patterns to follow (reusable in any bot project) |
-| [external-provider](../../.agents/skills/external-provider/SKILL.md) | Integrate any external API/provider — config gates, real-wire tests, id mapping, logs first (reusable) |
-| [workflow-router](../../.agents/skills/workflow-router/SKILL.md) | Route the human's intention to the right workflow before any work starts |
-| [discord-bot-docs](https://github.com/merlin-pinpin-org/kingdoms-services/blob/main/.agents/skills/discord-bot-docs/SKILL.md) | Keep `docs/DEVELOPMENT/DISCORD-BOT.md` up to date on every Discord surface change (repo-local, kingdoms-services) |
 
 This directory is kept as the documentation entry point; do not add new
 skill pages here — create `.agents/skills/<name>/SKILL.md` instead.
