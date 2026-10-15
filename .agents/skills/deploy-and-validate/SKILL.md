@@ -38,8 +38,12 @@ ready.
    checks the human's roster rights, the session acts on their behalf;
    never ask the human to post it)
    (`gh pr comment <n> --repo merlin-pinpin-org/kingdoms-services --body "/deploy"` —
-   no argument: the workflow targets your personal env from your roster
-   alias; add `test` explicitly for the shared validation env).
+   no argument: the workflow targets your **personal env** from your
+   roster alias — **never** the shared `test` env; a bare `/deploy` on a
+   personal alias therefore deploys to the personal env (e.g. `merlin`),
+   not `test`. When the designer says "déploie", they mean **`/deploy
+   test`** unless they name their personal env — always add the explicit
+   environment argument).
    Only collaborators with write+ may trigger it; forks are rejected.
 3. **Wait and read the gate's answer before doing anything else**:
    poll the PR conversation / runs (`gh run list --workflow deploy.yml`,
