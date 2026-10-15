@@ -95,6 +95,46 @@ it with `<t:…:F>` (full date-time), `<t:…:R>` (relative) or the other
   exist in the design but not yet in the code; a disabled button never
   wires its callback.
 
+## Modals (the Label rule and the interaction contract)
+
+**A select inside a modal MUST be wrapped in a Label component.** Discord's
+new modal components (string selects in modals) require every select to
+ride inside a `Label` (type 18): `modal.add_item(discord.ui.Label(text="…",
+component=select))`. A bare `modal.add_item(select)` is **silently rejected**
+by the API — the button that opens the modal seems unresponsive, and nothing
+in the logs says why. This cost a full deploy cycle to find; the rule is now
+guarded by `tests/architecture/test_modal_constraints.py` (runtime scan of
+every modal, payload type-18 check, source scan) — never bypass it.
+
+Other modal rules, learned the hard way:
+
+- **`send_modal` needs the interaction's response token** — it cannot ride a
+  deferred interaction. Any read before `send_modal` (options, prefill) must
+  be fast (wrap it in `asyncio.wait_for(..., timeout=2.5)` with a fallback)
+  or the click exceeds the 3-second window and dies silently.
+- **`on_submit` defers first** — a modal's submit is a fresh interaction: the
+  provider/database writes happen after `defer(ephemeral=True, thinking=True)`,
+  the answer rides the followup.
+- **Select values are read at submit time** — `Modal._refresh` populates
+  `select.values` from the payload; the select is found by `custom_id` through
+  `walk_children()` (Label wrappers are descended into). Set a stable
+  `custom_id` on every modal select.
+- **A modal never opens another modal** — the chain passes through an
+  ephemeral message.
+- **Modals are capped at 5 top-level components** (Label counts as one).
+
+Error reporting (the operator contract):
+
+- a failing user-facing flow answers with the **precise, human reason**
+  (provider name, game, what to check) — never a generic "échec";
+- the full stack trace goes to the **BOT_ADMINS by DM**
+  (`kingdoms.discord.error_report.dm_admins`), spam-guarded: one DM per
+  (error kind, surface) per 5 minutes — a broken provider under load never
+  floods the admins;
+- the user line and the admin DM are written together in the same handler,
+  so the diagnosis reaches the operators the first time it happens.
+
+
 ## The 3-second rule (defer, then followup)
 
 **Discord invalidates an interaction ~3 seconds after it fires.** A
