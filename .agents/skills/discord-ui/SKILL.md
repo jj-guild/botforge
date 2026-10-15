@@ -97,14 +97,22 @@ it with `<t:…:F>` (full date-time), `<t:…:R>` (relative) or the other
 
 ## Modals (the Label rule and the interaction contract)
 
-**A select inside a modal MUST be wrapped in a Label component.** Discord's
-new modal components (string selects in modals) require every select to
-ride inside a `Label` (type 18): `modal.add_item(discord.ui.Label(text="…",
-component=select))`. A bare `modal.add_item(select)` is **silently rejected**
-by the API — the button that opens the modal seems unresponsive, and nothing
-in the logs says why. This cost a full deploy cycle to find; the rule is now
-guarded by `tests/architecture/test_modal_constraints.py` (runtime scan of
-every modal, payload type-18 check, source scan) — never bypass it.
+**A select inside a modal MUST be wrapped in a Label component; a TextInput
+must NOT be.** Two rules, both learned the hard way:
+
+1. **Selects ride a Label** (type 18): `modal.add_item(discord.ui.Label(
+   text="…", component=select))`. A bare `modal.add_item(select)` is
+   **silently rejected** by the API — the opening button seems dead.
+2. **TextInputs stay naked** (the repo's proven ActionRow pattern):
+   `modal.add_item(TextInput(label="…"))`. Wrapping a TextInput in a
+   Label is NOT supported by discord.py 2.7's serializer (the deprecated
+   inner `label` leaks into the payload and Discord rejects the modal —
+   the 2026-10-15 regression: the add modal stopped opening). The Label's
+   text is capped at 45 chars, its description at 100.
+
+Both are guarded by `tests/architecture/test_modal_constraints.py`
+(runtime scan of every modal, payload shape + limits check, source scan)
+— never bypass it.
 
 Other modal rules, learned the hard way:
 
