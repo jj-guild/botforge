@@ -143,6 +143,36 @@ Error reporting (the operator contract):
   so the diagnosis reaches the operators the first time it happens.
 
 
+## Session lessons (2026-10-16, the profile saga)
+
+Everything below cost a deploy cycle to find — never reintroduce:
+
+- **The gate must match the wire.** A key/config gate invented by us
+  (LIBREMATCH_API_KEY, empty EXT_LIBREMATCH_URI, empty LIBREMATCH_API_URL)
+  silently rejected every valid input while the real service answered
+  anyone. Before gating on a config value, verify the value can actually
+  be absent AND that the service genuinely requires it. An env var that
+  exists-but-empty defeats ``${VAR:-default}`` compose defaults — code
+  must fall back itself (``value or DEFAULT``), always.
+- **A modal never edits the message it was opened from.** After a modal
+  submit you cannot edit the original ephemeral view — the refreshed
+  view is a followup. One followup per action, carrying the result as a
+  banner inside the view (never a confirmation message + a second view).
+- **Test the real wire shape.** A test suite that mocks the seam passes
+  while prod fails. The integration test must run the real gRPC server,
+  the real adapter, the real reply payloads (statGroups/leaderboardStats,
+  GetPersonalStat — never /api/leaderboard) and assert on the endpoint
+  actually called.
+- **Two ids, one profile.** aoe2insights URL id (12488557) and relic id
+  (17190369) are different numbers; librematch/aoe2lobby want the relic
+  id. Resolve any pasted id/URL through aoe2insights.com/user/<id>/relic-id/
+  (plain text), store the relic id, and build insights links with the
+  **relic** path: aoe2insights.com/user/relic/<relic_id>/ — the plain
+  /user/<id>/ path expects the insights user id, NOT the relic id.
+- **Read the logs before guessing.** ``/logs <env>`` answers in one grep
+  what an afternoon of hypotheses cannot.
+
+
 ## The 3-second rule (defer, then followup)
 
 **Discord invalidates an interaction ~3 seconds after it fires.** A
