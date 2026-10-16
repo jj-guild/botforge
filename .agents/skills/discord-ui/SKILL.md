@@ -171,6 +171,24 @@ Everything below cost a deploy cycle to find — never reintroduce:
   /user/<id>/ path expects the insights user id, NOT the relic id.
 - **Read the logs before guessing.** ``/logs <env>`` answers in one grep
   what an afternoon of hypotheses cannot.
+- **Component emojis come from an API-validated allowlist.** Discord
+  rejects U+1F5xx symbols outside its set with a silent 50035 (Invalid
+  emoji) — U+1F5F2 killed two admin buttons in production while the whole
+  test suite stayed green. The guard
+  ``tests/architecture/test_component_guards.py`` fails the build on any
+  unallowlisted 1F5xx codepoint: validate a new symbol live before
+  adding it.
+- **One ack per interaction.** A DynamicItem callback that dispatches to
+  a ``_handle_*`` (admin_persistent) must NOT defer first — those
+  handlers own their acknowledgment; deferring twice raises
+  InteractionResponded and the click dies silently (the Roles bug). The
+  same guard fails the build on the double-defer shape.
+- **Pinned views build without an interaction** — ``reply()`` renders
+  raw keys when the client is absent. Every pinned build must receive
+  the client (factory → builder chain) so the locale resolves, and a
+  label test must build the pinned surface the same way the factory does
+  (client, no interaction), not the ephemeral way.
+
 
 
 ## The 3-second rule (defer, then followup)
