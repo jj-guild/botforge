@@ -188,6 +188,37 @@ Everything below cost a deploy cycle to find — never reintroduce:
   the client (factory → builder chain) so the locale resolves, and a
   label test must build the pinned surface the same way the factory does
   (client, no interaction), not the ephemeral way.
+- **A modal is nothing without `on_submit`** (2026-10-17 language bug).
+  A `discord.ui.Modal` subclass without `async def on_submit` opens
+  fine, then the submit dies with "interaction failed" and **leaves
+  zero logs** — the whole suite stays green and even `/logs` shows
+  nothing. Every Modal must define `on_submit`; the guard
+  (`test_component_guards.py::test_modals_define_on_submit`) fails the
+  build on a Modal subclass without it.
+- **A DynamicItem's custom_ids must match its own template** (2026-10-17
+  DM bug). `AccessGuildSelect` shipped the constant custom_id
+  `admin:dm:access:guild:picker` while its template required digits —
+  discord.py raises `ValueError` at every wire rebuild and the button
+  dies at the first click, silently. When a DynamicItem builds custom_ids
+  in `__init__`, replay them mentally against the template — and never
+  make the template stricter than the ids the class itself emits. The
+  guard (`test_dynamic_item_custom_ids_match_their_template`) resolves
+  the constants and fails the build on a mismatch.
+- **One select per action row — and a fresh row per loop iteration**
+  (2026-10-17 Roles bug). A Discord Select occupies a whole action row;
+  two in one row raise `maximum number of children exceeded` at render
+  time. The sneaky shape: the row created **before** a loop while the
+  loop `add_item`s a select into it — every iteration re-feeds the same
+  row object. Create the row inside the loop, one row per select. The
+  guard (`test_action_rows_hold_one_select`) fails the build on both
+  shapes.
+- **A silent failure with empty logs is a dispatch that never happened**
+  (the meta-lesson of 2026-10-17). When a click "does nothing" and
+  `/logs` shows nothing, the interaction never reached a callback:
+  a modal nobody submits, an id nobody matches, a component nobody
+  registered. Grep the dispatch path (modal `on_submit`, DynamicItem
+  template vs custom_id, `add_dynamic_items` registration) before
+  suspecting the services.
 
 
 
