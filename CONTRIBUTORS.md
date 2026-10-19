@@ -32,6 +32,9 @@ Every contributor entry declares:
     Discord.
   - **vibe** — any human running vibe-coding sessions: their agent does
     the work, they validate and review within their ownership.
+- **discord-id** — the contributor's Discord user id (private mods
+  resolve their owners through it: `owner_discord_ids` in the mod
+  declaration);
 - **owns** — concrete ownership: mods (CODEOWNERS paths), infra
   environments, or platform areas;
 - **agent-scope** — what a session may do on their behalf (what the
@@ -218,10 +221,10 @@ address.
 (`vibe[<alias>]`), workflow verdicts and reports use it; the GitHub login
 is resolved from the roster only when an API call needs it.
 
-| Login | Alias | Since | CLA | GitHub teams | Platform roles | Owns | Agent scope |
-| ----- | ----- | ----- | --- | ------------ | -------------- | ---- | ----------- |
-| @merlin-pinpin | Merlin | 2024-02-05 | accepted 2026-09 | maintainers, ops, game-designers, vibe-coders | dev, platform, ops, vibe | The whole platform (core, platform, infra); the `ladder` and `register` mods (default owner until a designer claims them) | Sessions act fully on their behalf except production approvals, CLA and role changes |
-| @Drasahaoe | Drasah | 2025-08-19 | accepted 2026-09 | game-designers, vibe-coders | mod (kingdoms, marriage), vibe | The `kingdoms` and `marriage` mods (CODEOWNERS paths in kingdoms and kingdoms-services); their rules and environments | Sessions build, test, deploy to test and drive to ready; they review their mod's PRs and validate on the test Discord; never asked to merge or run anything |
+| Login | Alias | Since | CLA | GitHub teams | Platform roles | Owns | Agent scope | Discord ID |
+| ----- | ----- | ----- | --- | ------------ | -------------- | ---- | ----------- | ---------- |
+| @merlin-pinpin | Merlin | 2024-02-05 | accepted 2026-09 | maintainers, ops, game-designers, vibe-coders | dev, platform, ops, vibe | The whole platform (core, platform, infra); the `ladder` and `register` mods (default owner until a designer claims them) | Sessions act fully on their behalf except production approvals, CLA and role changes | 867534391436378123 |
+| @Drasahaoe | Drasah | 2025-08-19 | accepted 2026-09 | game-designers, vibe-coders | mod (kingdoms, marriage), vibe | The `kingdoms` and `marriage` mods (CODEOWNERS paths in kingdoms and kingdoms-services); their rules and environments | Sessions build, test, deploy to test and drive to ready; they review their mod's PRs and validate on the test Discord; never asked to merge or run anything | 1105259856778244196 |
 
 > **Maintainers**: the roster is the CLA record (the `cla` column); the CLA
 > email exchange stays private — never commit an address here. The `since`
