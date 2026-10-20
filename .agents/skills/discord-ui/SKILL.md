@@ -310,14 +310,23 @@ The locale resolution rules (native Discord, nothing stored):
   translator, not the guild's.
 
 The platform manages **no locale setting** — no language picker
-anywhere. One exception, an observation (never a setting): Discord
-exposes a user's language only inside interactions, so the bot
-records the language each user was last seen using
-(`LogService.observe_user_locale`, refreshed on every interaction,
-best-effort) — the interaction-free DMs (boot status, crash reports)
-render in that observed language (English until the user is first
-seen). A server changes its Discord language, the bot follows; so
-does a user with their client.
+anywhere. Discord's own surfaces, and their limits:
+
+- a **Community server** carries a real language setting
+  (`preferred_locale`, Server Settings → Language) — the guild
+  surfaces follow it;
+- a **non-Community server** has NO language setting: Discord
+  hard-codes `en-US`. The guild surfaces fall back to the **majority
+  of the members' observed client languages** (every interaction
+  records the clicker's client language per guild —
+  `observe_guild_member_locale` / `observed_guild_locale`);
+- a **user's** language exists only inside interactions: the bot
+  observes it per user (DMs render in the last-seen language) and
+  per guild (the majority fallback above).
+
+Activating Community on a server gives it the real setting — until
+then, the majority is the best signal Discord offers. Never add a
+language picker: the fallback covers the gap.
 
 Adding a screen or message, the checklist (never skip the sweep):
 
