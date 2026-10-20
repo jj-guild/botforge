@@ -309,8 +309,9 @@ The locale resolution rules (native Discord, nothing stored):
 - **command entries** — the Discord client locale, through the
   translator, not the guild's.
 
-The platform manages **no locale setting** — no language picker
-anywhere. Discord's own surfaces, and their limits:
+The platform stores the language (the admin picker for the guild,
+the DM picker for the user) and **the stored choice wins** over every
+Discord signal — Discord's own surfaces have hard limits:
 
 - a **Community server** carries a real language setting
   (`preferred_locale`, Server Settings → Language) — the guild
@@ -324,9 +325,10 @@ anywhere. Discord's own surfaces, and their limits:
   observes it per user (DMs render in the last-seen language) and
   per guild (the majority fallback above).
 
-Activating Community on a server gives it the real setting — until
-then, the majority is the best signal Discord offers. Never add a
-language picker: the fallback covers the gap.
+A guild that never picked falls back to Discord's signal, then the
+members' observed majority; a user who never picked falls back to
+their last observed client language. The pickers live in menu:admin
+(set-language action) and the DM panel's language opener.
 
 Adding a screen or message, the checklist (never skip the sweep):
 

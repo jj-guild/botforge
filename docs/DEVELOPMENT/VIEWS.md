@@ -37,6 +37,7 @@ _menu_ — pinned in `bot/admin`.
 
 Buttons:
 
+- `ui.homes.btn_language` — action `set-language`
 - → [`panel:status`](#panelstatus) — `ui.homes.btn_status`
 - → [`menu:games:admin`](#menugamesadmin) — `ui.homes.btn_games`
 - → [`menu:mods:admin`](#menumodsadmin) — `ui.homes.btn_mods`
