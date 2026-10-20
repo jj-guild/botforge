@@ -1,29 +1,32 @@
-# VIEWS — la carte des menus et des panels
+# VIEWS — the map of menus and panels
 
-> **Source de vérité.** Ce document décrit **chaque view** du bot : son
-> id, son type, où elle vit, et ses boutons. Le code reflète exactement
-> cette liste (`views_declared.py` dans kingdoms-services) : changer
-> l'organisation = changer ce doc **et** ce fichier dans le même PR.
-> Les agents lisent ce doc avant d'ajouter, déplacer ou retirer une view.
+> **Source of truth.** This document describes **every view** of the
+> bot: its id, its kind, where it lives, and its buttons. The code
+> mirrors this list exactly (`views_declared.py` in kingdoms-services):
+> reorganizing means changing this doc **and** that file in the same
+> PR. Agents read this doc before adding, moving or removing a view.
 
-## Les deux types de views
+## The two kinds of views
 
-| Type | Rôle | Contenu |
+| Kind | Role | Content |
 | ---- | ---- | ------- |
-| **menu** | Naviguer | Des boutons uniquement — chaque bouton ouvre une autre view. Pas de données, pas d'actions. |
-| **panel** | Informer / agir | Des données (listes, stats), des actions, du contenu live. |
+| **menu** | Navigate | Buttons only — every button opens another view. No data, no actions. |
+| **panel** | Inform / act | Data (lists, stats), actions, live content. |
 
-Règles communes :
+Shared rules:
 
-- chaque view porte un **id** (`menu:games:aoe2`, `panel:profile`) rendu
-  en **footer** — c'est l'ancre de tous les retours utilisateurs ;
-- un bouton **admin** porte l'emoji 🔒 et le style le plus discret ;
-- un bouton **sync** (salons & rôles) porte l'emoji 🔄 ;
-- les labels passent par le catalogue i18n (clé `ui.views.<id sans :>.title`) ;
-- **limites** : 20 maps / map pool · 20 map pools actifs / guilde ·
-  20 jeux · 20 mods.
+- every view carries an **id** (`menu:games:aoe2`, `panel:profile`)
+  rendered as its **footer** — the anchor every human feedback refers
+  to;
+- an **admin** button carries the 🔒 emoji and the most discreet style
+  Discord allows;
+- a **sync** button (channels & roles) carries the ⚙️ emoji;
+- labels resolve through the i18n catalog (key
+  `ui.views.<id without :>.title`);
+- **caps**: 20 maps / map pool · 20 active map pools / guild ·
+  20 games · 20 mods.
 
-## La carte (aujourd'hui : 1 jeu — aoe2, 0 mod)
+## The map (today: 1 game — aoe2, 0 mod)
 
 ```text
 menu:home ──┬─> panel:profile
@@ -31,96 +34,96 @@ menu:home ──┬─> panel:profile
             │                    │                     ├─> panel:game:aoe2:players
             │                    │                     └─> menu:game:aoe2:admin
             │                    └─> menu:games:admin ──> menu:game:aoe2:admin
-            ├─> menu:mods:home ──┬─> (menu:mod:ladder      — désactivé)
-            │                   ├─> (menu:mod:tournament — désactivé)
-            │                   ├─> (menu:mod:kingdom     — désactivé)
+            ├─> menu:mods:home ──┬─> (menu:mod:ladder      — disabled)
+            │                   ├─> (menu:mod:tournament — disabled)
+            │                   ├─> (menu:mod:kingdom     — disabled)
             │                   └─> menu:mods:admin
             └─> menu:admin ──┬─> panel:status
                              ├─> menu:games:admin
                              ├─> menu:mods:admin
-                             └─ [🔄 sync]
+                             └─ [⚙️ sync]
 ```
 
-## Les views, une par une
+## The views, one by one
 
-### `menu:home` — pin dans `root/général`
-Le point de départ.
+### `menu:home` — pinned in `root/general`
+The starting point.
 - → `panel:profile` (👤)
 - → `menu:games:home` (🎮)
 - → `menu:mods:home` (🧩)
 - → `menu:admin` (🔒)
 
 ### `panel:profile`
-Le profil du joueur (comptes liés, renommage). *Ok avec l'existant.*
+The player's profile (linked accounts, rename). *Unchanged.*
 
-### `menu:admin` — pin dans `bot/admin`
+### `menu:admin` — pinned in `bot/admin`
 - → `panel:status` (📊)
 - → `menu:games:admin` (🔒)
 - → `menu:mods:admin` (🔒)
-- 🔄 sync salons & rôles
+- ⚙️ sync channels & roles
 
-### `panel:status` — DM au boot
-Le statut du déploiement (version, uptime, services). *Ok avec l'existant.*
+### `panel:status` — boot DM
+The deployment status (version, uptime, services). *Unchanged.*
 
-### `menu:games:home` — pin dans `games/général`
-La liste des jeux disponibles — **un bouton par jeu, label long**
-(le nom du jeu, pas son game_key), + admin.
+### `menu:games:home` — pinned in `games/general`
+The list of available games — **one button per game, long label**
+(the game's name, not its game key), plus admin.
 - → `menu:games:aoe2` (⚔️ Age of Empires II)
 - → `menu:games:admin` (🔒)
 
-### `menu:games:admin` — pin dans `games/admin`
-- → `menu:game:aoe2:admin` (🔒 par jeu)
-- 🔄 sync salons & rôles
+### `menu:games:admin` — pinned in `games/admin`
+- → `menu:game:aoe2:admin` (🔒 per game)
+- ⚙️ sync channels & roles
 
-### `menu:games:aoe2` — pin dans `games/aoe2/général`
-Le nom du jeu en titre, puis :
-- texte : **les salons** (contenu, restrictions, forums)
-- texte : **les rôles** (usage)
+### `menu:games:aoe2` — pinned in `games/aoe2/general`
+The game's name as the title, then:
+- text: **the channels** (content, restrictions, forums)
+- text: **the roles** (usage)
 - → `panel:game:aoe2:live` (📡)
 - → `panel:game:aoe2:players` (👥)
 - → `menu:game:aoe2:admin` (🔒)
 
-### `menu:game:aoe2:admin` — pin dans `games/aoe2/admin`
-Mêmes sections salons/rôles que le menu du jeu, puis :
-- ⭐ Ajouter une map
-- 🧱 Créer un map pool
-- 🔄 sync salons & rôles
+### `menu:game:aoe2:admin` — pinned in `games/aoe2/admin`
+The same channels/roles sections as the game's menu, then:
+- ⭐ Add a map
+- 🧱 Create a map pool
+- ⚙️ sync channels & roles
 
-### `panel:game:aoe2:live` — pin dans `games/aoe2/live`
-Le dashboard live. *Ok avec l'existant.*
+### `panel:game:aoe2:live` — pinned in `games/aoe2/live`
+The live dashboard. *Unchanged.*
 
 ### `panel:game:aoe2:players`
-Les joueurs enregistrés **pour ce jeu** — une ligne chacun, pas de
-nom de guilde. Générique : `panel:game:<key>:players`.
+The registered players **of that game** — one line each, no guild
+name. Generic: `panel:game:<key>:players`.
 
-### `menu:mods:home` — pin dans `mods/general`
-La liste des mods (vide aujourd'hui) — **un bouton par mod, label
-long**, + admin. Les exemples déclarés sont désactivés :
-- (menu:mod:ladder — désactivé)
-- (menu:mod:tournament — désactivé)
-- (menu:mod:kingdom — désactivé)
+### `menu:mods:home` — pinned in `mods/general`
+The list of mods (empty today) — **one button per mod, long label**,
+plus admin. The declared placeholders are disabled:
+- (menu:mod:ladder — disabled)
+- (menu:mod:tournament — disabled)
+- (menu:mod:kingdom — disabled)
 - → `menu:mods:admin` (🔒)
 
-### `menu:mods:admin` — pin dans `mods/admin`
-- (menu:mod:ladder:admin — désactivé, 🔒)
-- (menu:mod:tournament:admin — désactivé, 🔒)
-- (menu:mod:kingdom:admin — désactivé, 🔒)
-- 🔄 sync salons & rôles
+### `menu:mods:admin` — pinned in `mods/admin`
+- (menu:mod:ladder:admin — disabled, 🔒)
+- (menu:mod:tournament:admin — disabled, 🔒)
+- (menu:mod:kingdom:admin — disabled, 🔒)
+- ⚙️ sync channels & roles
 
-## Ajouter ou déplacer une view (le mode d'emploi)
+## Adding or moving a view (the how-to)
 
-1. **Déclarer** : `views_declared.py` — une `ViewDecl` (id, type,
-   scope du pin, boutons avec leurs cibles). Un menu ne déclare que
-   des boutons qui pointent vers des views déclarées (ou sync) ;
-2. **Documenter** : ajouter la view ici, dans la carte et sa fiche ;
-3. **Câbler** : si la view ouvre un handler, `wire_view("<id>",
-   handler)` dans `_wire_declared_views` (factory) — sinon rien ;
-3. **Traduire** : `ui.views.<id>.title` / `.description` dans
-   `fr.yaml` **et** `en.yaml` ;
-4. **Tester** : le registre se valide (`validate_registry`) — une
-   cible non déclarée, un bouton de menu sans cible/sync/label sont
-   des drifts que les tests rejettent.
+1. **Declare**: `views_declared.py` — one `ViewDecl` (id, kind, pin
+   scope, buttons with their targets). A menu only declares buttons
+   pointing at declared views (or the sync flag);
+2. **Document**: add the view here, in the map and its own section;
+3. **Wire**: if the view opens a handler, `wire_view("<id>", handler)`
+   in `_wire_declared_views` (factory) — otherwise nothing;
+4. **Translate**: `ui.views.<id>.title` / `.description` in `fr.yaml`
+   **and** `en.yaml`;
+5. **Test**: the registry validates itself (`validate_registry`) — an
+   undeclared target, a menu button without target/sync/label are
+   drifts the tests reject.
 
-Un nouveau jeu suit le même chemin : `menu:games:<key>`,
-`menu:game:<key>:admin`, ses panels — le builder déclaratif rend le
-menu automatiquement depuis la déclaration.
+A new game follows the same path: `menu:games:<key>`,
+`menu:game:<key>:admin`, its panels — the declarative menu builder
+renders the menu automatically from the declaration.
