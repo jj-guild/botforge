@@ -156,6 +156,50 @@ _menu_.
 
 _(no buttons — content comes from its wired handler)_
 
+## The channel tree (the provisioned scopes)
+
+The scopes the platform provisions — the channels and categories the
+sync button recreates. A channel: `key` (stable id), `label` (i18n key),
+`kind` (text|forum), `access` (public|readonly|admin).
+
+### `root`
+
+- `general` — ui.panels.channels.general · text · readonly
+- `discussions` — ui.panels.channels.discussions · text · public
+
+### `bot`
+
+Category: `ui.panels.categories.bot`.
+
+- `logs` — ui.panels.channels.logs · text · admin
+- `admin` — ui.panels.channels.admin · text · admin
+- `decisions` — ui.panels.channels.decisions · text · admin
+
+### `games`
+
+Category: `ui.panels.categories.games`.
+
+- `general` — ui.panels.channels.general · text · readonly
+- `admin` — ui.panels.channels.admin · text · admin
+
+### `games/aoe2`
+
+Category: `ui.panels.categories.games_aoe2`.
+
+- `general` — ui.panels.channels.general · text · readonly
+- `live` — ui.panels.channels.live · text · readonly
+- `civs` — ui.panels.channels.civs · forum · readonly
+- `maps` — ui.panels.channels.maps · forum · readonly
+- `map-pools` — ui.panels.channels.map_pools · forum · readonly
+- `admin` — ui.panels.channels.admin · text · admin
+
+### `mods`
+
+Category: `ui.panels.categories.mods`.
+
+- `general` — ui.panels.channels.general · text · readonly
+- `admin` — ui.panels.channels.admin · text · admin
+
 ## Adding or moving a view
 
 Platform views live in `config/views.yaml`; a mod's own views live in
