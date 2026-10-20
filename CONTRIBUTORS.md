@@ -101,6 +101,7 @@ the session checks its human's agent-scope before acting):
 | `/dump-db [env]` — dump an env's databases | `ops` | mongodump + Redis snapshot; hosting archive + private artifact; also runs daily on cron (04:30 UTC) |
 | `/release` — tag and release | `dev` or `platform` | Released tags only; prod deployment stays a separate ops approval |
 | `/rollback <env>` — revert a pin | `ops` | Prod reverts go through the revert PR + environment gate |
+| `/console <env> <action> <guild\|all>` — run the console actions (clean-managed, nuke, reset-data, install) on an env's test guilds | `vibe`+ on **their personal env**; `dev`+ on shared envs (`test`); `ops`+ anywhere | Same gates as the Discord `/console`: only the env's allowlisted test guilds, `all` must be explicit, nuke needs `--confirm NUKE`. **Never allowed on prod** — no role, no approval path |
 | `/reset-env [env]` — wipe an env's data and reseed | the env's owner (self), or `ops` | Destructive: a contributor may reset only their own environment (their roster alias); ops may reset any. **Never allowed on prod** — no role, no approval path |
 | `/sync-teams` — run the roster sync | `platform` | Same as the scheduled sync |
 
