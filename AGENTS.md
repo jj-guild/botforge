@@ -160,6 +160,11 @@ Rules of the map:
 
 ## Read first — the detailed entries
 
+**A mod's files never scatter** (kingdoms#179): a mod's declaration,
+views (`config/mods/<mod>.views.yaml`), code and locales live
+together — never in the platform's shared config/locales, never in
+the platform's views.yaml. The same holds for a game's files.
+
 **Everything on the repositories is in English** — docs, comments,
 docstrings, commit messages, PR titles and descriptions (see
 docs/CONVENTIONS.md, *Working language*). The only French allowed is

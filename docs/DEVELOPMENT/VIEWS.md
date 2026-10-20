@@ -20,10 +20,10 @@ _menu_ — pinned in `root/general`.
 
 Buttons:
 
-- → [`panel:profile`](#panel-profile) — `ui.homes.btn_profile`
-- → [`menu:games:home`](#menu-games-home) — `ui.homes.btn_games`
-- → [`menu:mods:home`](#menu-mods-home) — `ui.homes.btn_mods`
-- → [`menu:admin`](#menu-admin) — `ui.homes.btn_admin` 🔒
+- → [`panel:profile`](#panelprofile) — `ui.homes.btn_profile`
+- → [`menu:games:home`](#menugameshome) — `ui.homes.btn_games`
+- → [`menu:mods:home`](#menumodshome) — `ui.homes.btn_mods`
+- → [`menu:admin`](#menuadmin) — `ui.homes.btn_admin` 🔒
 
 ### `panel:profile`
 
@@ -37,9 +37,9 @@ _menu_ — pinned in `bot/admin`.
 
 Buttons:
 
-- → [`panel:status`](#panel-status) — `ui.homes.btn_status`
-- → [`menu:games:admin`](#menu-games-admin) — `ui.homes.btn_games` 🔒
-- → [`menu:mods:admin`](#menu-mods-admin) — `ui.homes.btn_mods` 🔒
+- → [`panel:status`](#panelstatus) — `ui.homes.btn_status`
+- → [`menu:games:admin`](#menugamesadmin) — `ui.homes.btn_games` 🔒
+- → [`menu:mods:admin`](#menumodsadmin) — `ui.homes.btn_mods` 🔒
 - `ui.homes.btn_sync` ⚙️ sync
 
 ### `panel:status`
@@ -54,8 +54,8 @@ _menu_ — pinned in `games/general`.
 
 Buttons:
 
-- → [`menu:games:aoe2`](#menu-games-aoe2) — `ui.games.homes.aoe2`
-- → [`menu:games:admin`](#menu-games-admin) — `ui.homes.btn_games` 🔒
+- → [`menu:games:aoe2`](#menugamesaoe2) — `ui.games.homes.aoe2`
+- → [`menu:games:admin`](#menugamesadmin) — `ui.homes.btn_games` 🔒
 
 ### `menu:games:admin`
 
@@ -63,7 +63,7 @@ _menu_ — pinned in `games/admin`.
 
 Buttons:
 
-- → [`menu:game:aoe2:admin`](#menu-game-aoe2-admin) — `ui.games.homes.aoe2` 🔒
+- → [`menu:game:aoe2:admin`](#menugameaoe2admin) — `ui.games.homes.aoe2` 🔒
 - `ui.homes.btn_sync` ⚙️ sync
 
 ### `menu:games:aoe2`
@@ -72,9 +72,9 @@ _menu_ — pinned in `games/aoe2/general`.
 
 Buttons:
 
-- → [`panel:game:aoe2:live`](#panel-game-aoe2-live) — `ui.homes.btn_live`
-- → [`panel:game:aoe2:players`](#panel-game-aoe2-players) — `ui.homes.btn_users`
-- → [`menu:game:aoe2:admin`](#menu-game-aoe2-admin) — `ui.homes.btn_admin` 🔒
+- → [`panel:game:aoe2:live`](#panelgameaoe2live) — `ui.homes.btn_live`
+- → [`panel:game:aoe2:players`](#panelgameaoe2players) — `ui.homes.btn_users`
+- → [`menu:game:aoe2:admin`](#menugameaoe2admin) — `ui.homes.btn_admin` 🔒
 
 ### `menu:game:aoe2:admin`
 
@@ -104,10 +104,10 @@ _menu_ — pinned in `mods/general`.
 
 Buttons:
 
-- → [`menu:mod:ladder`](#menu-mod-ladder) — `ui.mods.homes.ladder` *(disabled)*
-- → [`menu:mod:tournament`](#menu-mod-tournament) — `ui.mods.homes.tournament` *(disabled)*
-- → [`menu:mod:kingdom`](#menu-mod-kingdom) — `ui.mods.homes.kingdom` *(disabled)*
-- → [`menu:mods:admin`](#menu-mods-admin) — `ui.homes.btn_mods` 🔒
+- → [`menu:mod:ladder`](#menumodladder) — `ui.mods.homes.ladder` *(disabled)*
+- → [`menu:mod:tournament`](#menumodtournament) — `ui.mods.homes.tournament` *(disabled)*
+- → [`menu:mod:kingdom`](#menumodkingdom) — `ui.mods.homes.kingdom` *(disabled)*
+- → [`menu:mods:admin`](#menumodsadmin) — `ui.homes.btn_mods` 🔒
 
 ### `menu:mods:admin`
 
@@ -115,9 +115,9 @@ _menu_ — pinned in `mods/admin`.
 
 Buttons:
 
-- → [`menu:mod:ladder:admin`](#menu-mod-ladder-admin) — `ui.mods.homes.ladder` 🔒 *(disabled)*
-- → [`menu:mod:tournament:admin`](#menu-mod-tournament-admin) — `ui.mods.homes.tournament` 🔒 *(disabled)*
-- → [`menu:mod:kingdom:admin`](#menu-mod-kingdom-admin) — `ui.mods.homes.kingdom` 🔒 *(disabled)*
+- → [`menu:mod:ladder:admin`](#menumodladderadmin) — `ui.mods.homes.ladder` 🔒 *(disabled)*
+- → [`menu:mod:tournament:admin`](#menumodtournamentadmin) — `ui.mods.homes.tournament` 🔒 *(disabled)*
+- → [`menu:mod:kingdom:admin`](#menumodkingdomadmin) — `ui.mods.homes.kingdom` 🔒 *(disabled)*
 - `ui.homes.btn_sync` ⚙️ sync
 
 ### `menu:mod:ladder`
@@ -158,7 +158,11 @@ _(no buttons — content comes from its wired handler)_
 
 ## Adding or moving a view
 
-1. **Declare** it in `config/views.yaml` (kingdoms-services):
+Platform views live in `config/views.yaml`; a mod's own views live in
+its own `config/mods/<mod>.views.yaml` (a mod's files never scatter —
+kingdoms#179) and merge into the same registry.
+
+1. **Declare** the view in the right YAML:
    id, kind, pin scope, buttons (target/label/admin/sync/action);
 2. **Regenerate** this doc (`scripts/generate_views_doc.py`);
 3. **Wire** the handler — `wire_view("<id>", handler)` for a panel,

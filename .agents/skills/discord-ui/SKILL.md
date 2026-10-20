@@ -342,7 +342,14 @@ docs/DEVELOPMENT/VIEWS.md is generated
 (`scripts/generate_views_doc.py` — regenerate it in the same change).
 YAML anchors and aliases keep the repetition out. Navigation buttons
 declare their target; complex behaviors declare an action id the code
-wires at boot (`wire_action`) — an unwired action renders disabled. Two kinds:
+wires at boot (`wire_action`) — an unwired action renders disabled.
+
+**A mod declares its own views in its own config**
+(`config/mods/<mod>.views.yaml`); the registry merges them with the
+platform's. A mod's files never scatter across the repo — its
+declaration, views, code and locales live together (kingdoms#179,
+the modular-layout rule): never add a mod's i18n keys to the shared
+`config/locales/`, never add its views to the platform's YAML. Two kinds:
 
 - a **menu** navigates — buttons only, each opening another view;
 - a **panel** informs or acts — data, actions, live content.
