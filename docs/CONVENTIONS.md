@@ -348,7 +348,11 @@ is the GitHub **environment variable** `TEST_GUILD_ID` on the env
 
 ### Visible ids: ladders and seasons
 
-Entities carry **visible, unambiguous ids**, shown in every UI footer:
+Entities carry **visible, unambiguous ids**, shown in every UI footer. **Every view carries its view id as its
+footer** — a `-#` line with the id in backticks (`view:aoe2:admin`),
+built through `kingdoms.core.ids.footer` or `MenuSpec.view_id`: the id
+is the anchor every human feedback refers to, no view ships without
+one:
 
 - **Ladder**: `ladder-<game_key>-<guild_id>` — one ladder per
   (guild, game); the game key charset is `a-z0-9` (validated at every
@@ -612,13 +616,18 @@ would be identical no matter which mods are installed — belong to the
 guild-level setting in its own panel: one guild, one value, one admin
 surface. Concretely:
 
-- **Locale and timezone are core guild settings.** A mod never ships its
-  own locale or timezone picker. The guild timezone lives in the core
-  guild settings, persisted once per guild — it would be the same for
-  every installed mod, so a per-mod copy is a duplication by
-  definition. If a mod needs a genuinely mod-specific tunable (a
-  gameplay constant), it goes in the mod's YAML `settings:` — data,
-  admin-overridable through the core surface, never a new panel.
+- **The locale is Discord's, not ours.** The platform stores no locale
+  of its own: guild surfaces render in the server's language
+  (`guild.preferred_locale`, Server Settings → Language), DMs in the
+  user's client language (`interaction.locale`), both resolved through
+  the single seam `kingdoms.discord.locales`. No language picker
+  anywhere — core or mod; a server changes its Discord language, the
+  bot follows. The guild timezone lives in the core guild settings,
+  persisted once per guild — it would be the same for every installed
+  mod, so a per-mod copy is a duplication by definition. If a mod
+  needs a genuinely mod-specific tunable (a gameplay constant), it
+  goes in the mod's YAML `settings:` — data, admin-overridable through
+  the core surface, never a new panel.
 - **Times are Discord timestamps.** User-facing times are rendered with
   Discord's native `<t:…:R>` / `<t:…>` format, so Discord localizes them
   per viewer and no per-guild timezone preference is needed for display.

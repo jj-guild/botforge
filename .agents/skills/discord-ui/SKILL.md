@@ -292,14 +292,21 @@ the `CatalogTranslator` (`kingdoms.discord.commands_i18n`) — the yaml
 `commands.<name>_name` / `commands.<name>_description` keys are the
 only source; never a hardcoded localization dict.
 
-The locale resolution rules:
+The locale resolution rules (native Discord, nothing stored):
 
-- **guild messages** — the per-guild language set in `/admin`
-  (`LogService.get_locale`); announcements, lifecycle events, panels;
-- **DMs** — the per-user language set in `/admin` in DM
-  (`user_settings`); DMs follow the user, not a guild;
+- **guild messages** — the server's own language, `guild.preferred_locale`
+  (Server Settings → Language), resolved through the single seam
+  `kingdoms.discord.locales` (`guild_locale`, `guild_locale_by_id`,
+  `interaction_locale`); announcements, lifecycle events, panels;
+- **DMs** — the user's client language, `interaction.locale` (again
+  through the seam); DMs follow the user, not a guild;
 - **command entries** — the Discord client locale, through the
   translator, not the guild's.
+
+The platform stores **no locale setting of its own** — no language
+picker, no `user_settings.locale`, no `set_locale`: a server changes
+its Discord language, the bot follows. The lifecycle audit events
+resolve through the same seam (a resolver injected into LogService).
 
 Adding a screen or message, the checklist (never skip the sweep):
 
@@ -326,8 +333,13 @@ Adding a screen or message, the checklist (never skip the sweep):
 - labels and urls: prefer an emoji + a short generic label on buttons
   (🔍 Files, 📦 Image, 🌿 Branch); the full values (sha, tags, ids) ride
   the text blocks next to the buttons, timestamps render as Discord
-  relative times (`<t:…:R>`) — the footer stays empty or minimal, it
-  never repeats the body.
+  relative times (`<t:…:R>`);
+- **every view carries its view id as its footer** — a small `-#`
+  line with the id in backticks (`view:aoe2:admin`), built through
+  `kingdoms.core.ids.footer` (or `MenuSpec.view_id` on the menu
+  template). The id is the anchor every human feedback refers to:
+  "the Create button on `view:games:pools:manage` is broken" — no
+  view ships without one.
 
 ## Proactivity mandate (know the whole discord.py surface)
 
