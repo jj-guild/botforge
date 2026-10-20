@@ -294,10 +294,16 @@ only source; never a hardcoded localization dict.
 
 The locale resolution rules (native Discord, nothing stored):
 
-- **guild messages** — the server's own language, `guild.preferred_locale`
-  (Server Settings → Language), resolved through the single seam
-  `kingdoms.discord.locales` (`guild_locale`, `guild_locale_by_id`,
-  `interaction_locale`); announcements, lifecycle events, panels;
+- **ephemeral / interaction surfaces** — the **clicker's client
+  language first** (`interaction.locale`), then the server's language
+  when the client speaks one the catalog does not carry — resolved
+  through `kingdoms.discord.locales.interaction_locale`. A French
+  client sees French even on an English server, exactly like Discord
+  localizes slash commands;
+- **pinned / public messages** (panels, announcements, lifecycle
+  events) — the server's own language, `guild.preferred_locale`
+  (Server Settings → Language), resolved through `guild_locale` /
+  `guild_locale_by_id`: one public message, one language;
 - **DMs** — the user's client language, `interaction.locale` (again
   through the seam); DMs follow the user, not a guild;
 - **command entries** — the Discord client locale, through the

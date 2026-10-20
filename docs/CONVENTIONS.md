@@ -617,12 +617,15 @@ guild-level setting in its own panel: one guild, one value, one admin
 surface. Concretely:
 
 - **The locale is Discord's, not ours.** The platform stores no locale
-  of its own: guild surfaces render in the server's language
-  (`guild.preferred_locale`, Server Settings → Language), DMs in the
-  user's client language (`interaction.locale`), both resolved through
-  the single seam `kingdoms.discord.locales`. No language picker
-  anywhere — core or mod; a server changes its Discord language, the
-  bot follows. The guild timezone lives in the core guild settings,
+  of its own. Ephemeral (interaction-driven) surfaces render in the
+  **clicker's client language** (`interaction.locale`), falling back
+  to the server's language — a French client sees French even on an
+  English server, exactly like Discord's own slash-command
+  localization. Pinned/public messages render in the **server's
+  language** (`guild.preferred_locale`, Server Settings → Language) —
+  one public message, one language. Both resolve through the single
+  seam `kingdoms.discord.locales`. No language picker anywhere — core
+  or mod; the Discord language settings drive everything. The guild timezone lives in the core guild settings,
   persisted once per guild — it would be the same for every installed
   mod, so a per-mod copy is a duplication by definition. If a mod
   needs a genuinely mod-specific tunable (a gameplay constant), it
