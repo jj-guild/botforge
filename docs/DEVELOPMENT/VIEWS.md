@@ -1,129 +1,169 @@
 # VIEWS — the map of menus and panels
 
-> **Source of truth.** This document describes **every view** of the
-> bot: its id, its kind, where it lives, and its buttons. The code
-> mirrors this list exactly (`views_declared.py` in kingdoms-services):
-> reorganizing means changing this doc **and** that file in the same
-> PR. Agents read this doc before adding, moving or removing a view.
+<!-- Generated from kingdoms-services config/views.yaml — edit the
+     YAML, then regenerate (scripts/generate_views_doc.py). -->
 
-## The two kinds of views
-
-| Kind | Role | Content |
-| ---- | ---- | ------- |
-| **menu** | Navigate | Buttons only — every button opens another view. No data, no actions. |
-| **panel** | Inform / act | Data (lists, stats), actions, live content. |
+Every view of the bot: its id, its kind (a **menu** only navigates; a **panel** informs or acts), where it pins, and its buttons — each a link to its target.
 
 Shared rules:
 
-- every view carries an **id** (`menu:games:aoe2`, `panel:profile`)
-  rendered as its **footer** — the anchor every human feedback refers
-  to;
-- an **admin** button carries the 🔒 emoji and the most discreet style
-  Discord allows;
-- a **sync** button (channels & roles) carries the ⚙️ emoji;
-- labels resolve through the i18n catalog (key
-  `ui.views.<id without :>.title`);
-- **caps**: 20 maps / map pool · 20 active map pools / guild ·
-  20 games · 20 mods.
+- an admin button carries the 🔒 emoji, the most discreet style;
+- a sync button (channels & roles) carries the ⚙️ emoji;
+- every view renders its id as its footer;
+- caps: 20 maps/pool · 20 active pools/guild · 20 games · 20 mods.
 
-## The map (today: 1 game — aoe2, 0 mod)
+## The views
 
-```text
-menu:home ──┬─> panel:profile
-            ├─> menu:games:home ──┬─> menu:games:aoe2 ──┬─> panel:game:aoe2:live
-            │                    │                     ├─> panel:game:aoe2:players
-            │                    │                     └─> menu:game:aoe2:admin
-            │                    └─> menu:games:admin ──> menu:game:aoe2:admin
-            ├─> menu:mods:home ──┬─> (menu:mod:ladder      — disabled)
-            │                   ├─> (menu:mod:tournament — disabled)
-            │                   ├─> (menu:mod:kingdom     — disabled)
-            │                   └─> menu:mods:admin
-            └─> menu:admin ──┬─> panel:status
-                             ├─> menu:games:admin
-                             ├─> menu:mods:admin
-                             └─ [⚙️ sync]
-```
+### `menu:home`
 
-## The views, one by one
+_menu_ — pinned in `root/general`.
 
-### `menu:home` — pinned in `root/general`
-The starting point.
-- → `panel:profile` (👤)
-- → `menu:games:home` (🎮)
-- → `menu:mods:home` (🧩)
-- → `menu:admin` (🔒)
+Buttons:
+
+- → [`panel:profile`](#panel-profile) — `ui.homes.btn_profile`
+- → [`menu:games:home`](#menu-games-home) — `ui.homes.btn_games`
+- → [`menu:mods:home`](#menu-mods-home) — `ui.homes.btn_mods`
+- → [`menu:admin`](#menu-admin) — `ui.homes.btn_admin` 🔒
 
 ### `panel:profile`
-The player's profile (linked accounts, rename). *Unchanged.*
 
-### `menu:admin` — pinned in `bot/admin`
-- → `panel:status` (📊)
-- → `menu:games:admin` (🔒)
-- → `menu:mods:admin` (🔒)
-- ⚙️ sync channels & roles
+_panel_.
 
-### `panel:status` — boot DM
-The deployment status (version, uptime, services). *Unchanged.*
+_(no buttons — content comes from its wired handler)_
 
-### `menu:games:home` — pinned in `games/general`
-The list of available games — **one button per game, long label**
-(the game's name, not its game key), plus admin.
-- → `menu:games:aoe2` (⚔️ Age of Empires II)
-- → `menu:games:admin` (🔒)
+### `menu:admin`
 
-### `menu:games:admin` — pinned in `games/admin`
-- → `menu:game:aoe2:admin` (🔒 per game)
-- ⚙️ sync channels & roles
+_menu_ — pinned in `bot/admin`.
 
-### `menu:games:aoe2` — pinned in `games/aoe2/general`
-The game's name as the title, then:
-- text: **the channels** (content, restrictions, forums)
-- text: **the roles** (usage)
-- → `panel:game:aoe2:live` (📡)
-- → `panel:game:aoe2:players` (👥)
-- → `menu:game:aoe2:admin` (🔒)
+Buttons:
 
-### `menu:game:aoe2:admin` — pinned in `games/aoe2/admin`
-The same channels/roles sections as the game's menu, then:
-- ⭐ Add a map
-- 🧱 Create a map pool
-- ⚙️ sync channels & roles
+- → [`panel:status`](#panel-status) — `ui.homes.btn_status`
+- → [`menu:games:admin`](#menu-games-admin) — `ui.homes.btn_games` 🔒
+- → [`menu:mods:admin`](#menu-mods-admin) — `ui.homes.btn_mods` 🔒
+- `ui.homes.btn_sync` ⚙️ sync
 
-### `panel:game:aoe2:live` — pinned in `games/aoe2/live`
-The live dashboard. *Unchanged.*
+### `panel:status`
+
+_panel_.
+
+_(no buttons — content comes from its wired handler)_
+
+### `menu:games:home`
+
+_menu_ — pinned in `games/general`.
+
+Buttons:
+
+- → [`menu:games:aoe2`](#menu-games-aoe2) — `ui.games.homes.aoe2`
+- → [`menu:games:admin`](#menu-games-admin) — `ui.homes.btn_games` 🔒
+
+### `menu:games:admin`
+
+_menu_ — pinned in `games/admin`.
+
+Buttons:
+
+- → [`menu:game:aoe2:admin`](#menu-game-aoe2-admin) — `ui.games.homes.aoe2` 🔒
+- `ui.homes.btn_sync` ⚙️ sync
+
+### `menu:games:aoe2`
+
+_menu_ — pinned in `games/aoe2/general`.
+
+Buttons:
+
+- → [`panel:game:aoe2:live`](#panel-game-aoe2-live) — `ui.homes.btn_live`
+- → [`panel:game:aoe2:players`](#panel-game-aoe2-players) — `ui.homes.btn_users`
+- → [`menu:game:aoe2:admin`](#menu-game-aoe2-admin) — `ui.homes.btn_admin` 🔒
+
+### `menu:game:aoe2:admin`
+
+_menu_ — pinned in `games/aoe2/admin`.
+
+Buttons:
+
+- `ui.homes.btn_add_map` — action `add-map`
+- `ui.homes.btn_create_pool` — action `create-pool`
+- `ui.homes.btn_sync` ⚙️ sync
+
+### `panel:game:aoe2:live`
+
+_panel_.
+
+_(no buttons — content comes from its wired handler)_
 
 ### `panel:game:aoe2:players`
-The registered players **of that game** — one line each, no guild
-name. Generic: `panel:game:<key>:players`.
 
-### `menu:mods:home` — pinned in `mods/general`
-The list of mods (empty today) — **one button per mod, long label**,
-plus admin. The declared placeholders are disabled:
-- (menu:mod:ladder — disabled)
-- (menu:mod:tournament — disabled)
-- (menu:mod:kingdom — disabled)
-- → `menu:mods:admin` (🔒)
+_panel_.
 
-### `menu:mods:admin` — pinned in `mods/admin`
-- (menu:mod:ladder:admin — disabled, 🔒)
-- (menu:mod:tournament:admin — disabled, 🔒)
-- (menu:mod:kingdom:admin — disabled, 🔒)
-- ⚙️ sync channels & roles
+_(no buttons — content comes from its wired handler)_
 
-## Adding or moving a view (the how-to)
+### `menu:mods:home`
 
-1. **Declare**: `views_declared.py` — one `ViewDecl` (id, kind, pin
-   scope, buttons with their targets). A menu only declares buttons
-   pointing at declared views (or the sync flag);
-2. **Document**: add the view here, in the map and its own section;
-3. **Wire**: if the view opens a handler, `wire_view("<id>", handler)`
-   in `_wire_declared_views` (factory) — otherwise nothing;
-4. **Translate**: `ui.views.<id>.title` / `.description` in `fr.yaml`
-   **and** `en.yaml`;
-5. **Test**: the registry validates itself (`validate_registry`) — an
-   undeclared target, a menu button without target/sync/label are
-   drifts the tests reject.
+_menu_ — pinned in `mods/general`.
 
-A new game follows the same path: `menu:games:<key>`,
-`menu:game:<key>:admin`, its panels — the declarative menu builder
-renders the menu automatically from the declaration.
+Buttons:
+
+- → [`menu:mod:ladder`](#menu-mod-ladder) — `ui.mods.homes.ladder` *(disabled)*
+- → [`menu:mod:tournament`](#menu-mod-tournament) — `ui.mods.homes.tournament` *(disabled)*
+- → [`menu:mod:kingdom`](#menu-mod-kingdom) — `ui.mods.homes.kingdom` *(disabled)*
+- → [`menu:mods:admin`](#menu-mods-admin) — `ui.homes.btn_mods` 🔒
+
+### `menu:mods:admin`
+
+_menu_ — pinned in `mods/admin`.
+
+Buttons:
+
+- → [`menu:mod:ladder:admin`](#menu-mod-ladder-admin) — `ui.mods.homes.ladder` 🔒 *(disabled)*
+- → [`menu:mod:tournament:admin`](#menu-mod-tournament-admin) — `ui.mods.homes.tournament` 🔒 *(disabled)*
+- → [`menu:mod:kingdom:admin`](#menu-mod-kingdom-admin) — `ui.mods.homes.kingdom` 🔒 *(disabled)*
+- `ui.homes.btn_sync` ⚙️ sync
+
+### `menu:mod:ladder`
+
+_menu_.
+
+_(no buttons — content comes from its wired handler)_
+
+### `menu:mod:tournament`
+
+_menu_.
+
+_(no buttons — content comes from its wired handler)_
+
+### `menu:mod:kingdom`
+
+_menu_.
+
+_(no buttons — content comes from its wired handler)_
+
+### `menu:mod:ladder:admin`
+
+_menu_.
+
+_(no buttons — content comes from its wired handler)_
+
+### `menu:mod:tournament:admin`
+
+_menu_.
+
+_(no buttons — content comes from its wired handler)_
+
+### `menu:mod:kingdom:admin`
+
+_menu_.
+
+_(no buttons — content comes from its wired handler)_
+
+## Adding or moving a view
+
+1. **Declare** it in `config/views.yaml` (kingdoms-services):
+   id, kind, pin scope, buttons (target/label/admin/sync/action);
+2. **Regenerate** this doc (`scripts/generate_views_doc.py`);
+3. **Wire** the handler — `wire_view("<id>", handler)` for a panel,
+   `wire_action("<view>", "<action>", handler)` for an action;
+4. **Translate** the labels (`fr.yaml` and `en.yaml`, same change);
+5. **Test**: the registry validates the YAML — an undeclared
+   target, a button with no driver, an action without a label
+   are drifts the tests reject.

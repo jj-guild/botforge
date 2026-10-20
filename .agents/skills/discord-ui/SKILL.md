@@ -335,9 +335,14 @@ Adding a screen or message, the checklist (never skip the sweep):
 
 ## Menus, panels and the views registry
 
-Every view is **declared once** (`kingdoms/discord/views_declared.py`,
-mirroring docs/DEVELOPMENT/VIEWS.md): its id, its kind, its pin scope
-and its buttons' targets. Two kinds:
+Every view is **declared once** in `config/views.yaml`
+(kingdoms-services) — the single source of truth the runtime menu
+builder, the pins and the button router consume, and from which
+docs/DEVELOPMENT/VIEWS.md is generated
+(`scripts/generate_views_doc.py` — regenerate it in the same change).
+YAML anchors and aliases keep the repetition out. Navigation buttons
+declare their target; complex behaviors declare an action id the code
+wires at boot (`wire_action`) — an unwired action renders disabled. Two kinds:
 
 - a **menu** navigates — buttons only, each opening another view;
 - a **panel** informs or acts — data, actions, live content.
