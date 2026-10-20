@@ -333,6 +333,31 @@ Adding a screen or message, the checklist (never skip the sweep):
    English, and a new key in one locale only is a bug — keep the
    key sets identical.
 
+## Menus, panels and the views registry
+
+Every view is **declared once** (`kingdoms/discord/views_declared.py`,
+mirroring docs/DEVELOPMENT/VIEWS.md): its id, its kind, its pin scope
+and its buttons' targets. Two kinds:
+
+- a **menu** navigates — buttons only, each opening another view;
+- a **panel** informs or acts — data, actions, live content.
+
+The rules the registry enforces (the tests reject the drifts):
+
+- a menu button opens a **declared** view (`view:open:<view id>` on
+  the wire — the ViewOpenButton router), or carries the sync flag;
+- an admin button renders with 🔒, as discreet as Discord allows;
+- a sync button renders with 🔄 (the TreeEnsureButton: re-provision
+  the scope's channels and roles);
+- every view carries its id as its `-#` footer;
+- the platform caps: 20 maps/pool, 20 active pools/guild, 20 games,
+  20 mods.
+
+Adding or reorganizing views: read docs/DEVELOPMENT/VIEWS.md first,
+then declare, wire (`wire_view`), translate both locales, and keep
+the doc and `views_declared.py` in the same PR — the doc is the
+source of truth, the code is its executable mirror.
+
 ## Views organization (adding a screen)
 
 - one module per surface in `kingdoms/discord/` (admin.py, status.py…):
