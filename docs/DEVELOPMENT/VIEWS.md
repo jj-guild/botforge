@@ -38,8 +38,8 @@ _menu_ — pinned in `bot/admin`.
 Buttons:
 
 - → [`panel:status`](#panelstatus) — `ui.homes.btn_status`
-- → [`menu:games:admin`](#menugamesadmin) — `ui.homes.btn_games` 🔒
-- → [`menu:mods:admin`](#menumodsadmin) — `ui.homes.btn_mods` 🔒
+- → [`menu:games:admin`](#menugamesadmin) — `ui.homes.btn_games`
+- → [`menu:mods:admin`](#menumodsadmin) — `ui.homes.btn_mods`
 - `ui.homes.btn_sync` ⚙️ sync
 
 ### `panel:status`
@@ -55,7 +55,7 @@ _menu_ — pinned in `games/general`.
 Buttons:
 
 - → [`menu:games:aoe2`](#menugamesaoe2) — `ui.games.homes.aoe2`
-- → [`menu:games:admin`](#menugamesadmin) — `ui.homes.btn_games` 🔒
+- → [`menu:games:admin`](#menugamesadmin) — `ui.homes.btn_admin` 🔒
 
 ### `menu:games:admin`
 
@@ -63,7 +63,7 @@ _menu_ — pinned in `games/admin`.
 
 Buttons:
 
-- → [`menu:game:aoe2:admin`](#menugameaoe2admin) — `ui.games.homes.aoe2` 🔒
+- → [`menu:game:aoe2:admin`](#menugameaoe2admin) — `ui.games.homes.aoe2`
 - `ui.homes.btn_sync` ⚙️ sync
 
 ### `menu:games:aoe2`
@@ -108,7 +108,7 @@ Buttons:
 - → [`menu:mod:ladder`](#menumodladder) — `ui.mods.homes.ladder` *(disabled)*
 - → [`menu:mod:tournament`](#menumodtournament) — `ui.mods.homes.tournament` *(disabled)*
 - → [`menu:mod:kingdom`](#menumodkingdom) — `ui.mods.homes.kingdom` *(disabled)*
-- → [`menu:mods:admin`](#menumodsadmin) — `ui.homes.btn_mods` 🔒
+- → [`menu:mods:admin`](#menumodsadmin) — `ui.homes.btn_admin` 🔒
 
 ### `menu:mods:admin`
 
@@ -116,9 +116,9 @@ _menu_ — pinned in `mods/admin`.
 
 Buttons:
 
-- → [`menu:mod:ladder:admin`](#menumodladderadmin) — `ui.mods.homes.ladder` 🔒 *(disabled)*
-- → [`menu:mod:tournament:admin`](#menumodtournamentadmin) — `ui.mods.homes.tournament` 🔒 *(disabled)*
-- → [`menu:mod:kingdom:admin`](#menumodkingdomadmin) — `ui.mods.homes.kingdom` 🔒 *(disabled)*
+- → [`menu:mod:ladder:admin`](#menumodladderadmin) — `ui.mods.homes.ladder` *(disabled)*
+- → [`menu:mod:tournament:admin`](#menumodtournamentadmin) — `ui.mods.homes.tournament` *(disabled)*
+- → [`menu:mod:kingdom:admin`](#menumodkingdomadmin) — `ui.mods.homes.kingdom` *(disabled)*
 - `ui.homes.btn_sync` ⚙️ sync
 
 ### `menu:mod:ladder`
