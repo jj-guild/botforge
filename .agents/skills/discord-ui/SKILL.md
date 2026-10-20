@@ -309,10 +309,15 @@ The locale resolution rules (native Discord, nothing stored):
 - **command entries** — the Discord client locale, through the
   translator, not the guild's.
 
-The platform stores **no locale setting of its own** — no language
-picker, no `user_settings.locale`, no `set_locale`: a server changes
-its Discord language, the bot follows. The lifecycle audit events
-resolve through the same seam (a resolver injected into LogService).
+The platform manages **no locale setting** — no language picker
+anywhere. One exception, an observation (never a setting): Discord
+exposes a user's language only inside interactions, so the bot
+records the language each user was last seen using
+(`LogService.observe_user_locale`, refreshed on every interaction,
+best-effort) — the interaction-free DMs (boot status, crash reports)
+render in that observed language (English until the user is first
+seen). A server changes its Discord language, the bot follows; so
+does a user with their client.
 
 Adding a screen or message, the checklist (never skip the sweep):
 
