@@ -82,7 +82,8 @@ _menu_ — pinned in `games/aoe2/admin`.
 
 Buttons:
 
-- `ui.homes.btn_add_map` — action `add-map`
+- `ui.homes.btn_add_map` — action `import-map`
+- `ui.games.bulk_import_map` — action `bulk-import-map`
 - `ui.homes.btn_create_pool` — action `create-pool`
 - `ui.homes.btn_sync` ⚙️ sync
 
@@ -155,6 +156,19 @@ _(no buttons — content comes from its wired handler)_
 _menu_.
 
 _(no buttons — content comes from its wired handler)_
+
+## The universal home rule
+
+Every menu pinned in a scope's `general` MUST (the registry rejects the drift):
+
+- **explain its scope** — the channel notice renders from the declared
+  tree automatically (one line per channel: its link and access band);
+- **navigate** — buttons to the scope's views, at least the admin surface;
+- **reach admin** — one admin button (the header carries the open padlock
+  on the admin surfaces, the buttons carry their own emojis).
+
+The rule holds for every game and every mod to come: their `general` menus
+follow the same contract, their scopes declared in the same YAML.
 
 ## The channel tree (the provisioned scopes)
 

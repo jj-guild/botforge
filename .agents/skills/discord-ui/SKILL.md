@@ -361,6 +361,11 @@ The rules the registry enforces (the tests reject the drifts):
 - an admin button renders with 🔒, as discreet as Discord allows;
 - a sync button renders with 🔄 (the TreeEnsureButton: re-provision
   the scope's channels and roles);
+- **the universal home rule** (registry-enforced): a menu pinned in
+  a scope's `general` explains its scope (the channel notice renders
+  from the declared tree — links, access bands), navigates, and
+  reaches the admin surface. The same contract for every game and
+  mod to come;
 - every view carries its id as its `-#` footer;
 - the platform caps: 20 maps/pool, 20 active pools/guild, 20 games,
   20 mods.
