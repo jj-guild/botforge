@@ -13,10 +13,12 @@ treat them as law.
 - Resolution at runtime uses the **stored id** only. Names are labels
   used on first creation; a human renaming a salon in Discord must
   never break the bot.
-- The registry is **self-healing**: a boot-time and per-change sync
-  re-provisions anything missing (salon deleted, message unpinned).
+- The registry heals **on demand**: the boot pass provisions a virgin
+  guild, and the sync button ("Synchroniser") re-provisions anything
+  missing afterwards (salon deleted, message unpinned, post deleted).
   While an entity exists in the database and is not disabled, its
-  salon/pinned message must exist.
+  salon/pinned message comes back at the next sync — nothing watches
+  Discord in real time, nothing runs in a loop.
 - Forum posts work the same way: the message id of each map post (or
   pool post) is stored so the flow can link back to the exact post.
 

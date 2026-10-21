@@ -107,8 +107,9 @@ dossiers de regroupement.
    `name` (registre `view:<guild-id>:<slug>`), `pinned_on`
    (channel + PinMode LATEST_ONLY|ALL|None), `autoheal`,
    `navigable` (False partout : figé, ephemerals), `permissions`
-   (rôles requis), `build`. Le SDK provisionne, épingle, cicatrise
-   (événement delete + sweep de sécurité), traduit.
+   (rôles requis), `build`. Le SDK provisionne, épingle, traduit ; la cicatrisation
+   est à la demande (le bouton Synchroniser du périmètre), jamais
+   en temps réel.
 
 ## Les menus : figés + navigation ephemeral
 
