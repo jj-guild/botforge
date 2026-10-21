@@ -84,10 +84,14 @@ component or workflow filler is a factorization bug.
 
 ## 5. Ephemeral views contract
 
-- **An ephemeral view never sends a copy of itself.** A click inside an
-  ephemeral view updates THAT message (`interaction.response.edit_message`)
-  — it never answers with a second ephemeral message showing the same or
-  a successor view. One interaction, one ephemeral message, N updates.
+- **An ephemeral view never sends a copy of itself — even after a modal
+  submit.** The only valid shapes: (1) a component click answers
+  `interaction.response.edit_message(...)`; (2) a modal submit edits the
+  message its opening button CAPTURED (`origin = interaction.message` at
+  the click, `origin.edit(view=fresh)` at the submit — the
+  `_profile_followup` pattern); the first-ever render sends the one
+  message. When the captured origin is gone, the fallback is a PLAIN
+  TEXT answer — never a new copy of the view.
 - **An ephemeral view is never replaced by another view.** The update
   re-renders the same logical view with fresh data; navigating to a
   genuinely different view opens it in its own message, and the previous
