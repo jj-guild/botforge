@@ -81,3 +81,21 @@ component or workflow filler is a factorization bug.
 - [discord.md](discord.md) — the Discord implementation layer
 - [ADR-0008](../DECISIONS/008-i18n-system.md) — i18n (every user-facing
   string, per guild, with pin resync on locale change)
+
+## 5. Ephemeral views contract
+
+- **An ephemeral view never sends a copy of itself.** A click inside an
+  ephemeral view updates THAT message (`interaction.response.edit_message`)
+  — it never answers with a second ephemeral message showing the same or
+  a successor view. One interaction, one ephemeral message, N updates.
+- **An ephemeral view is never replaced by another view.** The update
+  re-renders the same logical view with fresh data; navigating to a
+  genuinely different view opens it in its own message, and the previous
+  one is never duplicated to do so.
+- The ack always lands before any slow work (forum syncs, provider
+  fetches): `defer()` or the in-place edit first, the slow cascade
+  after — a modal's 3-second window is a hard failure otherwise.
+- A modal's `TextInput` labels are capped at **45 characters** by
+  Discord; selects ARE valid modal children (the API accepts them —
+  a 50035 on `send_modal` is almost always an over-cap label, not the
+  selects).
