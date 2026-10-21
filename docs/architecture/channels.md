@@ -95,7 +95,8 @@ component or workflow filler is a factorization bug.
 - The ack always lands before any slow work (forum syncs, provider
   fetches): `defer()` or the in-place edit first, the slow cascade
   after — a modal's 3-second window is a hard failure otherwise.
-- A modal's `TextInput` labels are capped at **45 characters** by
-  Discord; selects ARE valid modal children (the API accepts them —
-  a 50035 on `send_modal` is almost always an over-cap label, not the
-  selects).
+- A select rides a modal **wrapped in a Label**
+  (`discord.ui.Label(text=..., component=select)`) — never bare: the
+  API rejects a bare select in a modal (50035 `type must be one of
+  (4,)`), the Label-wrapped one works (the same shape as the profile's
+  add-account form). A `TextInput` label is capped at **45 characters**.
