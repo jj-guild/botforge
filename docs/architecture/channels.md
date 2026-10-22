@@ -92,6 +92,12 @@ component or workflow filler is a factorization bug.
   `_profile_followup` pattern); the first-ever render sends the one
   message. When the captured origin is gone, the fallback is a PLAIN
   TEXT answer — never a new copy of the view.
+- **A modal's submit REFRESHES the view it came from** (the submit
+  changes what the view displays — re-render it with the fresh data,
+  the `_profile_followup` shape). And a components-v2 message is
+  edited through a VIEW, never through `content` (the API rejects
+  `content` on a v2 edit — 50035); the answer text rides a container
+  (`_text_answer`).
 - **An ephemeral view is never replaced by another view.** The update
   re-renders the same logical view with fresh data; navigating to a
   genuinely different view opens it in its own message, and the previous
