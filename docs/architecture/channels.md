@@ -110,3 +110,6 @@ component or workflow filler is a factorization bug.
   API rejects a bare select in a modal (50035 `type must be one of
   (4,)`), the Label-wrapped one works (the same shape as the profile's
   add-account form). A `TextInput` label is capped at **45 characters**.
+  An OPTIONAL select in a modal carries `required=False`
+  (`select._underlying.required = False` + `min_values=0`) — the API
+  rejects `min_values=0` on a required component.
