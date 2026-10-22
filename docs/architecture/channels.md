@@ -27,8 +27,13 @@ treat them as law.
 - **Pins never move.** Clicking a pinned menu answers with an
   **ephemeral view**; the pinned message itself is edited in place when
   its content changes.
-- **Auto-refresh.** When an input changes (a parameter, the guild
-  locale, a season state), the surface calls the pin-refresher registry
+- **Auto-refresh.** The guild's pinned views are NEVER refreshed
+  wholesale — the single trigger is a **guild language change** (the
+  pins re-read their labels). Every other mutation heals at its own
+  surface (forum posts through the action's sync, counters at the
+  Synchroniser or the boot); a per-action full-pin refresh burns the
+  channel's PATCH budget.~~ When the language changes, the surface calls
+  the pin-refresher registry
   (`pinned_views.refresh_registered_pins`) so every registered pin is
   rebuilt with fresh data.
 - **Read-only by default.** Pinned salons are locked (`send_messages`
