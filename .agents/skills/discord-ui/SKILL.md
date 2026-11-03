@@ -122,6 +122,44 @@ Rules:
   `interaction.response.deferred` (discord_mock) so a regression fails
   CI, not the users.
 
+## Long-running actions: announce, then report at the same place
+
+**A task that runs past a few seconds (an external API paced by its
+terms, a bulk operation, a heavy aggregation) never leaves the user
+staring at a dead button.** The moment the work starts, the user gets a
+message saying WHAT is running, that it is in progress, and that the
+result will be posted **in that very message**. When the work ends,
+that same message is edited into the result — never a second,
+unrelated message.
+
+The canonical shape (three steps, in order):
+
+```python
+await interaction.response.defer(ephemeral=True, thinking=True)
+progress = await interaction.followup.send("... running, the result will be posted here", ephemeral=True)
+result = await the_slow_thing(...)                       # minutes are fine
+await interaction.followup.edit_message(progress.id, content=the_result_or_failure)
+```
+
+Rules:
+
+- the progress message names **what runs** and the **pacing reason**
+  ("Liquipedia is queried at its own pace — this can take minutes"),
+  so the wait is understood, not resented;
+- **every exit path edits the progress message** — success, failure,
+  and the "nothing to do" cases; the promise "the result lands here"
+  is never broken;
+- a click that can double-run the same slow work carries a
+  **process-wide cooldown** (e.g. 5 minutes): the second click answers
+  ephemerally with when it may retry, and never queues a duplicate run;
+- live per-item progress (a bulk import editing its message per line)
+  is the same pattern applied repeatedly — `edit_message` on the same
+  id, one message end to end.
+
+Reference implementations: `MapsSyncButton.callback` and
+`GamesBulkImportModal.on_submit` (`kingdoms-services`,
+`src/kingdoms/discord/admin_dm_panel.py` / `admin_panel_games.py`).
+
 ## Runtime permission checks (the click-time mandate)
 
 **Never assume that seeing a button means being allowed to click it.**
