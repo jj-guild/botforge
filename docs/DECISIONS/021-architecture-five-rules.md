@@ -63,10 +63,14 @@ collections' indexes are ensured by the game service at its boot; the
 matches aggregation answers over `GetLastCompletedTimes`; the bindings read
 rides the registration service's batched API.
 
-**Known remaining gap (accepted, dated):** the bot's game-catalog CRUD
-(maps, map pools, map packs, factions) still reaches the game's collections
-through `GameDataService` in-process. The fix — a GameData CRUD contract —
-is the next chantier; the guard's allowlist carries the gap explicitly.
+**The catalog gateway (landed 2026-11-05):** the game's collections (maps,
+map pools, map packs, factions, the localized content docs) answer through
+`GameData.Call` — an allowlisted op dispatch over the game service's own
+`GameDataService` + content store. The bot's `RemoteGameDataService` exposes
+the same method surface and rebuilds the same pydantic models, so the views
+keep their objects; a functional error crosses the wire with its kind and
+re-raises as the same exception type. The R5 allowlist carries exactly one
+dated entry: the operational purge tool.
 
 ## The sync rule
 
