@@ -108,3 +108,14 @@ the right depth:
 
 A doc change describing testing must keep this page and
 `docs/architecture/testing.md` consistent.
+
+## Troubleshooting (the repo's failure memory)
+
+The binding policy lives in CONVENTIONS.md, *Troubleshooting is part of
+the fix*: every fixed problem ships its regression test and a dated
+entry here (symptom → root cause → fix → the test that guards it),
+newest first. This repo's failures are mostly docs/CI-shaped; code
+failures live in `kingdoms-services` and deploy failures in
+`kingdoms-infra`.
+
+No entry yet — the first fixed incident lands here.
