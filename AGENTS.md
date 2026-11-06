@@ -125,7 +125,29 @@ whenever an env-scoped request arrives; capabilities are enforced
 mechanically by `authorize.yml` (fail-closed) when the session posts
 the keyword comment on the PR.
 
-## Read first
+## Instruction loading map — load only what the task needs
+
+Instructions are layered; a session loads a tier only when it needs it,
+and never the whole tree:
+
+| Tier | What | When it is loaded |
+| --- | --- | --- |
+| 0 | The three `AGENTS.md` + the PRIORITY 0 rules above | Always (the runtime loads every repo `AGENTS.md` at session start) |
+| 1 | [CONTRIBUTORS.md](CONTRIBUTORS.md) (roster, scope guard), [docs/CONVENTIONS.md](docs/CONVENTIONS.md) (binding rules), [docs/MODES.md](docs/MODES.md) (the working mode) | At session start and before any scoped or mode-sensitive action |
+| 2 | [docs/INDEX.md](docs/INDEX.md) (question → page router), [docs/VIBEWORKFLOW.md](docs/VIBEWORKFLOW.md), [docs/DEVELOPER.md](docs/DEVELOPER.md), [docs/architecture/](docs/architecture/), [DECISIONS/](docs/DECISIONS/README.md) | On demand, when the task touches their subject |
+| 3 | Skills — [`.agents/skills/`](.agents/skills/), indexed in [docs/SKILLS/README.md](docs/SKILLS/README.md) | The runtime loads the frontmatter (name + description) at startup and the full `SKILL.md` **only when a task matches the description** |
+
+Rules of the map:
+
+- **Prefer a skill over prose** for procedural know-how — skills are the
+  modular layer: they cost nothing until a task matches them.
+- **One home per rule**: the binding text lives once (CONVENTIONS,
+  architecture page, or skill) and everything else links to it — an
+  `AGENTS.md` entry is a one-liner plus a link, never a copy.
+- **Humans enter by [README.md](README.md)** (documentation map), agents
+  by this page; both converge on [docs/INDEX.md](docs/INDEX.md).
+
+## Read first — the detailed entries
 
 - [docs/INDEX.md](docs/INDEX.md) — the router: question → page. Find the
   answer without reading the whole docs tree.
@@ -136,8 +158,8 @@ the keyword comment on the PR.
   default.
 - [docs/CONVENTIONS.md](docs/CONVENTIONS.md) — conventions shared by the
   three repositories (language, humans-never-code, secrets, PR lifecycle,
-  issues, checks).
-- [docs/VIBEWORKFLOW.md](docs/VIBEWORKFLOW.md) — operating model (roles,
+  issues, checks, service data isolation, code quality).
+- [docs/VIBEWORKFLOW.md](docs/VIBEWORKFLOW.md) — the operating model (roles,
   session loop, approvals, deployment flow).
 - [docs/DEVELOPER.md](docs/DEVELOPER.md) — this repo's layout, checks,
   ADR process, mods documentation, generated artifacts.

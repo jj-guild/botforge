@@ -125,6 +125,12 @@ A read-modify-write without one of these mechanisms is a bug, whatever
 the data: the update must be expressed as one atomic operation, or the
 whole update must run under a lock/transaction.
 
+**Every Mongo collection has one owner** (ADR-0021 R5): a service only
+touches its own collections and exposes the data through its service
+contract (gRPC across processes) — see CONVENTIONS.md, *Service data
+isolation*; the target enforcement is one distinct MongoDB user per
+owner.
+
 ## 2. ChannelService
 
 Mods and workflows ask for a channel by **category**, never by name or

@@ -43,45 +43,61 @@ development docs. No application code lives here.
 
 ```
 kingdoms/
-├── README.md                      # This overview
-├── AGENTS.md                      # Rules for AI coding agents
+├── README.md                      # This overview (the human entry point)
+├── AGENTS.md                      # Rules for AI coding agents (the agent entry point)
 ├── docs/
+│   ├── INDEX.md                   # The router: question → page
 │   ├── ARCHITECTURE.md            # Technical architecture (Mermaid diagrams)
 │   ├── GAME-DESIGN.md             # The game designer's guide (English)
 │   ├── GAME-DESIGN.fr.md          # The game designer's guide (français)
 │   ├── WORKFLOWS.md               # Game workflows (registration, ladder, ...)
+│   ├── SKILLS/README.md           # The agent skills index
 │   ├── MODS/                      # Mods documentation
 │   │   ├── register/              # Registration mod (rules, environment)
 │   │   ├── ladder/                # Ladder mod (rules, environment)
 │   │   └── TEMPLATE/              # Template referenced by new mod docs
 │   └── DECISIONS/                 # Architecture Decision Records (ADR)
+├── .agents/skills/                # Agent skills (one directory per skill, SKILL.md)
 ├── .github/workflows/             # Docs generation and validation workflows
 ├── scripts/                       # Doc generation and validation scripts
 └── templates/                     # Reusable templates (mods, ADRs)
 ```
 
-## Key documents
+## Documentation map — where to look
+
+**For humans:** start at [docs/INDEX.md](docs/INDEX.md) — the
+question → page router ("I am… / I want to… — where do I look?").
+The main entries:
 
 - [docs/GAME-DESIGN.md](docs/GAME-DESIGN.md) — **the game designer's guide**
   ([français](docs/GAME-DESIGN.fr.md)): how to describe an idea, follow its
   delivery, test it in Discord, read the bot's `/status` — no tooling
-  involved; in English and French, like the bot's own locales
-- [AGENTS.md](AGENTS.md) — rules every AI coding agent must follow in this repo
-- [ROADMAP.md](https://github.com/merlin-pinpin-org/kingdoms/blob/sync/generated-artifacts/ROADMAP.md) — project phases and issue status (kept in sync
-  by `scripts/sync_roadmap.py`; see the
-  [Update roadmap](.agents/skills/update-roadmap/SKILL.md) skill)
-- [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) — technical architecture
-- [docs/WORKFLOWS.md](docs/WORKFLOWS.md) — game workflows
-- [docs/DECISIONS/](docs/DECISIONS/) — architecture decision records
+  involved
+- [docs/CONVENTIONS.md](docs/CONVENTIONS.md) — the binding rules every
+  contributor (human or agent) follows
+- [docs/VIBEWORKFLOW.md](docs/VIBEWORKFLOW.md) — the operating model
+  (roles, session loop, approvals, deployment flow)
+- [docs/MODES.md](docs/MODES.md) — the working modes (sandbox, pro, cowboy)
+- [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) +
+  [docs/DECISIONS/](docs/DECISIONS/) — the architecture and its decisions
 - [docs/MODS/](docs/MODS/) — mods documentation
+- [docs/SKILLS/README.md](docs/SKILLS/README.md) — the agent skills index
+  (what each skill is for; agents load a skill's full instructions only
+  when a task matches)
+
+**For AI agents:** start at [AGENTS.md](AGENTS.md) — the PRIORITY 0 rules
+and the instruction loading map.
 
 ## Automation
 
-Generated artifacts (`ROADMAP.md`, `docs/DEPENDENCIES.md`) are refreshed by
-the sync skills ([Update roadmap](.agents/skills/update-roadmap/SKILL.md),
-[Update dependencies](.agents/skills/update-dependencies/SKILL.md)): run
-`scripts/sync_roadmap.py` / `scripts/sync_dependencies.py` locally and
-commit the result to the PR branch — no rolling automation PR, no ghost PR.
+Generated artifacts (`generated/ROADMAP.md`,
+`generated/DEPENDENCIES.md`) are owned by the `sync-generated` workflow:
+the **single writer**, which publishes them on the
+`sync/generated-artifacts` branch (never on `main`, never in a PR).
+Sessions only *preview* drift with the
+[Update roadmap](.agents/skills/update-roadmap/SKILL.md) and
+[Update dependencies](.agents/skills/update-dependencies/SKILL.md)
+skills — the output is never committed by hand.
 
 Generated technical documentation (pydoc) lives in `kingdoms-services`
 ([`docs/DEVELOPMENT/pydoc`](https://github.com/merlin-pinpin-org/kingdoms-services/tree/main/docs/DEVELOPMENT/pydoc)),

@@ -12,6 +12,12 @@ descriptions at startup, and the full instructions when a task matches.
 own repo-local skills — `kingdoms-services` ships `discord-bot-docs` in
 its `.agents/skills/` — every future session discovers both).
 
+**Loading model:** the agent runtime discovers the skills through this
+index and the frontmatter (name + description) at startup, and loads a
+skill's full `SKILL.md` **only when a task matches its description** —
+the modular layer of the instruction loading map (AGENTS.md). Humans
+browse the table below to see what the agents know how to do.
+
 | Skill | Purpose |
 | ----- | ------- |
 | [automate-or-learn](../../.agents/skills/automate-or-learn/SKILL.md) | Where each automation belongs; the propose-to-memorize rule |

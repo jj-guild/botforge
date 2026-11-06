@@ -459,6 +459,14 @@ redundancy, not the reader's patience.
 `kingdoms` is the source of truth: a change in `kingdoms-services` or
 `kingdoms-infra` without its doc update there is incomplete.
 
+**Every code change induces a doc pass (developer-mandated).** The
+documentation is not a mirror written after the fact — it is the source
+of truth the code implements. Each code change requires the session to
+verify and, when needed, update the doc associated with what it touched
+(the matching architecture page, ADR, DEVELOPER/DEVELOPMENT page, skill
+or AGENTS.md entry) **in the same PR**: a PR whose docs do not match its
+code is incomplete, never marked ready, and never merged.
+
 **Issue references use GitHub autolink formats only:** same-repo references
 as `#12`, cross-repo references as `owner/repo#12` (e.g.
 `merlin-pinpin-org/kingdoms-services#12`) — GitHub renders both as links
@@ -575,3 +583,36 @@ it") — never a one-off command that lives only in the session transcript.
 Human contributors without an agent and future agent sessions must be able
 to replay every operation from the repository alone; document it for both
 (the script header for humans, a SKILLS entry when it is a session recipe).
+
+## Service data isolation (developer-mandated)
+
+Each service — the core, a game, a mod, a provider (`ext-*`) — **owns
+its code and its MongoDB collections**. Data is never accessed directly
+across ownership lines: no read, no write, no aggregation on another
+owner's collection. The owner exposes its data through its **service
+contract** (gRPC across processes — ADR-0020; in-process seams stay
+interface-typed), and cross-collection invariants are maintained by the
+owner, under its lock or transaction. Each owner is answerable for its
+data: a corruption or a bad exposure is its bug — it can never blame
+another service.
+
+Enforcement today is the AST layering guard (ADR-0021 R5, `kingdoms-services`
+`tests/architecture/test_layering.py`, runs on every commit — allowlists
+shrink, never rot). The target is **one distinct MongoDB user per owner**,
+so the isolation is enforced by the database itself; until then, no new
+cross-owner access is added, and every existing allowlist entry is a
+debt to remove.
+
+## Code quality: DRY, KISS, clean code (developer-mandated)
+
+- **DRY** — one home per rule and per logic: factorize before
+  duplicating; a second copy of a rule, a constant or a function is a
+  bug (same principle as the docs: one home, links elsewhere).
+- **KISS** — the simplest correct solution wins; no speculative
+  generality, no cleverness a future session will have to decode.
+- **Clean code** — explicit names, small functions, no dead code, no
+  commented-out leftovers, no comment paraphrasing the code.
+
+A violation found in code being touched is fixed in the same PR when
+the fix is local; anything wider becomes its own issue instead of a
+drive-by refactor.

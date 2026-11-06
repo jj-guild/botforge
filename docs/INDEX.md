@@ -9,6 +9,7 @@ page routes you to the answer. Read this page, not the whole docs tree.
 | --- | --- |
 | Who am I working with? Who may do what? | [CONTRIBUTORS.md](../CONTRIBUTORS.md) — the roster (login, alias, email, teams, roles, agent scope) + the authority matrix |
 | What are the universal rules every session follows? | [CONVENTIONS.md](CONVENTIONS.md) — working language, git identity, scope guard, automation, PR lifecycle, docs quality |
+| What are the code architecture rules (data isolation, write atomicity, DRY/KISS)? | [CONVENTIONS.md](CONVENTIONS.md) *Service data isolation*, *Code quality* + [architecture/core.md](architecture/core.md) *MongoDB write atomicity* + [ADR-0021](DECISIONS/021-architecture-five-rules.md) |
 | How does the platform work end to end (roles, sessions, deploys)? | [VIBEWORKFLOW.md](VIBEWORKFLOW.md) — the operating model |
 | Which working mode applies to me (sandbox, pro, cowboy)? | [MODES.md](MODES.md) — branch strategy, review gate and powers per mode |
 | What does each person click (and nothing else)? | [VIBEWORKFLOW.md](VIBEWORKFLOW.md) *Human GitHub scope* + [GUIDES/rulesets.md](GUIDES/rulesets.md) |
