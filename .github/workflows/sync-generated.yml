@@ -89,8 +89,10 @@ jobs:
           fi
           # Stage the restored state so the publish step can diff against
           # it (the regenerated files are otherwise untracked and the
-          # no-diff test would always pass).
-          git add generated/
+          # no-diff test would always pass). -f: the single writer stages
+          # the generated files even though .gitignore ignores generated/
+          # on main (it protects the working tree from local exports).
+          git add -f generated/
 
       - name: Regenerate the artifacts
         working-directory: kingdoms
@@ -117,6 +119,6 @@ jobs:
             exit 0
           fi
           git checkout -q -B sync/generated-artifacts
-          git add generated/
+          git add -f generated/
           git commit -m "chore(sync): regenerate generated/ (roadmap, dependencies, pydoc)"
           git push --force origin sync/generated-artifacts
