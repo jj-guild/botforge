@@ -428,11 +428,27 @@ needs, trunk-based style:
 
 ## Always include GitHub links in reports
 
-Every PR, issue, workflow run, or branch mentioned in a session report to a
-human carries its full GitHub URL (e.g.
-`https://github.com/merlin-pinpin-org/<repo>/pull/N`): humans never open a
-terminal, so links are their only way to reach the artifacts. A report
-without links is a bug in the session.
+Every artifact mentioned **anywhere** — a session report, a PR
+description, an issue comment, a review comment, a chat answer — is a
+**descriptive Markdown link** (`[label](url)`), never a bare reference:
+
+- an issue: `[kingdoms-services#309](https://github.com/merlin-pinpin-org/kingdoms-services/issues/309)` — never "issue 309";
+- a PR: `[kingdoms#198](https://github.com/merlin-pinpin-org/kingdoms/pull/198)` — never "PR 198";
+- a **build/run**: `[run 42273875545](https://github.com/merlin-pinpin-org/kingdoms-services/actions/runs/42273875545)` — **never "build #123" without its URL**;
+- a file: `[CONVENTIONS.md](https://github.com/merlin-pinpin-org/kingdoms/blob/main/docs/CONVENTIONS.md)` (or a permalink to the exact commit when the line matters);
+- a commit: `[24b375f](https://github.com/merlin-pinpin-org/kingdoms/commit/24b375f)`;
+- a **GitHub settings/config menu**: link the page itself —
+  `[Settings → Branches](https://github.com/merlin-pinpin-org/<repo>/settings/branches)`,
+  `[Rulesets](https://github.com/merlin-pinpin-org/<repo>/settings/rulesets)`,
+  `[Milestones](https://github.com/merlin-pinpin-org/<repo>/milestones)`,
+  `[Environments](https://github.com/merlin-pinpin-org/<repo>/settings/environments)` —
+  never "go to the branch protection settings".
+
+Humans never open a terminal, so links are their only way to reach the
+artifacts — and agents landing cold on a thread resolve a link in one
+click where a bare number costs a search. The label is explicit (what
+the artifact is, repo and number or a short description); the URL is
+the canonical GitHub page. A mention without its link is a bug.
 
 **The session hands over the links unprompted (developer-mandated).**
 Whenever the human asks "give me the links", "what do I do next", or any
