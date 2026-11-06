@@ -293,7 +293,7 @@ def render(issues: list[dict], a: dict) -> str:
         by_ms[i["milestone"]].append(i)
     epics: list[str] = []
     for idx, ms in enumerate(sorted(by_ms, key=ms_sort_key)):
-        group = "Out of scope (no milestone)" if ms == "\u2014" else ms_short(ms)
+        group = "Out of scope \u2014 no milestone" if ms == "\u2014" else ms_short(ms)
         lines.append(f"    subgraph MSG{idx}['{group}']")
         lines.append("        direction LR")
         for i in sorted(by_ms[ms], key=lambda x: x["number"]):
