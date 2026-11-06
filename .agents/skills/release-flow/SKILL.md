@@ -63,7 +63,9 @@ use the Git path.
    reviewers' approval** — link the run to the human, who clicks
    *Approve and deploy*.
 5. **Watch the prod deploy** with `make watch-deploy` (kingdoms-services)
-   — or the kingdoms-infra `make doctor` if anything stays pending (see
+   — polling the status, never a fixed sleep
+   ([github-polling](../github-polling/SKILL.md)) — or the
+   kingdoms-infra `make doctor` if anything stays pending (see
    the [diagnose-deploy](../diagnose-deploy/SKILL.md) skill).
 5. **Post-release**: the game designer validates the release in Discord;
    `/status` shows the release link. Keep the roadmap and dependency

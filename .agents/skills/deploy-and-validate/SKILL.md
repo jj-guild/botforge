@@ -43,7 +43,9 @@ ready.
    Only collaborators with write+ may trigger it; forks are rejected.
 3. **Wait and read the gate's answer before doing anything else**:
    poll the PR conversation / runs (`gh run list --workflow deploy.yml`,
-   the tracking comment) for the roster-gate verdict (seconds) and then
+   the tracking comment) — polling every 10-30s until a terminal state
+   ([github-polling](../github-polling/SKILL.md)), never a fixed
+   sleep — for the roster-gate verdict (seconds) and then
    the pipeline result; report the actual outcome to the human only
    once a final status has landed — never answer with "posted, should
    work" while a run is still in progress, and never move on before

@@ -18,7 +18,9 @@ lint conclusion).
    gh run list --repo merlin-pinpin-org/<repo> --branch <branch> \
      --json databaseId,workflowName,status,conclusion
    ```
-2. **Wait for completion** (poll or `gh run watch <id>`), then check every
+2. **Wait for completion by polling the status every 10-30s until the
+   terminal state** — never a fixed sleep sized to the worst case (see
+   [github-polling](../github-polling/SKILL.md)) — then check every
    job of every run — including the `skipping` ones (a job skipping where
    it should have run is a workflow bug: check its `if:` condition).
 3. **On failure — read the evidence before guessing**:
