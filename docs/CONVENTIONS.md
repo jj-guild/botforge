@@ -603,6 +603,37 @@ so the isolation is enforced by the database itself; until then, no new
 cross-owner access is added, and every existing allowlist entry is a
 debt to remove.
 
+## Configuration over code (developer-mandated)
+
+Anything declarative lives in **configuration, not code**: channel
+names, categories and trees, labels, emojis, visibility and permission
+flags (`admin_only`, `read_only`, …), locale strings, view layouts,
+per-mod tunables, provider site descriptors. The pattern already in
+place is the rule everywhere: `config/views.yaml` (every Discord
+surface), the mod channel declarations
+(`kingdoms-services/config/mods/<mod>.yaml`), the locale catalogs, the
+provider site configs.
+
+Why: a YAML block is readable by a non-developer (the game designers),
+reviewable at a glance in a PR, and cheap for an agent session to
+understand and change — fewer questions, fewer tokens, fewer bugs.
+Code stays the **engine**; the declarative surface is data.
+
+Concretely:
+
+- **Before writing code for something declarative, look for the config
+  seam.** If it exists, the change is a YAML edit plus validation — no
+  code.
+- **If the seam does not exist, building it in the platform is the
+  work** — the platform exists to make the others' work simple: add the
+  config key, its validation and its loader, then the change becomes
+  config. Never hand-code around a missing seam, and never teach a
+  session to hand-code it either.
+- **Config is validated at boot** (fail-closed, explicit errors): a typo
+  is caught at startup, not at click time.
+- **One config file per concern, per mod** — no god-file, no
+  cross-concern duplication.
+
 ## Code quality: DRY, KISS, clean code (developer-mandated)
 
 - **DRY** — one home per rule and per logic: factorize before
