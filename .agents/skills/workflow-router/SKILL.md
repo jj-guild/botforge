@@ -23,6 +23,31 @@ through the bug workflow; apply judgment, not bureaucracy.
 | "I want to fix a bug in the platform" / "I want to add a platform feature" | Pro mode | Feature branch per subject → PR → CODEOWNERS review → [deploy-and-validate](../deploy-and-validate/SKILL.md) |
 | "I want to document the project" | Docs change | `kingdoms` repo, PR (docs are code: same lifecycle, same checks) |
 | "I want to improve QoL (skills, scripts, tokens, CLI)" | Automation work | [automate-or-learn](../automate-or-learn/SKILL.md) — where the automation belongs, then the same PR lifecycle |
+| "Unroll the roadmap" / "what's next?" | Roadmap unrolling | The [generated artifacts](../generated-artifacts/SKILL.md) (ROADMAP + DEPENDENCIES on the sync branch): read the current milestone's open issues, work the dependency waves (wave 0 = no unmet dependency), report status and next steps — see *Unrolling the roadmap* below |
+
+## Unrolling the roadmap
+
+When the human says "unroll the roadmap" (or asks where the project
+stands), the session works **from the generated truth**, never from
+memory:
+
+1. **Read the state**: the current milestone's open issues and the
+   dependency graph
+   ([generated/ROADMAP.md](https://github.com/merlin-pinpin-org/kingdoms/blob/sync/generated-artifacts/generated/ROADMAP.md)
+   and
+   [generated/DEPENDENCIES.md](https://github.com/merlin-pinpin-org/kingdoms/blob/sync/generated-artifacts/generated/DEPENDENCIES.md)
+   on the sync branch — refreshed by the single-writer workflow).
+2. **Pick the next work**: the issues whose dependencies are all
+   satisfied (the graph's waves; an issue whose "Depends on"
+   checkboxes are still open is not next), ordered by priority label
+   (`P0` first) then milestone.
+3. **Report status at any moment** — the standing answer to "where are
+   we?": milestone in progress, issues done / in review / todo with
+   their sizes, the critical path, and the next 2-3 concrete steps.
+4. **Keep the graph true**: an issue worked on gets its state from
+   GitHub (linked PR, labels, milestone); a dependency that no longer
+   holds is edited in the issue's `## Dependencies` section — the
+   graph regenerates from the issues, never by hand.
 
 ## Rules
 
