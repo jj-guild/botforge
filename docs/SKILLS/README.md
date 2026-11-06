@@ -23,8 +23,7 @@ browse the table below to see what the agents know how to do.
 | [automate-or-learn](../../.agents/skills/automate-or-learn/SKILL.md) | Where each automation belongs; the propose-to-memorize rule |
 | [human-interaction](../../.agents/skills/human-interaction/SKILL.md) | How the session talks to its human — UI-select asks, live plan, context links, aliases |
 | [diagnose-deploy](../../.agents/skills/diagnose-deploy/SKILL.md) | Diagnose a stuck/pending deploy before blaming the runner |
-| [update-roadmap](../../.agents/skills/update-roadmap/SKILL.md) | Detect `generated/ROADMAP.md` drift, trigger the sync workflow |
-| [update-dependencies](../../.agents/skills/update-dependencies/SKILL.md) | Preview `generated/DEPENDENCIES.md` regeneration (dry-run) |
+| [generated-artifacts](../../.agents/skills/generated-artifacts/SKILL.md) | The generated artifacts (ROADMAP, DEPENDENCIES, pydoc): single writer, drift detection, preview |
 | [deploy-and-validate](../../.agents/skills/deploy-and-validate/SKILL.md) | Deploy a PR to test and validate it before ready |
 | [release-flow](../../.agents/skills/release-flow/SKILL.md) | Cut a release (tag, GitHub release, prod pin) on request |
 | [shape-game-designer-idea](../../.agents/skills/shape-game-designer-idea/SKILL.md) | Turn a game designer idea into an automatable issue |

@@ -95,9 +95,8 @@ Generated artifacts (`generated/ROADMAP.md`,
 the **single writer**, which publishes them on the
 `sync/generated-artifacts` branch (never on `main`, never in a PR).
 Sessions only *preview* drift with the
-[Update roadmap](.agents/skills/update-roadmap/SKILL.md) and
-[Update dependencies](.agents/skills/update-dependencies/SKILL.md)
-skills — the output is never committed by hand.
+[Generated artifacts](.agents/skills/generated-artifacts/SKILL.md)
+skill — the output is never committed by hand.
 
 Generated technical documentation (pydoc) lives in `kingdoms-services`
 ([`docs/DEVELOPMENT/pydoc`](https://github.com/merlin-pinpin-org/kingdoms-services/tree/main/docs/DEVELOPMENT/pydoc)),

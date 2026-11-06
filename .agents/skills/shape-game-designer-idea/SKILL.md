@@ -39,8 +39,8 @@ lives in an issue, never only in a conversation.
      references; set `size/*` and `priority/*` labels (the dependency sync
      fails without them).
 4. **Wire it**: the roadmap/dependency artifacts pick the issue up at the
-   next sync (see the [update-roadmap](../update-roadmap/SKILL.md) and
-   [update-dependencies](../update-dependencies/SKILL.md) skills).
+   next sync (see the
+   [generated-artifacts](../generated-artifacts/SKILL.md) skill).
 5. **Explain back**: restate the shaped rule to the game designer in one
    short paragraph before implementing — the game designer validates the
    *rule*, then the developer validates the *implementation*.

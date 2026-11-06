@@ -172,8 +172,8 @@ view:
 artifacts owned by the **`sync-generated` workflow — the single writer**:
 it regenerates both and publishes them on the `sync/generated-artifacts`
 branch on every push to `main`, daily at 06:00 UTC, and on demand. The
-sync skills ([Update roadmap](../.agents/skills/update-roadmap/SKILL.md),
-[Update dependencies](../.agents/skills/update-dependencies/SKILL.md)) are
+sync skill ([Generated
+artifacts](../.agents/skills/generated-artifacts/SKILL.md)) is
 **preview-only**: the agent runs the sync script locally
 (`.github/workflows/scripts/sync_roadmap.py`,
 `.github/workflows/scripts/sync_dependencies.py`) to detect drift and fix
@@ -236,9 +236,12 @@ An agent session (which starts with no memory of previous conversations):
    rule, pitfall or pattern, update the matching skill page, convention
    or repo `AGENTS.md` entry as part of the change — never wait to
    be asked.
-8. Verify the roadmap: run `.github/workflows/scripts/sync_roadmap.py` (the
-   [Update roadmap](../.agents/skills/update-roadmap/SKILL.md) skill) and commit the synced
-   `generated/ROADMAP.md` to the current PR branch.
+8. Verify the roadmap: run `.github/workflows/scripts/sync_roadmap.py
+   --check` (the
+   [Generated artifacts](../.agents/skills/generated-artifacts/SKILL.md)
+   skill); if drift is reported, the single writer catches it on the
+   next merge or its daily run — **never commit the generated
+   artifact to a PR branch**.
 
 ## Rules
 

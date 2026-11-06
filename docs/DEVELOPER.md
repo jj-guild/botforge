@@ -20,7 +20,7 @@ covers what is specific to working *in this repo*.
 | `docs/DECISIONS/` | Architecture decision records |
 | `docs/MODS/<mod-name>/` | Mods documentation (`README.md`, `RULES.md`, `ENVIRONMENT.md`) |
 | `docs/GUIDES/` | Audience entry points: mod developer, game provider developer, vibe coder (AI session), game designer |
-| `.agents/skills/` | Agent Skills (open standard, `SKILL.md` per skill): automate-or-learn, diagnose-deploy, update-roadmap, update-dependencies, deploy-and-validate, release-flow, shape-game-designer-idea, ci-monitoring |
+| `.agents/skills/` | Agent Skills (open standard, `SKILL.md` per skill): automate-or-learn, diagnose-deploy, generated-artifacts, deploy-and-validate, release-flow, shape-game-designer-idea, ci-monitoring |
 | `docs/CONVENTIONS.md` | Conventions shared by the three repos |
 | `generated/ROADMAP.md`, `generated/DEPENDENCIES.md` | Generated artifacts — never edit manually |
 | `scripts/` | `validate_docs.py`, `sync_roadmap.py`, `sync_dependencies.py`, `session_check.py` |
@@ -81,8 +81,9 @@ files.
 `generated/ROADMAP.md` and `generated/DEPENDENCIES.md` are regenerated, never hand-edited:
 
 - Change the **issue state** or its `## Dependencies` section instead, then
-  run the sync scripts ([Update roadmap](../.agents/skills/update-roadmap/SKILL.md),
-  [Update dependencies](../.agents/skills/update-dependencies/SKILL.md)) and commit the
+  preview drift with the sync scripts ([Generated
+  artifacts](../.agents/skills/generated-artifacts/SKILL.md)) — the
+  single-writer workflow publishes them; a session never commits the
   regenerated files to your open PR branch.
 - Statuses needing human judgment (`in-progress`, `blocked`) are set
   manually and preserved by the script.
