@@ -258,6 +258,13 @@ each `vibe/*/main` branch automatically; conflicts are resolved by
   there even when `main` deliberately excludes it). Only feature
   branches and branches whose code is fully on `main` or their
   integration branch may be deleted.
+- **An agent acts for its own human only (non-overridable).** A
+  session acting for user X never touches another user's integration
+  branch, mod code or environment — `vibe/<Y>/main` belongs to Y's
+  sessions, whoever they are. Each user's agent (their own sessions)
+  has full rights on that user's branches; every other session has
+  none. Cross-user collaboration happens through PRs and issues,
+  never through a direct push to the other's branch.
 
 ### Cowboy mode (maintainer-only, per-push confirmation)
 
@@ -553,6 +560,11 @@ understand the choices and their reasons without asking anyone.
   `## Related`.
 - Keep the issues you touched in sync with reality (state, acceptance
   criteria, `## Dependencies` checkboxes).
+- **Milestones are named `Lot N — Title (details)`** (English, `N`
+  sequential): the working milestones carry the pre-1.0.0 work in
+  unroll order (`Lot 1 — Structural (core, platform, changelog)` is
+  taken); `v1.0.0 — Public release` is the only non-Lot working
+  milestone. No version-numbered intermediate milestones.
 
 ## Checks must pass everywhere
 
