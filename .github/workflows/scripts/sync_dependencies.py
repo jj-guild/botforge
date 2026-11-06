@@ -276,16 +276,42 @@ def render(issues: list[dict], a: dict) -> str:
     ]
     lines.append(" -> ".join(f"[{n}](https://github.com/{OWNER}/{n.split('#')[0]}/issues/{n.split('#')[1]})" for n in a["cp"]))
     lines += ["", "## Dependency graph", "", "```mermaid", "flowchart LR"]
+
+    def ms_sort_key(ms: str) -> tuple:
+        m = re.match(r"Lot (\d+)", ms)
+        if m:
+            return (0, int(m.group(1)), ms)
+        if ms == "\u2014":
+            return (2, 0, ms)
+        return (1, 0, ms)
+
+    def ms_short(ms: str) -> str:
+        return ms.split(" (")[0]
+
+    by_ms: defaultdict[str, list[dict]] = defaultdict(list)
     for i in issues:
-        label = f"#{i['number']} {short_title(i)}".replace('"', "'")
-        lines.append(f'    {node_key(i)}["{label}"]')
+        by_ms[i["milestone"]].append(i)
+    epics: list[str] = []
+    for idx, ms in enumerate(sorted(by_ms, key=ms_sort_key)):
+        group = "Out of scope (no milestone)" if ms == "\u2014" else ms_short(ms)
+        lines.append(f"    subgraph MSG{idx}['{group}']")
+        lines.append("        direction LR")
+        for i in sorted(by_ms[ms], key=lambda x: x["number"]):
+            label = f"#{i['number']} {short_title(i)}".replace('"', "'")
+            lines.append(f'        {node_key(i)}["{label}"]')
+            if "[epic]" in i["title"].lower():
+                epics.append(node_key(i))
+        lines.append("    end")
     for i in issues:
         for d in i["deps"]:
             if d in by_id:
                 lines.append(f"    {node_key(by_id[d])} --> {node_key(i)}")
     lines.append("    classDef critical fill:#ffe0e0,stroke:#d43d51,stroke-width:3px;")
+    lines.append("    classDef epic stroke:#1f6feb,stroke-width:3px,fill:#ddf4ff;")
     cp_keys = ",".join(node_key(by_id[n]) for n in a["cp"])
     lines.append(f"    class {cp_keys} critical")
+    if epics:
+        lines.append(f"    class {','.join(epics)} epic")
     lines += ["```", "", "## Waves (parallelisable batches)", "",
               "Issues in the same wave have no dependency on each other and can be",
               "worked on in parallel.", ""]
