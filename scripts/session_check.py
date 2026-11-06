@@ -14,7 +14,10 @@ three Kingdoms repositories:
   committed generated/DEPENDENCIES.md (open issues, size/priority labels).
 
 Exit code is non-zero when any check fails; each failure line names the exact
-artefact to fix. The script never writes anything — it reports.
+artefact to fix. The script never commits anything; it may export the
+generated artifacts from the sync/generated-artifacts branch into the
+untracked local generated/ directory so the drift checks can run on a
+fresh clone (main carries no generated files).
 """
 
 from __future__ import annotations
@@ -42,6 +45,31 @@ def run_check(name: str, cmd: list[str]) -> list[str]:
     return [f"{name}: {line}" for line in lines if line]
 
 
+def ensure_generated_artifacts(root: Path) -> list[str]:
+    """Materialize generated/ROADMAP.md from the sync branch when absent.
+
+    Main carries no generated files; sync_roadmap.py --check reads the
+    local generated/ROADMAP.md, so a fresh clone must export it from the
+    sync/generated-artifacts branch first (untracked, never committed).
+    """
+    roadmap = root / "generated" / "ROADMAP.md"
+    if roadmap.exists():
+        return []
+    result = subprocess.run(
+        ["git", "show", "origin/sync/generated-artifacts:generated/ROADMAP.md"],
+        cwd=root, capture_output=True, text=True,
+    )
+    if result.returncode != 0:
+        return [
+            "roadmap drift: generated/ROADMAP.md is absent and the "
+            "sync/generated-artifacts branch is not fetched - run: "
+            "git fetch origin sync/generated-artifacts"
+        ]
+    roadmap.parent.mkdir(exist_ok=True)
+    roadmap.write_text(result.stdout)
+    return []
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     parser.add_argument(
@@ -63,7 +91,8 @@ def main() -> int:
 
     root = repo_root()
     scripts_dir = root / args.scripts_dir
-    checks: list[list[str]] = [
+    checks: list[list[str]] = [ensure_generated_artifacts(root)]
+    checks.append(
         run_check(
             "docs validation",
             [
@@ -75,12 +104,14 @@ def main() -> int:
                 "--config",
                 args.config,
             ],
-        ),
+        )
+    )
+    checks.append(
         run_check(
             "roadmap drift",
             ["python3", str(scripts_dir / "sync_roadmap.py"), "--check"],
-        ),
-    ]
+        )
+    )
 
     deps_out = Path("/tmp") / "kingdoms-dependencies-check.md"
     deps_result = subprocess.run(

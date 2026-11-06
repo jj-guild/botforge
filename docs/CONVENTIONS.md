@@ -554,6 +554,11 @@ understand the choices and their reasons without asking anyone.
   (critical-path slack, maintained by
   `kingdoms/.github/workflows/scripts/sync_dependencies.py` — do not set by hand unless the
   analysis is wrong) and a `phase-N` label.
+- `kingdoms` issues that belong to the platform work (the epics and
+  tasks the roadmap tracks: SDK, packaging, guides, docs reconciliation,
+  the content bar) join the dependency graph too: they carry the same
+  `size/*` + `priority/*` labels and a `## Dependencies` section as the
+  other repos — the graph reads all three repositories.
 - Every issue has a `## Dependencies` section: task-list checkboxes
   pointing at the issues it blocks on (fully qualified for cross-repo
   refs). "Depends on" = cannot start before; soft relations stay in
