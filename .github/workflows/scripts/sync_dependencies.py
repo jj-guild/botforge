@@ -100,6 +100,7 @@ def load_issues() -> list[dict]:
                         "repo": repo,
                         "number": it["number"],
                         "title": it["title"],
+                        "milestone": (it.get("milestone") or {}).get("title") or "—",
                         "labels": labels,
                         "size": size,
                         "phase": phase,
@@ -217,6 +218,15 @@ def expected_prio(slack: int) -> str:
     return "P3"
 
 
+def short_title(i: dict, limit: int = 40) -> str:
+    """A readable short title: truncated at the em-dash or the limit."""
+    t = i["title"].split(" \u2014 ")[0]
+    t = t.split(" (")[0]
+    if len(t) > limit:
+        t = t[: limit - 1].rstrip() + "\u2026"
+    return t
+
+
 def node_key(i: dict) -> str:
     return (
         i["id"].replace("#", "_")
@@ -226,8 +236,10 @@ def node_key(i: dict) -> str:
     )
 
 
-def issue_link(id_: str, title: str) -> str:
+def issue_link(id_: str, title: str, limit: int = 60) -> str:
     repo, _, num = id_.partition("#")
+    if len(title) > limit:
+        title = title[: limit - 1].rstrip() + "…"
     return f"[{id_}](https://github.com/{OWNER}/{repo}/issues/{num}) — {title}"
 
 
@@ -265,7 +277,7 @@ def render(issues: list[dict], a: dict) -> str:
     lines.append(" -> ".join(f"[{n}](https://github.com/{OWNER}/{n.split('#')[0]}/issues/{n.split('#')[1]})" for n in a["cp"]))
     lines += ["", "## Dependency graph", "", "```mermaid", "flowchart LR"]
     for i in issues:
-        label = f"#{i['number']} {i['title']}".replace('"', "'")
+        label = f"#{i['number']} {short_title(i)}".replace('"', "'")
         lines.append(f'    {node_key(i)}["{label}"]')
     for i in issues:
         for d in i["deps"]:
@@ -283,16 +295,16 @@ def render(issues: list[dict], a: dict) -> str:
     for w in sorted(by_wave):
         lines.append(f"**Wave {w}**")
         lines.append("")
-        lines.append("| Issue | Size | Priority | Slack |")
-        lines.append("| ----- | ---- | -------- | ----- |")
+        lines.append("| Issue | Milestone | Size | Priority | Slack |")
+        lines.append("| ----- | --------- | ---- | -------- | ----- |")
         for i in sorted(by_wave[w], key=lambda x: (-a["T"][x["id"]], x["id"])):
             lines.append(
-                f"| {issue_link(i['id'], i['title'])} | `{i['size']}` ({a['T'][i['id']]}) | `{i['prio_label']}` | {a['slack'][i['id']]} |"
+                f"| {issue_link(i['id'], i['title'])} | {i['milestone']} | `{i['size']}` ({a['T'][i['id']]}) | `{i['prio_label']}` | {a['slack'][i['id']]} |"
             )
         lines.append("")
     lines += ["## All issues", "",
-              "| Issue | Phase | Size | Priority | Slack | Depends on |",
-              "| ----- | ----- | ---- | -------- | ----- | ---------- |"]
+              "| Issue | Milestone | Size | Priority | Slack | Depends on |",
+              "| ----- | --------- | ---- | -------- | ----- | ---------- |"]
     for i in sorted(issues, key=lambda x: (x["repo"], x["number"])):
         deps = ", ".join(
             f"[{d}](https://github.com/{OWNER}/{d.split('#')[0]}/issues/{d.split('#')[1]})"
@@ -303,7 +315,7 @@ def render(issues: list[dict], a: dict) -> str:
             for d in i["done_deps"]
         )
         all_deps = ", ".join(x for x in (deps, deps_done) if x) or "—"
-        lines.append(f"| {issue_link(i['id'], i['title'])} | {i['phase']} | `{i['size']}` | `{i['prio_label']}` | {a['slack'][i['id']]} | {all_deps} |")
+        lines.append(f"| {issue_link(i['id'], i['title'])} | {i['milestone']} | `{i['size']}` | `{i['prio_label']}` | {a['slack'][i['id']]} | {all_deps} |")
     lines.append("")
     return "\n".join(lines)
 
