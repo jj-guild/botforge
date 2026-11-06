@@ -491,6 +491,31 @@ updates `AGENTS.md`, the vibe-coding docs (`docs/CONVENTIONS.md`,
   duplication);
 - never the same rule in three places — one home, links elsewhere.
 
+## The reasoning lives on the artifacts (developer-mandated)
+
+Sessions have no memory — the PR and issue threads **are** the memory
+for every future agent and every human reviewer. An artifact that
+shows *what* changed but not *why* is half-written:
+
+- **Explain the why on every PR**: the description carries the design
+  decisions and the alternatives considered (one line each is enough);
+  a non-obvious choice gets a review comment at the exact commit or
+  file ("this is X and not Y because Z"); when the approach changes
+  mid-PR, a comment records what was tried and why it moved.
+- **State the pending points explicitly**: open questions, deferred
+  items, known trade-offs go in a dedicated PR section ("Open
+  questions / deferred") — never left implicit in the hope someone
+  asks.
+- **Issues are living**: when the understanding of a need evolves
+  (scope, constraint, decision), the issue follows — amend the body
+  for the stable facts (the spec stays readable top-down), add a
+  comment for the journey (what changed, why, when). A silent scope
+  drift is a bug; an issue that no longer matches reality is amended
+  in the same session that learned it.
+
+The test: a future agent landing on the PR or issue cold must
+understand the choices and their reasons without asking anyone.
+
 ## Issues
 
 - **Issue templates are mandatory** in all three repos: blank issues are

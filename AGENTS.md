@@ -231,6 +231,11 @@ Rules of the map:
   skill; the procedures are
   [deploy-and-validate](.agents/skills/deploy-and-validate/SKILL.md)
   and [ci-monitoring](.agents/skills/ci-monitoring/SKILL.md)).
+- **The reasoning lives on the artifacts**: PRs explain the why
+  (design decisions, rejected alternatives, pending points in an
+  explicit section); issues are amended or commented when the need
+  evolves — the threads are the only memory future agents have
+  (CONVENTIONS.md, *The reasoning lives on the artifacts*).
 - **Issue references** use GitHub autolink formats only — same-repo
   `#N`, cross-repo `owner/repo#N`; a bare `repo#N` is plain text,
   never write it (CONVENTIONS.md, *Documentation is part of the
