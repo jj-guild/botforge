@@ -191,13 +191,18 @@ flow frictionless:
 
 ## Generated artifacts sync
 
-`generated/ROADMAP.md` and `generated/DEPENDENCIES.md` are generated artifacts kept in
-sync by the sync skills ([Update roadmap](../.agents/skills/update-roadmap/SKILL.md),
-[Update dependencies](../.agents/skills/update-dependencies/SKILL.md)): the agent runs the
-sync script locally (`.github/workflows/scripts/sync_roadmap.py`,
-`.github/workflows/scripts/sync_dependencies.py`), fixes what the script reports, and
-**commits the regenerated artifact to the current PR branch** — never a
-rolling `automation/*` PR, never a direct push to `main`. Generated
+`generated/ROADMAP.md` and `generated/DEPENDENCIES.md` are generated
+artifacts owned by the **`sync-generated` workflow — the single writer**:
+it regenerates both and publishes them on the `sync/generated-artifacts`
+branch on every push to `main`, daily at 06:00 UTC, and on demand. The
+sync skills ([Update roadmap](../.agents/skills/update-roadmap/SKILL.md),
+[Update dependencies](../.agents/skills/update-dependencies/SKILL.md)) are
+**preview-only**: the agent runs the sync script locally
+(`.github/workflows/scripts/sync_roadmap.py`,
+`.github/workflows/scripts/sync_dependencies.py`) to detect drift and fix
+what the script reports (labels, references) — it **never commits the
+regenerated artifact**: no PR carries it, no rolling `automation/*` PR,
+no direct push to `main`. Generated
 technical docs (pydoc) live in `kingdoms-services` and are
 freshness-checked there.
 

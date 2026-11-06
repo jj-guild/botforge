@@ -20,7 +20,7 @@ Nobody downgrades their gate without an explicit human decision.
 | Review gate | Another user validates the PR to `main` (standard path) | CODEOWNERS review, PR per feature | **Explicit human validation per operation** |
 | Environment | Personal env only (their bot, their Discord, their runner) | Personal env → shared validation env (`test`) → `prod` | Any |
 | Deploy | Own env; `test` via the standard path | Own env, `test`, `prod` (ops check) | Any, including prod |
-| Force push / bypass | Never | Never | Yes, after explicit human OK — and you own the fallout |
+| Force push / bypass | Never | Never | Push commits to `main` without a PR — after explicit human OK. **Force-pushing `main` is always refused, even here.** |
 
 ## Sandbox mode (vibe coder) — the default for vibe roles
 
