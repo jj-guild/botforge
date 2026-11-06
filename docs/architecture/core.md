@@ -103,6 +103,28 @@ durable document is the recovery source. Detailed key scheme:
 - On startup, the engine scans MongoDB for `IN_PROGRESS` instances and
   resumes or times them out — never silently drops them.
 
+### MongoDB write atomicity (the concurrency rule)
+
+MongoDB writes follow a strict concurrency hierarchy — the rule scales
+with the contention, never more:
+
+1. **Cold data (insert-only, never modified after creation)** — plain
+   inserts and reads; no transaction, no lock. Do not over-engineer.
+2. **Hot data modified by possibly-concurrent processes** — **atomic
+   single-document updates**: `find_one_and_update` with `$set`/`$inc`/
+   `$push` operators and a filter, never a read-then-write sequence.
+   Single-document updates are always atomic in MongoDB.
+3. **Invariants spanning several documents under concurrent writers** —
+   a **multi-document transaction** (requires the replica set — see
+   [ADR-0004](../DECISIONS/004-mongodb-schema-design.md)) or the
+   **Redis lock** of the enclosing operation (ADR-0005, the pattern the
+   WorkflowEngine already uses). Redis is not a third tool bolted on: it
+   is the platform's existing lock provider (`StateService.acquire_lock`).
+
+A read-modify-write without one of these mechanisms is a bug, whatever
+the data: the update must be expressed as one atomic operation, or the
+whole update must run under a lock/transaction.
+
 ## 2. ChannelService
 
 Mods and workflows ask for a channel by **category**, never by name or

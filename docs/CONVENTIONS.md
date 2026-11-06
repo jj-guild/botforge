@@ -11,7 +11,11 @@ described in [VIBEWORKFLOW.md](VIBEWORKFLOW.md) — read it first.
 ## Working language
 
 All code, comments, documentation, commit messages, PR titles and PR
-descriptions are written in **English**.
+descriptions are written in **English**. So are issue titles and bodies,
+PR review comments, release notes, and sample/example or seed data —
+**everything a session produces on GitHub is English**. The only
+exception: translation/locale files. The chat with the human follows
+the human's language and never changes what the session produces.
 
 ## Git identity of agent sessions (developer-mandated)
 

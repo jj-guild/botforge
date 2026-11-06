@@ -164,6 +164,16 @@ maintainer-reviewed; each mod's paths are delegated to its designer
 negative/regex patterns, so per-mod lines are the mechanism; a new mod
 means adding its line, which is part of the mod's bootstrap).
 
+**CODEOWNERS also protects the authority surfaces** — the files the
+permission model itself relies on are maintainer-reviewed in the three
+repositories: `.github/workflows/` (the CI/CD and deploy gates — a
+workflow change is a security-sensitive change), `AGENTS.md`,
+`CONTRIBUTORS.md` (the roster: the source of truth the `authorize.yml`
+gates read), `docs/DECISIONS/` (ADRs), and `scripts/` (sync and
+validation machinery). Combined with the required code-owner review on
+`main`, no session or contributor changes the permission model without
+a maintainer approving it.
+
 ## Shared checks — factorized once, referenced thrice
 
 Several checks are logically identical across the three repos but exist

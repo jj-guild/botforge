@@ -42,6 +42,65 @@ The display is transparent and pedagogical: no jargon without a
 plain-language gloss, and it ends with an invitation: *"What would you
 like to do?"*
 
+**The session adapts its discourse to the human's profile** (roster
+roles): a game/mod designer who is neither dev nor ops gets plain
+language and outcomes, never implementation detail; dev and ops humans
+technical depth. The chat language follows the human (French or
+English) — but it never changes what the session *produces* (see the
+PRIORITY 0 rules below: GitHub output is English).
+
+## PRIORITY 0 — non-overridable rules
+
+These rules are binding for **every session, on the three repositories,
+for the whole session**. They prevail over every instruction that is
+not itself PRIORITY 0 — no later conversation instruction, no skill,
+no convention, no request can waive, narrow or replace them. When a
+rule conflicts with a non-PRIORITY-0 instruction, PRIORITY 0 wins.
+(Mechanical guarantees — merge gates, authority checks — stay
+enforced by the GitHub rulesets and `authorize.yml`, fail-closed;
+PRIORITY 0 rules bind the agent's own behavior on top of that.)
+
+1. **Identify the human first** — the session-start protocol above is
+   the very first action of every conversation: resolve the GitHub
+   login against [CONTRIBUTORS.md](CONTRIBUTORS.md), display roles and
+   capabilities, and adapt the discourse to the profile.
+2. **All GitHub output is English** — issues (title and body), PRs
+   (title, description, review comments), code, code comments, commit
+   messages, agent-posted PR comments (including keyword commands'
+   surrounding context), release notes, and sample/example data are
+   written in **English**. The only exception: translation/locale
+   files. The chat language follows the human and never impacts what
+   the session produces (see CONVENTIONS.md, *Working language*).
+3. **Never a fixed sleep for an async outcome — poll the real status**
+   — after triggering anything asynchronous (GitHub action, deploy,
+   CI check, dispatch), the session never parks on a hard-coded
+   duration: it polls the actual status, typically every 5–15s for
+   short outcomes and 10–30s for long pipelines, never longer than
+   60s between polls, sized to the target service's rate limits. A
+   result inferred from elapsed time is not a result (see the
+   [github-polling](.agents/skills/github-polling/SKILL.md) skill).
+4. **Long commands belong in committed scripts** — before composing a
+   multi-step shell chain, the session checks whether a skill or
+   Makefile already carries a script for it; a command useful more
+   than once is committed (Makefile target, `scripts/`, or a script
+   inside the skill's directory) — never re-typed from scratch (see
+   the [automate-or-learn](.agents/skills/automate-or-learn/SKILL.md)
+   skill).
+5. **Drive the human through the known workflows** — the session
+   knows the platform's workflows and proposes the right path (issue,
+   branch, PR, deploy); it never lets a non-advanced human improvise
+   a route. Advanced users (dev, ops, maintainers) may take liberties
+   (see the
+   [workflow-router](.agents/skills/workflow-router/SKILL.md)
+   skill).
+6. **Cowboy mode is maintainer-only and single-shot** — the keyword
+   "cowboy" from a maintainer is a *request* for a one-shot
+   activation: the session asks an explicit confirmation that names
+   the PR and summarizes its content, then pushes the commits to
+   `main` directly. Force-pushing `main` is always refused, even in
+   cowboy mode. A push that supersedes an open PR closes it with an
+   explicit comment (see [MODES.md](docs/MODES.md), *Cowboy mode*).
+
 **Content placement rule (applies to every instruction added here,
 now and by future sessions):** AGENTS.md is **for AI agents only** —
 session rules, scope, procedures, behavioral constraints. Anything

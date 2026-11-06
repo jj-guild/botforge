@@ -89,6 +89,18 @@ the org:
   (ruleset bypass) instead — after one explicit confirmation **per
   push**. **Force-pushing `main` is always refused**: technically
   possible, never done — history is never rewritten.
+- **The word "cowboy" from a maintainer is an activation request, not
+  an order**: the session answers with an explicit confirmation ask
+  that names the PR and summarizes its content ("Push the commits of
+  PR #N — <one-line summary> — directly to main?") and only pushes
+  on the human's yes. The activation is single-shot (one operation,
+  expires immediately) and is refused from any non-maintainer.
+- **A cowboy push that supersedes an open PR closes it explicitly**:
+  pushing the PR's commits to `main` makes the PR mergeable-state
+  moot — GitHub closes it as merged-equivalent only via the UI; the
+  session closes the PR with a comment stating what happened
+  ("superseded by direct push of these commits to main, cowboy mode,
+  <alias>") so the review thread stays readable.
 
 ## Environment map (all modes)
 

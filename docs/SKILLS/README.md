@@ -8,8 +8,9 @@ progressive disclosure — the session loads only the skill names and
 descriptions at startup, and the full instructions when a task matches.
 
 **Location:** [`.agents/skills/`](../../.agents/skills/) at the repo root
-(the `kingdoms` repo is the source of truth; every future session discovers
-the skills there).
+(the `kingdoms` repo carries the shared skills; a repo may also carry its
+own repo-local skills — `kingdoms-services` ships `discord-bot-docs` in
+its `.agents/skills/` — every future session discovers both).
 
 | Skill | Purpose |
 | ----- | ------- |
@@ -24,6 +25,8 @@ the skills there).
 | [ci-monitoring](../../.agents/skills/ci-monitoring/SKILL.md) | Monitor CI, find root causes, push focused fixes |
 | [github-polling](../../.agents/skills/github-polling/SKILL.md) | Poll GitHub statuses every 10-30s instead of a fixed worst-case sleep |
 | [discord-ui](../../.agents/skills/discord-ui/SKILL.md) | Build any Discord message through the kingdoms-services UI SDK — bricks, archetypes, guards, i18n |
+| [workflow-router](../../.agents/skills/workflow-router/SKILL.md) | Route the human's intention to the right workflow before any work starts |
+| [discord-bot-docs](https://github.com/merlin-pinpin-org/kingdoms-services/blob/main/.agents/skills/discord-bot-docs/SKILL.md) | Keep `docs/DEVELOPMENT/DISCORD-BOT.md` up to date on every Discord surface change (repo-local, kingdoms-services) |
 
 This directory is kept as the documentation entry point; do not add new
 skill pages here — create `.agents/skills/<name>/SKILL.md` instead.

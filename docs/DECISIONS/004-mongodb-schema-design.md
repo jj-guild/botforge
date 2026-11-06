@@ -50,9 +50,20 @@ Use **MongoDB** with **Pydantic models** for:
 
 ### Negative
 
-- No multi-document transactions
 - No joins (need to denormalize)
 - Less ACID compliance
+
+## Revision (2026-11-06)
+
+The original decision listed "no multi-document transactions" among
+the accepted negatives. **Revised:** cross-document invariants under
+concurrent writers **are** allowed to use multi-document transactions
+(MongoDB supports them on replica sets) or the existing Redis locks
+(ADR-0005). The default remains atomic single-document updates;
+transactions are the exception for multi-document invariants, not the
+rule. The full concurrency hierarchy lives in
+[architecture/core.md](../architecture/core.md), *MongoDB write
+atomicity*.
 
 ## References
 

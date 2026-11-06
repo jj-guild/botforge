@@ -6,7 +6,7 @@ description: Cut a release of the Kingdoms bot (tag vX.Y.Z, GitHub release, depl
 # Release flow
 
 Releasing is a human-requested, agent-executed pipeline: the agent tags
-`vX.Y.Z` on `main` (annotated, notes from `scripts/release_notes.sh`), and
+`vX.Y.Z` on `main` (annotated, notes from `make release-notes`), and
 the Docker workflow publishes the image, creates the GitHub release and
 pins it on `deploy/test`; the promotion to prod pins it on `deploy/prod`.
 Prod-like environments deploy released images only — never a PR image.
@@ -40,8 +40,9 @@ use the Git path.
 
 ## Procedure
 
-1. **Draft the release notes** (`scripts/release_notes.sh` on
-   kingdoms-services assembles the change log since the last tag).
+1. **Draft the release notes** (`make release-notes TAG=vX.Y.Z` on
+   kingdoms-services — `scripts/generate_changelog.py` — assembles the
+   change log since the last tag).
 2. **Tag and push** from the kingdoms-services clone:
    ```bash
    make release VERSION=vX.Y.Z
@@ -67,7 +68,7 @@ use the Git path.
    ([github-polling](../github-polling/SKILL.md)) — or the
    kingdoms-infra `make doctor` if anything stays pending (see
    the [diagnose-deploy](../diagnose-deploy/SKILL.md) skill).
-5. **Post-release**: the game designer validates the release in Discord;
+6. **Post-release**: the game designer validates the release in Discord;
    `/status` shows the release link. Keep the roadmap and dependency
    artifacts in sync (the closed issues change the graph).
 

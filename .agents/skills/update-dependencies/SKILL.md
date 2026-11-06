@@ -29,14 +29,17 @@ from the graph but still shown (struck through) in the tables.
 
 **Generated artifacts:**
 
-- [docs/DEPENDENCIES.md](https://github.com/merlin-pinpin-org/kingdoms/blob/sync/generated-artifacts/docs/DEPENDENCIES.md) (sync/generated-artifacts branch) — Mermaid graph, critical
+- [generated/DEPENDENCIES.md](https://github.com/merlin-pinpin-org/kingdoms/blob/sync/generated-artifacts/generated/DEPENDENCIES.md) (sync/generated-artifacts branch) — Mermaid graph, critical
   path, waves, per-issue priority table
 - `priority/P0-P3` labels on every issue (critical-path slack)
 - `size/XS-XL` labels (set manually: XS=1, S=3, M=5, L=8, XL=13 points)
 
-**Mechanism:** run `.github/workflows/scripts/sync_dependencies.py` locally, then commit the
-regenerated `docs/DEPENDENCIES.md` to the PR branch (or open a dedicated
-PR). The script reads all open issues via `gh api`; since all three
+**Mechanism:** run `.github/workflows/scripts/sync_dependencies.py --dry-run`
+locally to **preview** what the single writer (the `sync-generated`
+workflow) will change — the output is **never committed by a session**
+(the workflow publishes it on the `sync/generated-artifacts` branch;
+see AGENTS.md, *Never edit or regenerate the generated artifacts*).
+The script reads all open issues via `gh api`; since all three
 repositories are public, no custom secret is required. It fails closed
 when a repository is unreadable — it never regenerates the graph from
 partial data.
@@ -45,11 +48,11 @@ partial data.
 
 1. **Run the script** from the repo root:
    ```bash
-   python3 .github/workflows/scripts/sync_dependencies.py
+   python3 .github/workflows/scripts/sync_dependencies.py --dry-run
    ```
    It fails loudly on missing `size/*`/`priority/*` labels, unknown or
    still-open checked dependencies, cycles, and unreadable repositories,
-   then rewrites `generated/DEPENDENCIES.md`. Use `--dry-run` to preview.
+   then reports what it would write to `generated/DEPENDENCIES.md`.
 2. **Fix label drift.** The script prints a **priority-label drift report**
    when an issue's `priority/*` label no longer matches its critical-path
    slack; it never edits issues. Fix the labels and re-run:
@@ -66,9 +69,12 @@ partial data.
    | `priority/P1` | ≤ 4 |
    | `priority/P2` | ≤ 12 |
    | `priority/P3` | > 12 |
-3. **Commit and open a PR** with `docs(dependencies): sync dependency graph`
-   — or commit to the branch of an existing open PR that needs the
-   regenerated graph. Review the diff like any PR change.
+3. **Let the single writer publish**: once the label or dependency fixes
+   land (an issue edit or a merge on `main`), the `sync-generated`
+   workflow regenerates and publishes the graph — a session never
+   commits `generated/DEPENDENCIES.md` itself (see
+   [update-roadmap](../update-roadmap/SKILL.md) for the trigger and the
+   dispatch fallback).
 
 ## Conventions
 

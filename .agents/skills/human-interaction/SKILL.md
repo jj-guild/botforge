@@ -77,6 +77,6 @@ answer:
 
 - [CONTRIBUTORS.md](../../../CONTRIBUTORS.md) — roster, authority
   matrix, git history rules (what needs an explicit ask)
-- [VIBEWORKFLOW.md](../../VIBEWORKFLOW.md) — the operating model
-  (roles, approvals, session loop)
-- [CONVENTIONS.md](../../CONVENTIONS.md) — repo-wide conventions
+- [VIBEWORKFLOW.md](../../../docs/VIBEWORKFLOW.md) — the operating
+  model (roles, approvals, session loop)
+- [CONVENTIONS.md](../../../docs/CONVENTIONS.md) — repo-wide conventions

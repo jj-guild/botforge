@@ -17,7 +17,7 @@ belongs** and **when a session must persist a command it improvised**.
 | Kind of operation | Artifact | Where |
 | ----------------- | -------- | ----- |
 | Anything a session runs more than once | Makefile target | `Makefile` of the repo it belongs to (`make lint`, `make session-check`, `make watch-deploy`, `make release`) |
-| Reusable implementation, multi-step logic, fail-closed checks | Python or shell script | `scripts/` of the repo it belongs to (`sync_roadmap.py`, `release.sh`, `watch_deploy.sh`) |
+| Reusable implementation, multi-step logic, fail-closed checks | Python or shell script | `scripts/` (or `.github/workflows/scripts/`) of the repo it belongs to (`kingdoms`: `.github/workflows/scripts/sync_roadmap.py`; `kingdoms-services`: `scripts/cut_release.sh`, `.github/workflows/scripts/watch_deploy.sh`) |
 | Must run with no session open, or needs permissions the session lacks (releases, deploy pins, scheduled sync), or cannot run in the sandbox | GitHub Actions workflow | `.github/workflows/` of the repo it belongs to |
 | How to use the above, plus pitfalls learned | Skill | `.agents/skills/<name>/SKILL.md` in the `kingdoms` repo (Agent Skills open standard) |
 
@@ -25,7 +25,10 @@ Rules of thumb:
 
 - The Makefile is the **menu**: a new session discovers what exists by
   reading it. A script without its Makefile target (or workflow) is
-  half-committed knowledge.
+  half-committed knowledge. A skill may also carry its own scripts
+  (`.agents/skills/<name>/scripts/`) when the procedure is
+  skill-specific — the `SKILL.md` documents their usage, and the
+  scripts are committed, tested once, and never re-typed by hand.
 - Scripts are **fail-closed**: explicit error, non-zero exit, no partial
   writes — same standard as the sync scripts (see
   [Generated artifacts sync](../../../docs/VIBEWORKFLOW.md)).

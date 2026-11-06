@@ -22,6 +22,10 @@
 /AGENTS.md              @merlin-pinpin-org/maintainers
 /docs/DECISIONS/        @merlin-pinpin-org/maintainers
 
+## CI/CD workflows: the sync and validation machinery — maintainer-only,
+## symmetric with kingdoms-services and kingdoms-infra
+/.github/workflows/    @merlin-pinpin-org/maintainers
+
 ## Sync and workflow scripts: they regenerate generated/, drive the roster
 ## gates and the authority matrix — maintainer-only, CODEOWNERS-protected
 ## under the workflows path

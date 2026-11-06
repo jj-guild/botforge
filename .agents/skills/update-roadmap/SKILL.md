@@ -24,6 +24,13 @@ humans never edit or regenerate it by hand.**
    ```bash
    gh workflow run sync-generated.yml --repo merlin-pinpin-org/kingdoms
    ```
+   **A session token gets 403 on `workflow_dispatch`** (the trust
+   design — see the
+   [release-flow](../release-flow/SKILL.md) skill): when the dispatch
+   is refused, do not report a bug — the drift is caught by the next
+   push on `main` (every merge triggers the sync) or the daily 06:00
+   UTC schedule; a maintainer may trigger the on-demand run from the
+   GitHub web UI if the refresh cannot wait.
    The workflow restores the previous state from the sync branch,
    regenerates `generated/ROADMAP.md` + `generated/DEPENDENCIES.md` +
    `generated/pydoc/`, and pushes the result to
