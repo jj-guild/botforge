@@ -588,23 +588,22 @@ to replay every operation from the repository alone; document it for both
 
 ## Troubleshooting is part of the fix (developer-mandated)
 
-Every repo maintains a **troubleshooting section** in its developer
-guide (`docs/DEVELOPER.md`; in `kingdoms-infra` it is the *Workflow
-pitfalls* section) — the memory of the failures the platform already
-met. When a session fixes a problem (a bug, an incident, a stuck
-deploy, a flaky check), the same PR carries:
+The platform's **failure memory** lives in the
+[troubleshooting](../.agents/skills/troubleshooting/SKILL.md) skill
+(one dated entry per incident, per scope — symptom, root cause, fix,
+the test that guards it). When a session fixes a problem (a bug, an
+incident, a stuck deploy, a flaky check), the same PR carries:
 
 1. **The regression test** — a test that fails without the fix and
    passes with it, committed next to the fix (the bug never comes
    back silently; CI owns the memory).
-2. **A dated troubleshooting entry** — symptom (what it looked
-   like), root cause (the real mechanism, found in the logs — see
-   *Diagnose before blaming the infrastructure*), fix, and the test
-   that now guards it. One entry per incident, newest first.
+2. **A dated entry in the troubleshooting skill** — the memory for
+   every future session; root cause found in the logs (see
+   *Diagnose before blaming the infrastructure*), never a guess.
 
 A fix without its test and its entry is incomplete — the next
 session meets the same wall with the same blindness. Conversely,
-never copy an entry elsewhere: the section is the single home, other
+never copy an entry elsewhere: the skill is the single home, other
 docs link to it.
 
 ## Service data isolation (developer-mandated)

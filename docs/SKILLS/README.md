@@ -24,6 +24,7 @@ browse the table below to see what the agents know how to do.
 | [human-interaction](../../.agents/skills/human-interaction/SKILL.md) | How the session talks to its human — UI-select asks, live plan, context links, aliases |
 | [diagnose-deploy](../../.agents/skills/diagnose-deploy/SKILL.md) | Diagnose a stuck/pending deploy before blaming the runner |
 | [generated-artifacts](../../.agents/skills/generated-artifacts/SKILL.md) | The generated artifacts (ROADMAP, DEPENDENCIES, pydoc): single writer, drift detection, preview |
+| [troubleshooting](../../.agents/skills/troubleshooting/SKILL.md) | The platform's failure memory — check it before diagnosing, add an entry when a fix lands |
 | [deploy-and-validate](../../.agents/skills/deploy-and-validate/SKILL.md) | Deploy a PR to test and validate it before ready |
 | [release-flow](../../.agents/skills/release-flow/SKILL.md) | Cut a release (tag, GitHub release, prod pin) on request |
 | [shape-game-designer-idea](../../.agents/skills/shape-game-designer-idea/SKILL.md) | Turn a game designer idea into an automatable issue |

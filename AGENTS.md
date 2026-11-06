@@ -105,8 +105,10 @@ PRIORITY 0 rules bind the agent's own behavior on top of that.)
    incident (a crash, a stuck deploy, a flaky check, an
    architecture violation), the same PR carries: a test that fails
    without the fix and passes with it, and a dated entry in the
-   repo's troubleshooting section (symptom → root cause → fix →
-   the test that guards it). Sessions have no memory: an unfixed
+   [troubleshooting
+   skill](.agents/skills/troubleshooting/SKILL.md)
+   (symptom → root cause → fix → the test that guards it).
+   Sessions have no memory: an unfixed
    learning is knowledge lost (see CONVENTIONS.md, *Troubleshooting
    is part of the fix*).
 
