@@ -161,6 +161,37 @@ as the `IPlatform` implementation, in-memory stores, and the real
 `WorkflowEngine`. A mod that only talks to the core is fully testable
 without Discord. Strategy details: [testing.md](testing.md).
 
+## 7. Target layout — one directory per mod (docs / conf / grpc / cogs)
+
+**Developer direction (2026-11-06 session).** The end state of a mod is
+a self-contained directory with four concerns — and, at some point, its
+own repository. The layout is extraction-ready from day one: no
+cross-mod imports, config-relative references only.
+
+```
+<mod>/
+├── docs/     # the mod's documentation (mirrors docs/MODS/<mod>/)
+├── conf/     # declaration YAMLs: channels, panels/menus, locales, providers
+├── grpc/     # the mod's gRPC server code (its data, its collections)
+└── cogs/     # discord.py cogs: commands, views — call the mod's gRPC
+              # service and use the UI SDK; never touch another mod
+```
+
+- **The cog is the only Discord layer of a mod**: it declares commands
+  and views, calls the mod's gRPC service, and builds its UI through
+  the kingdoms-services UI SDK (the discord-ui skill rules apply
+  unchanged).
+- **One PyPI artifact per mod** (the cogs package + the gRPC server
+  package); the bot Docker image is built **above the published PyPI
+  artifacts**, never from source copies.
+- **Multi-bot, same image**: the image aggregates the bot core + the
+  cogs of every authorized mod; each bot container loads its cogs from
+  a `KINGDOMS_MODS` environment variable (comma-separated mod names) at
+  startup — at least 3 distinct bots in test and prod, each with a
+  different mod set, running the same code.
+- Retrofit: the existing game migrates onto this layout and onto the
+  mod declaration seam (tracked: kingdoms-services#310, #311).
+
 ## See also
 
 - [MODS/README.md](../MODS/README.md) — mod system overview (documentation-facing)
