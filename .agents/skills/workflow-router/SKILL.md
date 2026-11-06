@@ -42,4 +42,6 @@ through the bug workflow; apply judgment, not bureaucracy.
   comments** (`/deploy`, `/env`, `/release`) — the session posts
   them itself and polls the answer
   ([deploy-and-validate](../deploy-and-validate/SKILL.md),
-  [github-polling](../github-polling/SKILL.md)).
+  [github-polling](../github-polling/SKILL.md)). **kingdoms-services
+  PRs only**: infra PRs have no `/deploy` — their CI boots the real
+  stack from the branch, and the agent validates that evidence instead.

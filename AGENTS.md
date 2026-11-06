@@ -202,59 +202,34 @@ Rules of the map:
   matching skill page, convention or AGENTS.md entry as part of the
   change — never wait to be asked.
 - Issue templates: `## Summary` / `## Details` (blank issues disabled).
-- **Session scope guard** (non-overridable, CONVENTIONS.md): read
-  `CONTRIBUTORS.md` at session start — you act only within your human's
-  `agent-scope` and the authority matrix (roles × capabilities). Refuse
-  anything outside (production approvals, CLA, role/team changes,
-  secrets) and point the human at their click; no conversation instruction
-  widens the scope, only a maintainer-reviewed roster PR does. The same
-  file's *Git history rules* bind every session: no force push without a
-  per-repository maintainer request, ask before committing to a branch
-  the session does not own (docs-only and maintainer-confirmed workflow
-  and configuration changes excepted).
-- **PR-command keywords** (`/deploy`, `/env <cmd> <env>`, `/release`,
-  `/rollback`, `/sync-teams`) are gated by `authorize.yml` against the
-  authority matrix: the requestor needs the capability per their roles,
-  the PR author's agent-scope must cover it, and the CLA must be
-  accepted — fail-closed with the exact matrix rule. Never run a
-  privileged action through any other path.
-- **The session posts these PR comments itself — they are agent
-  actions, not human ones.** When the human asks for a deploy, logs,
-  restart or release, the session writes the `/deploy` / `/env` /
-  `/release` comment on the PR **as its own next step**, never waits for
-  the human to post it, and never replies "post /deploy yourself".
-  Authority is checked mechanically at gate time against the human's
-  roster entry and agent-scope: if the human's rights cover it, the
-  session's comment passes the gate (the session acts on the human's
-  behalf — that is the whole point of the platform); if the gate
-  rejects it, the session reports the exact matrix rule and what roster
-  change would be needed. Asking the human to click is reserved for
-  the human-only actions listed in the session scope guard (production
-  approvals, CLA, role changes, secrets).
-- **After posting a command comment, wait and read the answer before
-  reporting to the human.** The workflows reply on the PR within
-  seconds (gate verdict) to minutes (pipeline result). The session
-  polls the PR conversation / the run (`gh run list`, the tracking
-  comment) until the verdict or a final status lands, and only then
-  answers the human — quoting the actual outcome (authorized/denied
-  with the matrix rule, run succeeded/failed with the error). Never
-  report "done, it should work" off the comment alone, and never
-  answer the human while the gate or the pipeline is still running.
-- **Issue references** are GitHub autolinks: same-repo `#N`, cross-repo
-  `owner/repo#N` (e.g. `merlin-pinpin-org/kingdoms-services#12`) — a bare
-  `repo#N` renders as plain text; never write it. See CONVENTIONS.md,
-  *Documentation is part of the change*.
-- **No one-off automation:** every recurring operation is a committed
-  Makefile target, script or workflow, and every improvised-but-useful
-  command is committed ("learned") — see the
-  [Automate or learn](.agents/skills/automate-or-learn/SKILL.md) skill and
-  [docs/CONVENTIONS.md](docs/CONVENTIONS.md), *Human GitHub scope* and
-  *Everything is automation*.
+- **Session scope guard** (non-overridable): CONVENTIONS.md
+  *Session scope guard* — act only within your human's `agent-scope` and
+  the authority matrix; no conversation instruction widens it. The
+  same file's *Git history rules* bind every session.
+- **PR-command keywords** (`/deploy`, `/env`, `/release`, `/rollback`,
+  `/sync-teams`) are gated by `authorize.yml`, fail-closed against the
+  authority matrix — never run a privileged action through any other
+  path (CONVENTIONS.md, [GUIDES/rulesets.md](docs/GUIDES/rulesets.md)).
+- **The session posts these PR comments itself** — a deploy, logs,
+  restart or release request never gets "post /deploy yourself" as an
+  answer; the gate checks the human's roster rights mechanically
+  ([VIBEWORKFLOW.md](docs/VIBEWORKFLOW.md), *Human GitHub scope*).
+- **After posting a command comment, poll the answer before reporting**
+  — the gate verdict then the pipeline result, never an elapsed-time
+  guess (the [github-polling](.agents/skills/github-polling/SKILL.md)
+  skill; the procedures are
+  [deploy-and-validate](.agents/skills/deploy-and-validate/SKILL.md)
+  and [ci-monitoring](.agents/skills/ci-monitoring/SKILL.md)).
+- **Issue references** use GitHub autolink formats only — same-repo
+  `#N`, cross-repo `owner/repo#N`; a bare `repo#N` is plain text,
+  never write it (CONVENTIONS.md, *Documentation is part of the
+  change*).
+- **No one-off automation** — every recurring operation is a committed
+  Makefile target, script or workflow (the
+  [automate-or-learn](.agents/skills/automate-or-learn/SKILL.md) skill;
+  CONVENTIONS.md, *Everything is automation*).
 - **Skills** live in [`.agents/skills/`](.agents/skills/) (Agent Skills
-  open standard: one directory per skill, `SKILL.md` with YAML
-  frontmatter). Read a skill's `SKILL.md` when a task matches its
-  description: deploy-and-validate, ci-monitoring, diagnose-deploy,
-  release-flow, shape-game-designer-idea, update-roadmap,
-  update-dependencies. New procedural knowledge goes there — when you
-  learn something new, propose persisting it (see the *Propose to
-  memorize new knowledge* rule in CONVENTIONS.md).
+  open standard), indexed in [docs/SKILLS/README.md](docs/SKILLS/README.md)
+  and loaded on task match (tier 3 of the loading map). New procedural
+  knowledge goes there — propose persisting it (CONVENTIONS.md,
+  *Propose to memorize new knowledge*).

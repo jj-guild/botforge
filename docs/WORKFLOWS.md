@@ -1,4 +1,4 @@
-# Workflows
+# Game workflows — user-facing flows (registration, ladder, …)
 
 This document is the definitive reference for Kingdoms user interactions and
 system behavior. All workflows are described **platform-agnostically**: they

@@ -385,7 +385,9 @@ needs, trunk-based style:
    verified (a deployable change never goes ready without its
    deployment), self-review done, docs updated. Flipping to ready comes
    with enabling automerge — the PR then merges itself once the owner
-   reviews land.
+   reviews land. **The ready transition is not optional and never waits
+   for a reminder**: a green, deployed, self-validated PR left in
+   draft is a session bug.
    **Checks are verified on the head commit, completed** — never ask for a
    merge while a check is pending or only the previous commit is green
    (the 2026-09-24 SC2046 incident: the merge landed between the push of

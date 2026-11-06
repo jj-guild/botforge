@@ -134,8 +134,8 @@ remains an isolated sandbox (own compose project, own data volumes).
    and expires as soon as it completes — it never lasts the session;
    the session reports each cowboy operation in its
    summary so the audit trail exists.
-5b. No session merges PRs (API-blocked); the cowboy "merge" is a
+6. No session merges PRs (API-blocked); the cowboy "merge" is a
    direct push of the PR's commits to `main`, confirmed once per
    push.
-6. The mode applies to the session's GitHub actions only — the human
+7. The mode applies to the session's GitHub actions only — the human
    can always do more in the web UI than the session may automate.

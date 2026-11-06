@@ -122,7 +122,7 @@ Step by step:
    identity of agent sessions* rule in CONVENTIONS.md).
 5. When explicitly requested, the agent tags a version and creates the GitHub
    release — tag and release permissions are enforced by GitHub.
-7. PR deployments are **on demand** (`/deploy` PR comment posted by
+6. PR deployments are **on demand** (`/deploy` PR comment posted by
    the session); the PR image (commit-SHA tagged) is pinned in the
    environment **state branch** `deploy/test` by the kingdoms-deployer
    GitHub App (ephemeral Actions: write token), and the push to
@@ -148,46 +148,23 @@ procedure and placement rules live in the
 
 ## PR conventions (agent rules, developer-mandated)
 
-These conventions are binding for the agent; they keep the human merge
-flow frictionless:
+The binding rules live once in [CONVENTIONS.md](CONVENTIONS.md) — *PR
+lifecycle (merge-readiness)*; this page keeps only the operating-model
+view:
 
-1. **Ready means the session has nothing left to do.** A PR goes
-   *ready for review* when the checks are green and completed on the
-   head commit, the change is **deployed and verified** (a
-   deployable change never goes ready without its test deployment), the
-   implementation is complete, the self-review is done and the docs
-   are updated — and never before. **Draft is the working state and it
-   comes back**: any work in progress or check in flight means the PR
-   stays in or returns to draft. Going ready comes with enabling
-   automerge; nobody is asked to click Merge.
-2. **Deploy to test, validate, then ready — in that order.** For any
-   change with something to deploy: the session deploys the PR to the
-   test environment, **verifies the deployment itself** (healthchecks
-   green, stack healthy, no crash loop), then flips the PR to *ready
-   for review* with automerge enabled. The PR stays in draft while a
-   test deployment is running or can be re-run. The human's Discord
-   check and the owner reviews happen **after** ready — they are the
-   final acceptance, not a precondition for it. Doc-only or infra-only
-   changes with nothing to redeploy skip the deployment step. **The
-   ready transition is not optional and never waits for a reminder**
-   (developer-mandated): as soon as the checks are green, the PR is
-   deployed and the session has verified the deployment, it
-   flips the PR to ready — a green, tested PR left in draft is a
-   session bug. From there the CODEOWNERS-named owners review on
-   GitHub, the designer validates on the test Discord, and GitHub
-   automerges once both are in.
-3. **Never overwrite another PR's test deployment.** One image runs on
-   test at a time: if a different PR is pinned on `deploy/test` under
-   validation, don't deploy on top of it. After a merge, re-align test
-   to `main` only if the merged PR is the one deployed there.
-5. **Normal-size PRs on platform work.** Platform work (pro mode) uses
-   collaborative feature branches with normal-size, reviewable PRs;
-   one PR = one coherent scope, the PR body lists the covered issues,
-   and several PRs may be open in parallel. The exception is the
-   sandbox-mode **mod PR** (CONVENTIONS.md — *Integration branches*):
-   one long-lived draft PR per personal mod is the intended shape — it
-   exists to run the checks on every push and merges only when the
-   mod is complete.
+- **Ready = nothing left to do** — checks green and completed on the
+  head commit, deployed and verified, self-review done, docs updated;
+  flipping to ready enables automerge, and the transition never waits
+  for a reminder (CONVENTIONS.md, *PR lifecycle* 1).
+- **Deploy to test, validate, then ready — in that order** (CONVENTIONS.md,
+  *PR lifecycle* 2; the procedure is the
+  [deploy-and-validate](../.agents/skills/deploy-and-validate/SKILL.md)
+  skill).
+- **Never overwrite another PR's test deployment** (CONVENTIONS.md,
+  *PR lifecycle* 3).
+- **Normal-size PRs on platform work** — one PR = one coherent scope;
+  the sandbox-mode mod PR is the one exception (CONVENTIONS.md,
+  *PR lifecycle* 4 and *Integration branches*).
 
 ## Generated artifacts sync
 
