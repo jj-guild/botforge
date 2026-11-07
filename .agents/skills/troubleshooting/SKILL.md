@@ -31,7 +31,12 @@ No entry yet — the first fixed incident lands here.
 
 ## Scope: deploy & infra (kingdoms-infra, VPS, runners)
 
-No entry yet — the first fixed incident lands here.
+### 2026-10-16 — Hours of hypotheses on a silent failure
+- Symptom: a flow silently does nothing; no error, no logs.
+- Root cause: the answer was in `/logs <env>` all along — one grep beats an afternoon of hypotheses.
+- Fix: check `/logs <env>` before forming any hypothesis (habit, not code).
+- Guard: none (process lesson, not a regression test).
+
 (The concurrency-zombie trap — a run waiting for an environment approval
 holding the deploy group forever — is documented with its diagnosis
 procedure in the

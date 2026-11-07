@@ -41,7 +41,7 @@ ready.
    no argument: the workflow targets your **personal env** from your
    roster alias — **never** the shared `test` env; a bare `/deploy` on a
    personal alias therefore deploys to the personal env (e.g. `merlin`),
-   not `test`. When the designer says "déploie", they mean **`/deploy
+   not `test`. When the designer says "deploy", they mean **`/deploy
    test`** unless they name their personal env — always add the explicit
    environment argument).
    Only collaborators with write+ may trigger it; forks are rejected.
