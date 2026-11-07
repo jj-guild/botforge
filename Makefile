@@ -5,13 +5,14 @@
 
 KINGDOMS_SERVICES ?= ../kingdoms-services
 
-.PHONY: help session-check sync-artifacts validate contributors-check contributors-sync
+.PHONY: help session-check sync-artifacts validate contributors-check contributors-sync roadmap-next
 
 # List the available targets (human entry point).
 help:
 	@echo "Kingdoms docs repo — available targets:"
 	@echo "  make help                        — show this help"
 	@echo "  make session-check               — full validation (docs + roadmap + dependencies)"
+	@echo "  make roadmap-next                — print the current lot's ordered work table (read-only)"
 	@echo "  make validate                    — docs validation only"
 	@echo "  make sync-artifacts              — regenerate generated/ROADMAP.md and generated/DEPENDENCIES.md"
 	@echo "  make contributors-check          — roster dry-run (report org drift, no mutation)"
@@ -22,6 +23,11 @@ help:
 # dependency-graph drift. Fails closed with the exact artefacts to fix.
 session-check:
 	python3 scripts/session_check.py --source $(KINGDOMS_SERVICES)/src/kingdoms --config $(KINGDOMS_SERVICES)/config --scripts-dir .github/workflows/scripts
+
+# Current lot's work order, straight from the issues (read-only; reuses the
+# workflow scripts' parsers). This is what the roadmap-unroll skill runs.
+roadmap-next:
+	python3 scripts/roadmap_next.py
 
 # Regenerate the synced artefacts (generated/ROADMAP.md, generated/DEPENDENCIES.md) —
 # local dry-run only: the sync-generated workflow owns the real
