@@ -108,6 +108,8 @@ def load_issues() -> list[dict]:
                         "number": it["number"],
                         "title": it["title"],
                         "milestone": (it.get("milestone") or {}).get("title") or "—",
+                        "milestone_number": (it.get("milestone") or {}).get("number"),
+                        "body": it.get("body") or "",
                         "labels": labels,
                         "size": size,
                         "phase": phase,
