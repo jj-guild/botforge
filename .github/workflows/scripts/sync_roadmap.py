@@ -31,16 +31,13 @@ import json
 import os
 import re
 import sys
-import urllib.error
-import urllib.request
+import subprocess
 from collections import defaultdict
 from dataclasses import dataclass
 from pathlib import Path
 
-API_BASE = "https://api.github.com"
 OWNER = "merlin-pinpin-org"
 REPOS = ("kingdoms", "kingdoms-services", "kingdoms-infra")
-PER_PAGE = 100
 MANUAL_STATUSES = ("in-progress", "blocked", "backlog")
 STATUSES = ("todo", "in-progress", "in-review", "done", "blocked", "dropped")
 
@@ -121,43 +118,27 @@ def warn(message: str) -> None:
 
 
 def api_get(path: str, token: str | None) -> list[dict]:
-    """Return all pages of a GET request to the GitHub REST API.
+    """Return all pages of a GET request, via `gh api --paginate --slurp`.
 
-    On an authentication failure (401/403) or a missing repo (404) the request
-    is retried unauthenticated: all three Kingdoms repositories are public.
-    Raises the last error when both attempts fail.
+    The three Kingdoms repositories are public, so no custom secret is
+    needed; gh authenticates through GH_TOKEN/GITHUB_TOKEN in the
+    environment (set by the workflow, or by the local gh auth).
     """
-    last_error: Exception | None = None
-    for attempt_token in (token, None):
-        items: list[dict] = []
-        page = 1
-        separator = "&" if "?" in path else "?"
-        try:
-            while True:
-                url = f"{API_BASE}{path}{separator}per_page={PER_PAGE}&page={page}"
-                request = urllib.request.Request(
-                    url,
-                    headers={
-                        "Accept": "application/vnd.github+json",
-                        "User-Agent": "kingdoms-roadmap-sync",
-                    },
-                )
-                if attempt_token:
-                    request.add_header("Authorization", f"Bearer {attempt_token}")
-                with urllib.request.urlopen(request, timeout=30) as response:
-                    data = json.load(response)
-                items.extend(data)
-                if not isinstance(data, list) or len(data) < PER_PAGE:
-                    return items
-                page += 1
-        except urllib.error.HTTPError as error:
-            last_error = error
-            if error.code not in (401, 403, 404) or attempt_token is None:
-                raise
-        except urllib.error.URLError as error:
-            last_error = error
-            raise
-    raise last_error if last_error else RuntimeError("unreachable")
+    env = dict(os.environ)
+    if token:
+        env["GH_TOKEN"] = token
+    result = subprocess.run(
+        ["gh", "api", "--paginate", "--slurp", path],
+        capture_output=True,
+        text=True,
+        env=env,
+    )
+    if result.returncode != 0:
+        raise RuntimeError(f"gh api {path}: {result.stderr.strip()}")
+    data = json.loads(result.stdout)
+    if data and all(isinstance(page, list) for page in data):
+        return [item for page in data for item in page]
+    return data
 
 
 def fetch_repo_state(
@@ -166,7 +147,7 @@ def fetch_repo_state(
     """Return ({number: Issue}, {numbers with an open linked PR}) or None."""
     try:
         raw_issues = api_get(f"/repos/{OWNER}/{repo}/issues?state=all", token)
-    except (urllib.error.HTTPError, urllib.error.URLError) as error:
+    except RuntimeError as error:
         warn(f"cannot read {OWNER}/{repo}: {error}; keeping its rows")
         return None
 
@@ -198,7 +179,7 @@ def fetch_repo_state(
     linked: set[int] = set()
     try:
         pulls = api_get(f"/repos/{OWNER}/{repo}/pulls?state=open", token)
-    except (urllib.error.HTTPError, urllib.error.URLError) as error:
+    except RuntimeError as error:
         warn(f"cannot list open PRs of {OWNER}/{repo}: {error}; no PR detection")
         pulls = []
     for pull in pulls:
@@ -216,7 +197,7 @@ def fetch_milestones(token: str | None) -> dict[tuple[str, int], dict] | None:
     for repo in REPOS:
         try:
             raw = api_get(f"/repos/{OWNER}/{repo}/milestones?state=all", token)
-        except (urllib.error.HTTPError, urllib.error.URLError) as error:
+        except RuntimeError as error:
             warn(
                 f"cannot read milestones of {OWNER}/{repo}: {error}; "
                 "keeping the milestone titles already in the file"
