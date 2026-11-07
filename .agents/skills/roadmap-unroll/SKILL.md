@@ -24,10 +24,11 @@ of truth.
    It determines the **current lot** — the first unfinished `Lot N`
    milestone, i.e. the lowest N with open issues — and prints that lot's
    issues in work order.
-2. Report the table to the human with the columns: issue URL, PR URL if a
-   PR is already open, priority label translated in French, short summary,
-   details (critical-path flag, dependency wave, number of dependent
-   issues, size/complexity in points, slack), lot.
+2. Report the table to the human. First cell carries the links on two
+   lines (`issue: #322` / `PR: #306`, `PR: —` when none); then the
+   priority label translated in French, a short summary, the details
+   (critical-path flag, dependency wave, number of dependent issues,
+   size/complexity in points, slack), and the lot.
 3. Work order rule: **dependency wave first** (an issue whose dependencies
    are still open cannot start), then **priority label** (P0 first), then
    **slack** (critical path first), then issue number.
