@@ -131,43 +131,6 @@ Other modal rules, learned the hard way:
   ephemeral message.
 - **Modals are capped at 5 top-level components** (Label counts as one).
 
-## Session lessons (2026-10-17, the Discord wire traps)
-
-Everything below cost a deploy cycle to find — never reintroduce:
-
-- **Component emojis come from an API-validated allowlist.** Discord
-  rejects U+1F5xx symbols outside its set with a silent 50035 (Invalid
-  emoji) — U+1F5F2 killed two admin buttons in production while the whole
-  test suite stayed green. The guard
-  `tests/architecture/test_component_guards.py` fails the build on any
-  unallowlisted 1F5xx codepoint: validate a new symbol live before
-  adding it.
-- **One ack per interaction.** A DynamicItem callback that dispatches to
-  a `_handle_*` (admin_persistent) must NOT defer first — those
-  handlers own their acknowledgment; deferring twice raises
-  InteractionResponded and the click dies silently (the Roles bug). The
-  same guard fails the build on the double-defer shape.
-- **A modal is nothing without `on_submit`** (2026-10-17 language bug).
-  A `discord.ui.Modal` subclass without `async def on_submit` opens
-  fine, then the submit dies with "interaction failed" and **leaves
-  zero logs** — the whole suite stays green and even `/logs` shows
-  nothing. Every Modal must define `on_submit`; the guard
-  (`test_component_guards.py::test_modals_define_on_submit`) fails the
-  build on a Modal subclass without it.
-- **One select per action row — and a fresh row per loop iteration.**
-  A Discord Select occupies a whole action row; two in one row raise
-  `maximum number of children exceeded` at render time. The sneaky
-  shape: the row created **before** a loop while the loop `add_item`s a
-  select into it — every iteration re-feeds the same row object. Create
-  the row inside the loop, one row per select. The guard
-  (`test_action_rows_hold_one_select`) fails the build on both shapes.
-- **A silent failure with empty logs is a dispatch that never happened.**
-  When a click "does nothing" and `/logs` shows nothing, the
-  interaction never reached a callback: a modal nobody submits, an id
-  nobody matches, a component nobody registered. Grep the dispatch path
-  (modal `on_submit`, DynamicItem template vs custom_id,
-  `add_dynamic_items` registration) before suspecting the services.
-
 ## The 3-second rule (defer, then followup)
 
 **Discord invalidates an interaction ~3 seconds after it fires.** A
