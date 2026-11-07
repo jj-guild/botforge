@@ -131,63 +131,22 @@ Other modal rules, learned the hard way:
   ephemeral message.
 - **Modals are capped at 5 top-level components** (Label counts as one).
 
-Error reporting (the operator contract):
-
-- a failing user-facing flow answers with the **precise, human reason**
-  (provider name, game, what to check) — never a generic "échec";
-- the full stack trace goes to the **BOT_ADMINS by DM**
-  (`kingdoms.discord.error_report.dm_admins`), spam-guarded: one DM per
-  (error kind, surface) per 5 minutes — a broken provider under load never
-  floods the admins;
-- the user line and the admin DM are written together in the same handler,
-  so the diagnosis reaches the operators the first time it happens.
-
-
-## Session lessons (2026-10-16, the profile saga)
+## Session lessons (2026-10-17, the Discord wire traps)
 
 Everything below cost a deploy cycle to find — never reintroduce:
 
-- **The gate must match the wire.** A key/config gate invented by us
-  (LIBREMATCH_API_KEY, empty EXT_LIBREMATCH_URI, empty LIBREMATCH_API_URL)
-  silently rejected every valid input while the real service answered
-  anyone. Before gating on a config value, verify the value can actually
-  be absent AND that the service genuinely requires it. An env var that
-  exists-but-empty defeats ``${VAR:-default}`` compose defaults — code
-  must fall back itself (``value or DEFAULT``), always.
-- **A modal never edits the message it was opened from.** After a modal
-  submit you cannot edit the original ephemeral view — the refreshed
-  view is a followup. One followup per action, carrying the result as a
-  banner inside the view (never a confirmation message + a second view).
-- **Test the real wire shape.** A test suite that mocks the seam passes
-  while prod fails. The integration test must run the real gRPC server,
-  the real adapter, the real reply payloads (statGroups/leaderboardStats,
-  GetPersonalStat — never /api/leaderboard) and assert on the endpoint
-  actually called.
-- **Two ids, one profile.** aoe2insights URL id (12488557) and relic id
-  (17190369) are different numbers; librematch/aoe2lobby want the relic
-  id. Resolve any pasted id/URL through aoe2insights.com/user/<id>/relic-id/
-  (plain text), store the relic id, and build insights links with the
-  **relic** path: aoe2insights.com/user/relic/<relic_id>/ — the plain
-  /user/<id>/ path expects the insights user id, NOT the relic id.
-- **Read the logs before guessing.** ``/logs <env>`` answers in one grep
-  what an afternoon of hypotheses cannot.
 - **Component emojis come from an API-validated allowlist.** Discord
   rejects U+1F5xx symbols outside its set with a silent 50035 (Invalid
   emoji) — U+1F5F2 killed two admin buttons in production while the whole
   test suite stayed green. The guard
-  ``tests/architecture/test_component_guards.py`` fails the build on any
+  `tests/architecture/test_component_guards.py` fails the build on any
   unallowlisted 1F5xx codepoint: validate a new symbol live before
   adding it.
 - **One ack per interaction.** A DynamicItem callback that dispatches to
-  a ``_handle_*`` (admin_persistent) must NOT defer first — those
+  a `_handle_*` (admin_persistent) must NOT defer first — those
   handlers own their acknowledgment; deferring twice raises
   InteractionResponded and the click dies silently (the Roles bug). The
   same guard fails the build on the double-defer shape.
-- **Pinned views build without an interaction** — ``reply()`` renders
-  raw keys when the client is absent. Every pinned build must receive
-  the client (factory → builder chain) so the locale resolves, and a
-  label test must build the pinned surface the same way the factory does
-  (client, no interaction), not the ephemeral way.
 - **A modal is nothing without `on_submit`** (2026-10-17 language bug).
   A `discord.ui.Modal` subclass without `async def on_submit` opens
   fine, then the submit dies with "interaction failed" and **leaves
@@ -195,32 +154,19 @@ Everything below cost a deploy cycle to find — never reintroduce:
   nothing. Every Modal must define `on_submit`; the guard
   (`test_component_guards.py::test_modals_define_on_submit`) fails the
   build on a Modal subclass without it.
-- **A DynamicItem's custom_ids must match its own template** (2026-10-17
-  DM bug). `AccessGuildSelect` shipped the constant custom_id
-  `admin:dm:access:guild:picker` while its template required digits —
-  discord.py raises `ValueError` at every wire rebuild and the button
-  dies at the first click, silently. When a DynamicItem builds custom_ids
-  in `__init__`, replay them mentally against the template — and never
-  make the template stricter than the ids the class itself emits. The
-  guard (`test_dynamic_item_custom_ids_match_their_template`) resolves
-  the constants and fails the build on a mismatch.
-- **One select per action row — and a fresh row per loop iteration**
-  (2026-10-17 Roles bug). A Discord Select occupies a whole action row;
-  two in one row raise `maximum number of children exceeded` at render
-  time. The sneaky shape: the row created **before** a loop while the
-  loop `add_item`s a select into it — every iteration re-feeds the same
-  row object. Create the row inside the loop, one row per select. The
-  guard (`test_action_rows_hold_one_select`) fails the build on both
-  shapes.
-- **A silent failure with empty logs is a dispatch that never happened**
-  (the meta-lesson of 2026-10-17). When a click "does nothing" and
-  `/logs` shows nothing, the interaction never reached a callback:
-  a modal nobody submits, an id nobody matches, a component nobody
-  registered. Grep the dispatch path (modal `on_submit`, DynamicItem
-  template vs custom_id, `add_dynamic_items` registration) before
-  suspecting the services.
-
-
+- **One select per action row — and a fresh row per loop iteration.**
+  A Discord Select occupies a whole action row; two in one row raise
+  `maximum number of children exceeded` at render time. The sneaky
+  shape: the row created **before** a loop while the loop `add_item`s a
+  select into it — every iteration re-feeds the same row object. Create
+  the row inside the loop, one row per select. The guard
+  (`test_action_rows_hold_one_select`) fails the build on both shapes.
+- **A silent failure with empty logs is a dispatch that never happened.**
+  When a click "does nothing" and `/logs` shows nothing, the
+  interaction never reached a callback: a modal nobody submits, an id
+  nobody matches, a component nobody registered. Grep the dispatch path
+  (modal `on_submit`, DynamicItem template vs custom_id,
+  `add_dynamic_items` registration) before suspecting the services.
 
 ## The 3-second rule (defer, then followup)
 

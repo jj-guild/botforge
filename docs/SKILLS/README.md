@@ -31,6 +31,9 @@ browse the table below to see what the agents know how to do.
 | [ci-monitoring](../../.agents/skills/ci-monitoring/SKILL.md) | Monitor CI, find root causes, push focused fixes |
 | [github-polling](../../.agents/skills/github-polling/SKILL.md) | Poll GitHub statuses every 10-30s instead of a fixed worst-case sleep |
 | [discord-ui](../../.agents/skills/discord-ui/SKILL.md) | Build any Discord message through the kingdoms-services UI SDK — bricks, archetypes, guards, i18n |
+| [provider-librematch](../../.agents/skills/provider-librematch/SKILL.md) | The Libre:Match provider — API key gating, the real wire shape, the relic id |
+| [provider-aoe2lobby](../../.agents/skills/provider-aoe2lobby/SKILL.md) | The aoe2lobby realtime provider — WS endpoint, the relic id |
+| [provider-aoe2insights](../../.agents/skills/provider-aoe2insights/SKILL.md) | aoe2insights ids — insights user id vs relic id, resolution and link paths |
 | [workflow-router](../../.agents/skills/workflow-router/SKILL.md) | Route the human's intention to the right workflow before any work starts |
 | [discord-bot-docs](https://github.com/merlin-pinpin-org/kingdoms-services/blob/main/.agents/skills/discord-bot-docs/SKILL.md) | Keep `docs/DEVELOPMENT/DISCORD-BOT.md` up to date on every Discord surface change (repo-local, kingdoms-services) |
 
