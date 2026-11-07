@@ -72,13 +72,15 @@ invent statuses: every row must reflect an actual GitHub issue state.
 
 The generated pages show the current state and the next steps, not the
 history (the git log of the `sync/generated-artifacts` branch carries it).
-ROADMAP.md leads with "Current Phase" (live milestone titles and open
-counts — a milestone rename on GitHub is reflected at the next sync) and a
-"Next up" table (open issues ordered by priority label, then lot); its
-change log is gone. DEPENDENCIES.md leads with "Next up — wave 0 (no open
-dependency: actionable now)" before the graph and the later waves; an open
-issue depending on an issue closed as not planned is listed as out of
-scope instead of entering the waves.
+ROADMAP.md is regenerated from scratch on every run: the current lot, its
+open issues in work order as a vertical list of `[#id — title](url)`
+links (with status, priority, size, PR link), the upcoming lots with
+their live description, and the out-of-scope / no-lot issues. Milestone
+titles and descriptions are read live from GitHub — a rename or edit is
+reflected at the next sync. DEPENDENCIES.md leads with "Next up — wave 0
+(no open dependency: actionable now)" before the graph and the later
+waves; an open issue depending on an issue closed as not planned is
+listed as out of scope instead of entering the waves.
 
 Priority labels (slack = points by which an issue can slip without
 delaying the project; set manually, the script only reports drift):
