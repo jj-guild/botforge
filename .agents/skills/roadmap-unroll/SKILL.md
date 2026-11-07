@@ -1,6 +1,6 @@
 ---
 name: roadmap-unroll
-description: What to do when the human says "roadmap", "traite la roadmap", "on déroule", "what's next?", "vas-y continue". Determines the current lot (first unfinished Lot milestone), prints the ordered work table for that lot, and on "continue" starts the top issue in pro mode. Use whenever the human asks where the project stands or what to do next.
+description: What to do when the human says "roadmap", "unroll the roadmap", "what's next?", "continue", "go". Determines the current lot (first unfinished Lot milestone), prints the ordered work table for that lot, and on "continue" starts the top issue in pro mode. Use whenever the human asks where the project stands or what to do next.
 ---
 
 # Roadmap unrolling — the agent-side procedure
@@ -15,7 +15,7 @@ to that workflow. This skill is the agent side: read-only, via
 those scripts' parsers and CPM so the GitHub issues stay the single source
 of truth.
 
-## When the human says "roadmap" / "on déroule" / "traite la roadmap" / "what's next?"
+## When the human says "roadmap" / "unroll the roadmap" / "what's next?"
 
 1. From the kingdoms repo root, run:
    ```bash
@@ -24,9 +24,9 @@ of truth.
    It determines the **current lot** — the first unfinished `Lot N`
    milestone, i.e. the lowest N with open issues — and prints that lot's
    issues in work order.
-2. Report the table to the human. First cell carries the links on two
-   lines (`issue: #322` / `PR: #306`, `PR: —` when none); then the
-   priority label translated in French, a short summary, the details
+2. Report the table to the human. The first cell carries the links on two
+   lines (`issue: #322` / `PR: #306`, `PR: —` when none); then the priority
+   label with its plain-language gloss, a short summary, the details
    (critical-path flag, dependency wave, number of dependent issues,
    size/complexity in points, slack), and the lot.
 3. Work order rule: **dependency wave first** (an issue whose dependencies
@@ -35,7 +35,7 @@ of truth.
 4. Add a one-line status: current lot, done / in-review / todo counts, and
    the open PRs on the lot.
 
-## When the human says "vas-y continue" / "go" / "on y va"
+## When the human says "continue" / "go"
 
 Take the **top todo issue of the current lot's table** (skip the ones
 already in-review) and work it in pro mode: one branch `vibe/<slug>` from
