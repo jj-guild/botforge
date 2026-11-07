@@ -26,11 +26,11 @@ sys.path.insert(0, str(SCRIPTS))
 import sync_dependencies as sd  # noqa: E402
 import sync_roadmap as sr  # noqa: E402
 
-PRIO_FR = {
-    "P0": "P0 — critique (chemin critique)",
-    "P1": "P1 — quasi-critique",
-    "P2": "P2 — modérée",
-    "P3": "P3 — peut attendre",
+PRIO_GLOSS = {
+    "P0": "P0 (critical path)",
+    "P1": "P1 (near-critical)",
+    "P2": "P2 (moderate)",
+    "P3": "P3 (can wait)",
 }
 
 
@@ -120,7 +120,7 @@ def main() -> int:
     print("Work order: dependency wave first (an issue with open dependencies cannot start),")
     print("then priority label (P0 first), then slack (critical path first), then issue number.")
     print()
-    print("| Issue / PR | Priority (fr) | Summary | Details | Lot |")
+    print("| Issue / PR | Priority | Summary | Details | Lot |")
     print("|------------|---------------|---------|---------|-----|")
     for i in lot_issues:
         iid = i["id"]
@@ -133,7 +133,7 @@ def main() -> int:
         pr_cell = "<br>".join(f"PR: [#{u.rsplit('/', 1)[-1]}]({u})" for u in prs) if prs else "PR: —"
         issue_cell = f"issue: [{iid}]({issue_url(i['repo'], i['number'])})<br>{pr_cell}"
         print(
-            f"| {issue_cell} | {PRIO_FR.get(i['prio_label'], i['prio_label'])} "
+            f"| {issue_cell} | {PRIO_GLOSS.get(i['prio_label'], i['prio_label'])} "
             f"| {sd.short_title(i, 60)} | {details} | {i['milestone'].split(' (')[0]} |"
         )
     blocked_in_lot = [b for b in blocked if b[0] in {i["id"] for i in lots[current]}]
