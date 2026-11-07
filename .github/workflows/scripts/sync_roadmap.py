@@ -2,8 +2,11 @@
 """Synchronize ROADMAP.md with GitHub issue states.
 
 Queries the GitHub REST API for the three Kingdoms repositories, maps issue
-states to roadmap statuses and rewrites ROADMAP.md in place: milestone table
-rows, "Current Phase", "Out of Scope" and the change log.
+states to roadmap statuses and rewrites ROADMAP.md in place: the "Next up"
+section, the milestone table (live titles and counts), "Current Phase" and
+"Out of Scope". The change log is dropped on purpose: the file shows the
+current state and the next steps — the history lives in the git log of the
+sync branch.
 
 Status mapping (.agents/skills/update-roadmap/SKILL.md):
 - closed as completed   -> done
@@ -32,7 +35,6 @@ import urllib.error
 import urllib.request
 from collections import defaultdict
 from dataclasses import dataclass
-from datetime import datetime, timezone
 from pathlib import Path
 
 API_BASE = "https://api.github.com"
@@ -80,6 +82,14 @@ def parse_issue_ref(reference: str) -> tuple[str, int]:
     return match["repo"], int(match["num"])
 PHASE_HEADING_RE = re.compile(r"^### Phase (?P<num>\d+) —")
 CURRENT_PHASE_RE = re.compile(r"^Phase (?P<num>\d+)\b")
+MILESTONE_ROW_RE = re.compile(
+    r"^\| \[(?P<label>[^\]]*)\]\((?P<url>https://github\.com/[\w.-]+/"
+    r"(?P<repo>[\w.-]+)/milestone/(?P<num>\d+))\) \|(?P<rest>.*)$"
+)
+CHANGE_LOG_RE = re.compile(r"^## Change Log\s*$", re.IGNORECASE)
+NEXT_UP_RE = re.compile(r"^## Next up\s*$")
+MILESTONES_HEADING_RE = re.compile(r"^## Milestones\s*$")
+PRIO_RANK = {"P0": 0, "P1": 1, "P2": 2, "P3": 3}
 CLOSING_REF_RE = re.compile(
     r"\b(?:close[ds]?|closing|fix(?:e[ds]?)?|fixing|resolv(?:e[ds]?)?|resolving)"
     r"[\s:;,.'\"()\[\]]*(?:(?P<owner>[\w.-]+)/(?P<ref_repo>[\w.-]+))?"
@@ -97,6 +107,9 @@ class Issue:
     state: str
     state_reason: str | None
     title: str
+    milestone: int | None = None
+    milestone_title: str | None = None
+    priority: str | None = None
 
 
 def repo_root() -> Path:
@@ -162,6 +175,16 @@ def fetch_repo_state(
             state=item["state"],
             state_reason=item.get("state_reason"),
             title=item.get("title") or f"{repo}#{item['number']}",
+            milestone=(item.get("milestone") or {}).get("number"),
+            milestone_title=(item.get("milestone") or {}).get("title"),
+            priority=next(
+                (
+                    m.group(1)
+                    for label in item.get("labels") or []
+                    if (m := re.match(r"^priority/(P[0-3])$", label.get("name", "")))
+                ),
+                None,
+            ),
         )
         for item in raw_issues
         if "pull_request" not in item
@@ -185,6 +208,23 @@ def fetch_repo_state(
                 continue
             linked.add(int(match["num"]))
     return issues, linked
+
+
+def fetch_milestones(token: str | None) -> dict[tuple[str, int], dict] | None:
+    """Return {(repo, number): milestone} across the three repos, or None."""
+    milestones: dict[tuple[str, int], dict] = {}
+    for repo in REPOS:
+        try:
+            raw = api_get(f"/repos/{OWNER}/{repo}/milestones?state=all", token)
+        except (urllib.error.HTTPError, urllib.error.URLError) as error:
+            warn(
+                f"cannot read milestones of {OWNER}/{repo}: {error}; "
+                "keeping the milestone titles already in the file"
+            )
+            return None
+        for item in raw:
+            milestones[(repo, item["number"])] = item
+    return milestones
 
 
 def compute_status(
@@ -216,13 +256,26 @@ def migrate_links(text: str) -> tuple[str, int]:
         return f"{match['prefix']}{issue_ref(match['repo'], int(match['num']))}{match['suffix']}"
 
     text = BULLET_PLAIN_RE.sub(link_bullet, text)
+
+    header_old = (
+        "> Single source of truth for project progress. Updated via the\n"
+        "> [Update roadmap](.agents/skills/update-roadmap/SKILL.md) skill.\n"
+    )
+    header_new = (
+        "> Current state and next steps of the plan, regenerated from the GitHub\n"
+        "> issues — the history lives in the git log of the `sync/generated-artifacts`\n"
+        "> branch. Single writer: the [Generated artifacts](../.agents/skills/generated-artifacts/SKILL.md) workflow.\n"
+    )
+    if header_old in text:
+        text = text.replace(header_old, header_new)
+        migrated += 1
     return text, migrated
 
 
 def sync_roadmap(
     text: str,
     states: dict[str, tuple[dict[int, Issue], set[int]]],
-    today: str,
+    milestones: dict[tuple[str, int], dict] | None,
 ) -> tuple[str, list[str], list[str]]:
     """Return (new text, change summaries, warnings)."""
     lines = text.splitlines()
@@ -233,6 +286,7 @@ def sync_roadmap(
     phase_status: dict[int, list[str]] = defaultdict(list)
     referenced: dict[str, set[int]] = defaultdict(set)
     row_status: dict[int, str] = {}
+    issue_status: dict[tuple[str, int], str] = {}
     subtasks_last_row = -1
 
     section: int | str | None = None
@@ -269,6 +323,7 @@ def sync_roadmap(
             continue
         status = compute_status(issue, num in linked, current)
         row_status[index] = status
+        issue_status[(repo, num)] = status
         if status == "dropped":
             dropped.append((repo, num, issue.title))
             if current != "dropped":
@@ -301,7 +356,89 @@ def sync_roadmap(
             break
     replace_next_phase_line = current_phase is not None or any(row_status.values())
 
+    if milestones:
+        current_lots = ", ".join(
+            f"[{m['title']}](https://github.com/{OWNER}/{repo}/milestone/{num})"
+            f" ({m.get('open_issues', 0)} open)"
+            for (repo, num), m in sorted(
+                (
+                    (key, value)
+                    for key, value in milestones.items()
+                    if value.get("state") == "open" and value.get("open_issues", 0) > 0
+                ),
+                key=lambda kv: (REPOS.index(kv[0][0]), kv[0][1]),
+            )
+        )
+    else:
+        current_lots = ""
+
+    open_rows = []
+    for repo, nums in referenced.items():
+        state = states.get(repo)
+        if state is None:
+            continue
+        issues, _linked = state
+        for num in nums:
+            status = issue_status.get((repo, num))
+            if status not in ("todo", "in-progress", "in-review", "blocked"):
+                continue
+            issue = issues.get(num)
+            open_rows.append(
+                (
+                    PRIO_RANK.get(issue.priority, 9) if issue else 9,
+                    issue.milestone if issue and issue.milestone is not None else 10**9,
+                    REPOS.index(repo),
+                    num,
+                    repo,
+                    issue,
+                    status,
+                )
+            )
+    open_rows.sort(key=lambda r: r[:4])
+    next_up_lines: list[str] = []
+    if open_rows:
+        next_up_lines = [
+            "## Next up",
+            "",
+            "Open issues of the plan, ordered by priority label then lot. Statuses sync",
+            "from GitHub; dependency order, sizes and slack: [DEPENDENCIES.md](DEPENDENCIES.md).",
+            "",
+            "| Issue | Lot | Priority | Status |",
+            "| ----- | --- | -------- | ------ |",
+        ]
+        for _p, _m, _r, num, repo, issue, status in open_rows:
+            lot = issue.milestone_title if issue and issue.milestone_title else "—"
+            prio = issue.priority if issue and issue.priority else "—"
+            next_up_lines.append(f"| {issue_ref(repo, num)} | {lot} | {prio} | {status} |")
+        next_up_lines.append("")
+
+    in_change_log = False
+    next_up_done = False
+    skip_next_up = False
+
     for index, line in enumerate(lines):
+        if in_change_log:
+            if line.startswith("## "):
+                in_change_log = False
+                out.append(line)
+            continue
+        if CHANGE_LOG_RE.match(line):
+            in_change_log = True
+            changes.append("change log dropped (history lives in the git log of the sync branch)")
+            continue
+        if NEXT_UP_RE.match(line):
+            out.extend(next_up_lines)
+            next_up_done = True
+            skip_next_up = True
+            continue
+        if skip_next_up:
+            if line.startswith("## "):
+                skip_next_up = False
+            else:
+                continue
+        if MILESTONES_HEADING_RE.match(line) and not next_up_done:
+            out.extend(next_up_lines)
+            next_up_done = True
         if line.startswith("## Out of Scope"):
             in_out_of_scope = True
             out.append(line)
@@ -357,6 +494,16 @@ def sync_roadmap(
             repo, num = parse_issue_ref(row["issue"])
             if row["status"] != status:
                 line = f"| {row['track']} | {issue_ref(repo, num)} | {status} |"
+        milestone_row = MILESTONE_ROW_RE.match(line)
+        if milestone_row:
+            key = (milestone_row["repo"], int(milestone_row["num"]))
+            ms = milestones.get(key) if milestones else None
+            if ms is not None:
+                counts = f"{ms.get('open_issues', 0)} open / {ms.get('closed_issues', 0)} done"
+                title = ms.get("title") or milestone_row["label"]
+                line = f"| [{title}]({milestone_row['url']}) — {counts} |{milestone_row['rest']}"
+            out.append(line)
+            continue
         if replace_next_phase_line and CURRENT_PHASE_RE.match(line):
             if current_phase is None:
                 out.append("All phases complete")
@@ -365,9 +512,10 @@ def sync_roadmap(
                 old = int(CURRENT_PHASE_RE.match(line)["num"])
                 if old != current_phase:
                     changes.append(f"current phase {old}->{current_phase}")
-                out.append(
-                    CURRENT_PHASE_RE.sub(f"Phase {current_phase}", line, count=1)
-                )
+                if current_lots:
+                    out.append(f"Phase {current_phase} — current lots: {current_lots}")
+                else:
+                    out.append(f"Phase {current_phase}")
             replace_next_phase_line = False
             continue
         out.append(line)
@@ -382,14 +530,6 @@ def sync_roadmap(
         out.extend(out_of_scope_buffer)
         out.append("")
 
-    summary = "; ".join(changes[:5])
-    if len(changes) > 5:
-        summary += f"; (+{len(changes) - 5} more)"
-    change_row = f"| {today} | auto-sync: {summary} |"
-    if change_row not in out:
-        while out and out[-1] == "":
-            out.pop()
-        out.append(change_row)
     return "\n".join(out) + "\n", changes, warnings
 
 
@@ -426,9 +566,9 @@ def main() -> int:
         warn("no repository could be read; aborting")
         return 2
 
-    today = datetime.now(timezone.utc).date().isoformat()
+    milestones = fetch_milestones(args.token)
     new_text, changes, warnings = sync_roadmap(
-        text, known, today  # type: ignore[arg-type]
+        text, known, milestones  # type: ignore[arg-type]
     )
     for warning in warnings:
         warn(warning)

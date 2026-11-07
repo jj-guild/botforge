@@ -1,14 +1,20 @@
 #!/usr/bin/env python3
 """Regenerate generated/DEPENDENCIES.md from GitHub issue dependencies.
 
-Reads the `## Dependencies` section of every open issue in
-`kingdoms-services` and `kingdoms-infra` (written as GitHub task-list
-checkboxes: `- [ ] kingdoms-services#N` or `- [ ] #N` for same-repo refs),
-runs critical-path analysis (CPM) on the resulting graph, and rewrites:
+Reads the `## Dependencies` section of every open issue in the three repos
+(written as GitHub task-list checkboxes: `- [ ] kingdoms-services#N` or
+`- [ ] #N` for same-repo refs), runs critical-path analysis (CPM) on the
+resulting graph, and rewrites:
 
-- the Mermaid dependency diagram (including the critical path),
-- the wave table (parallelisable batches),
-- the per-issue priority table (slack-based P0-P3).
+- the "Next up" table (wave 0: no open dependency — actionable now),
+- the critical path and the Mermaid dependency diagram,
+- the later waves (dependency order),
+- the per-issue inventory (slack-based P0-P3).
+
+The page shows the current state and what to work next; the history lives
+in the git log of the `sync/generated-artifacts` branch. An open issue that
+depends on an issue closed as not planned is listed as out of scope instead
+of entering the waves.
 
 Issue sizes come from the `size/XS|S|M|L|XL` labels (points: XS=1, S=3,
 M=5, L=8, XL=13). If an issue has no size label, the script fails loudly
@@ -31,6 +37,7 @@ from pathlib import Path
 REPOS = ("kingdoms", "kingdoms-services", "kingdoms-infra")
 OWNER = "merlin-pinpin-org"
 SIZE_POINTS = {"XS": 1, "S": 3, "M": 5, "L": 8, "XL": 13}
+PRIO_RANK = {"P0": 0, "P1": 1, "P2": 2, "P3": 3}
 PHASE_LABEL = re.compile(r"^phase-(\d+)$")
 PRIORITY_LABEL = re.compile(r"^priority/(P[0-3])$")
 DEP_LINE = re.compile(
@@ -113,16 +120,34 @@ def load_issues() -> list[dict]:
     return issues
 
 
-def fail_on_missing(issues: list[dict]) -> list[dict]:
-    """Validate issue data; return the issues eligible for the graph.
+_ISSUE_CACHE: dict[str, dict] = {}
+
+
+def fetch_issue(repo_num: str) -> dict | None:
+    """Fetch a single issue (used to tell closed-completed from not-planned)."""
+    if repo_num not in _ISSUE_CACHE:
+        repo, _, num = repo_num.partition("#")
+        try:
+            _ISSUE_CACHE[repo_num] = gh_api(f"repos/{OWNER}/{repo}/issues/{num}")
+        except subprocess.CalledProcessError:
+            _ISSUE_CACHE[repo_num] = {}
+    return _ISSUE_CACHE[repo_num] or None
+
+
+def fail_on_missing(issues: list[dict]) -> tuple[list[dict], list[tuple[str, str]]]:
+    """Validate issue data; return (issues eligible for the graph, blocked pairs).
 
     Untriaged issues (no size/* or no priority/* label) are excluded with
     a warning instead of aborting: the sync workflow is the single writer
-    and must never deadlock on triage debt. Hard problems (unknown or
-    inconsistent dependencies) still abort.
+    and must never deadlock on triage debt. An open issue depending on an
+    issue closed as not planned is out of scope: it is excluded from the
+    graph and reported in `blocked` as (issue, dropped dependency). Hard
+    problems (unknown or inconsistent dependencies) still abort.
     """
     problems = []
     eligible = []
+    blocked: list[tuple[str, str]] = []
+    blocked_ids: set[str] = set()
     ids = {i["id"] for i in issues}
     for i in issues:
         untriaged = False
@@ -134,6 +159,19 @@ def fail_on_missing(issues: list[dict]) -> list[dict]:
             untriaged = True
         for d in i["deps"]:
             if d not in ids:
+                closed = fetch_issue(d)
+                if (
+                    closed
+                    and closed.get("state") == "closed"
+                    and closed.get("state_reason") == "not_planned"
+                ):
+                    blocked.append((i["id"], d))
+                    blocked_ids.add(i["id"])
+                    print(
+                        f"warning: {i['id']}: depends on {d}, closed as not planned — "
+                        f"excluded from the plan (out of scope)"
+                    )
+                    continue
                 # A dependency on a closed issue is satisfied — treat it as
                 # checked (warn so the issue body gets tidied up).
                 print(
@@ -149,11 +187,11 @@ def fail_on_missing(issues: list[dict]) -> list[dict]:
                 )
         for d in i["done_deps"]:
             i["deps"] = [x for x in i["deps"] if x != d]
-        if not untriaged:
+        if not untriaged and i["id"] not in blocked_ids:
             eligible.append(i)
     if problems:
         sys.exit("Refusing to regenerate:\n  " + "\n  ".join(problems))
-    return eligible
+    return eligible, blocked
 
 
 def cpm(issues: list[dict]) -> dict:
@@ -243,7 +281,7 @@ def issue_link(id_: str, title: str, limit: int = 60) -> str:
     return f"[{id_}](https://github.com/{OWNER}/{repo}/issues/{num}) — {title}"
 
 
-def render(issues: list[dict], a: dict) -> str:
+def render(issues: list[dict], a: dict, blocked: list[tuple[str, str]]) -> str:
     cp_set = set(a["cp"])
     by_id = a["by_id"]
     lines: list[str] = []
@@ -257,6 +295,9 @@ def render(issues: list[dict], a: dict) -> str:
         f"Source: open issues in [kingdoms](https://github.com/merlin-pinpin-org/kingdoms/issues), "
         f"[kingdoms-services](https://github.com/merlin-pinpin-org/kingdoms-services/issues) "
         f"and [kingdoms-infra](https://github.com/merlin-pinpin-org/kingdoms-infra/issues).",
+        "",
+        "Current state and next steps only — the history lives in the git log of",
+        "the `sync/generated-artifacts` branch.",
         "",
         "Priority labels come from critical-path analysis (CPM):",
         "",
@@ -275,7 +316,6 @@ def render(issues: list[dict], a: dict) -> str:
         "",
     ]
     lines.append(" -> ".join(f"[{n}](https://github.com/{OWNER}/{n.split('#')[0]}/issues/{n.split('#')[1]})" for n in a["cp"]))
-    lines += ["", "## Dependency graph", "", "```mermaid", "flowchart LR"]
 
     def ms_sort_key(ms: str) -> tuple:
         m = re.match(r"Lot (\d+)", ms)
@@ -288,12 +328,34 @@ def render(issues: list[dict], a: dict) -> str:
     def ms_short(ms: str) -> str:
         return ms.split(" (")[0]
 
+    def wave_sort_key(i: dict) -> tuple:
+        return (
+            PRIO_RANK.get(i["prio_label"], 9),
+            ms_sort_key(i["milestone"]),
+            -a["T"][i["id"]],
+            i["id"],
+        )
+
+    wave0 = sorted((i for i in issues if a["wave"][i["id"]] == 0), key=wave_sort_key)
+    lines += [
+        "",
+        "## Next up — wave 0 (no open dependency: actionable now)",
+        "",
+        "| Issue | Lot | Size | Priority |",
+        "| ----- | --- | ---- | -------- |",
+    ]
+    for i in wave0:
+        lines.append(
+            f"| {issue_link(i['id'], i['title'])} | {i['milestone']} | `{i['size']}` | `{i['prio_label']}` |"
+        )
+    lines += ["", "## Dependency graph", "", "```mermaid", "flowchart LR"]
+
     by_ms: defaultdict[str, list[dict]] = defaultdict(list)
     for i in issues:
         by_ms[i["milestone"]].append(i)
     epics: list[str] = []
     for idx, ms in enumerate(sorted(by_ms, key=ms_sort_key)):
-        group = "Out of scope \u2014 no milestone" if ms == "\u2014" else ms_short(ms)
+        group = "No milestone yet" if ms == "\u2014" else ms_short(ms)
         lines.append(f"    subgraph MSG{idx}['{group}']")
         lines.append("        direction LR")
         for i in sorted(by_ms[ms], key=lambda x: x["number"]):
@@ -312,23 +374,34 @@ def render(issues: list[dict], a: dict) -> str:
     lines.append(f"    class {cp_keys} critical")
     if epics:
         lines.append(f"    class {','.join(epics)} epic")
-    lines += ["```", "", "## Waves (parallelisable batches)", "",
-              "Issues in the same wave have no dependency on each other and can be",
-              "worked on in parallel.", ""]
+    lines += ["```", "", "## Later waves (dependency order)", "",
+              "Wave 0 is the Next up table above. Wave N starts once the open",
+              "dependencies of the previous waves are done; issues in the same wave",
+              "are independent and can be worked on in parallel.", ""]
     by_wave: defaultdict[int, list[dict]] = defaultdict(list)
     for i in issues:
         by_wave[a["wave"][i["id"]]].append(i)
     for w in sorted(by_wave):
+        if w == 0:
+            continue
         lines.append(f"**Wave {w}**")
         lines.append("")
         lines.append("| Issue | Milestone | Size | Priority | Slack |")
         lines.append("| ----- | --------- | ---- | -------- | ----- |")
-        for i in sorted(by_wave[w], key=lambda x: (-a["T"][x["id"]], x["id"])):
+        for i in sorted(by_wave[w], key=wave_sort_key):
             lines.append(
                 f"| {issue_link(i['id'], i['title'])} | {i['milestone']} | `{i['size']}` ({a['T'][i['id']]}) | `{i['prio_label']}` | {a['slack'][i['id']]} |"
             )
         lines.append("")
-    lines += ["## All issues", "",
+    if blocked:
+        lines += ["## Out of scope (blocked by a dropped dependency)", ""]
+        for iid, dep in sorted(blocked):
+            lines.append(
+                f"- [{iid}](https://github.com/{OWNER}/{iid.split('#')[0]}/issues/{iid.split('#')[1]})"
+                f" — depends on {dep}, closed as not planned"
+            )
+        lines.append("")
+    lines += ["## All open issues (inventory)", "",
               "| Issue | Milestone | Size | Priority | Slack | Depends on |",
               "| ----- | --------- | ---- | -------- | ----- | ---------- |"]
     for i in sorted(issues, key=lambda x: (x["repo"], x["number"])):
@@ -371,10 +444,10 @@ def main() -> None:
     ap.add_argument("--out", default="generated/DEPENDENCIES.md")
     args = ap.parse_args()
     issues = load_issues()
-    issues = fail_on_missing(issues)
+    issues, blocked = fail_on_missing(issues)
     analysis = cpm(issues)
     report_priority_drift(issues, analysis)
-    content = render(issues, analysis)
+    content = render(issues, analysis, blocked)
     print(f"{len(issues)} issues, critical path: {' -> '.join(analysis['cp'])}, total {analysis['total']} pts")
     if args.dry_run:
         print(content)
