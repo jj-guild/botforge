@@ -31,7 +31,13 @@ while :; do
         else .other += 1 end
     ) | "\(.pass)/\(.fail)/\(.pending)/\(.other)"' 2>/dev/null)" || { echo "gh error" >&2; exit 2; }
     IFS='/' read -r pass fail pending other <<<"$summary"
+    total=$(( pass + fail + pending + other ))
     echo "head ${head:0:7} checks: pass=$pass fail=$fail pending=$pending neutral=$other"
+    # a just-pushed head has NO check runs yet (0/0/0/0) — that is
+    # pending, never green (the second 2026-11-07 race)
+    if [ "$total" -eq 0 ]; then
+        pending=1
+    fi
     if [ "$pending" -eq 0 ]; then
         [ "$fail" -eq 0 ] && exit 0 || exit 1
     fi
