@@ -13,17 +13,23 @@ lint conclusion).
 
 ## Procedure
 
-1. **List the runs** of the branch:
+1. **Before pushing — run the local checks in the sandbox** (systematic,
+   every push, so CI confirms a result instead of discovering a failure
+   five minutes later). The repo's Makefile is the menu; everything
+   sandbox-runnable runs there — kingdoms-services: `make lint`,
+   `make typecheck`, `make test`, `make docs-check`. Fix locally, then
+   push.
+2. **List the runs** of the branch:
    ```bash
    gh run list --repo merlin-pinpin-org/<repo> --branch <branch> \
      --json databaseId,workflowName,status,conclusion
    ```
-2. **Wait for completion by polling the status every 10-30s until the
+3. **Wait for completion by polling the status every 10-30s until the
    terminal state** — never a fixed sleep sized to the worst case (see
    [github-polling](../github-polling/SKILL.md)) — then check every
    job of every run — including the `skipping` ones (a job skipping where
    it should have run is a workflow bug: check its `if:` condition).
-3. **On failure — read the evidence before guessing**:
+4. **On failure — read the evidence before guessing**:
    ```bash
    gh run view <id> --repo <repo> --log-failed   # the failing steps only
    gh run view <id> --repo <repo> --json jobs    # which job failed
@@ -31,13 +37,13 @@ lint conclusion).
    Find the **root cause in the logs** (the exact error line, the exact
    command), never a guessed symptom. Diagnose before blaming the
    infrastructure (CONVENTIONS).
-4. **Reproduce locally when feasible**: workflow lint (actionlint —
+5. **Reproduce locally when feasible**: workflow lint (actionlint —
    install in /tmp, the same binary the CI installs), shellcheck, ruff,
    mypy, pytest, docs validation — all run in the sandbox. Compose boots
    and deploy runs do not: they are reproduced by the CI jobs themselves.
-5. **Push a focused fix** to the same branch (never a workaround), then
+6. **Push a focused fix** to the same branch (never a workaround), then
    re-monitor. One root cause = one commit when possible.
-6. **Report** the failure and the fix with run URLs (reports carry
+7. **Report** the failure and the fix with run URLs (reports carry
    GitHub links).
 
 ## Known failure classes and their reflexes
@@ -53,6 +59,7 @@ lint conclusion).
 - **Required checks**: a required status check never uses a `paths:`
   filter — if a required check is missing on a PR, verify the workflow's
   `on:` triggers, not the ruleset first.
+- **Generated pydoc stale** (kingdoms-services Docs workflow: `docs/DEVELOPMENT/pydoc is stale — regenerate with 'make docs' and commit`): any edit under `src/` — a docstring counts — changes the generated pydoc. Local repro: `make docs-check`; fix: `make docs` in kingdoms-services and commit the regenerated HTML on the same branch.
 
 ## Conventions kept
 
