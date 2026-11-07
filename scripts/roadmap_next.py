@@ -43,17 +43,36 @@ def issue_url(repo: str, num: int) -> str:
     return f"https://github.com/{sd.OWNER}/{repo}/issues/{num}"
 
 
-def open_pr_map() -> dict[str, str]:
-    """Map issue id -> open PR URL, via closing references in open PR bodies."""
-    prs: dict[str, str] = {}
+def open_prs() -> tuple[dict[str, str], dict[str, dict[int, str]]]:
+    """Return (issue id -> PR url via closing refs, repo -> {pr number: url})."""
+    by_issue: dict[str, str] = {}
+    by_repo: dict[str, dict[int, str]] = {}
     for repo in sd.REPOS:
         pulls = sd.gh_api(f"repos/{sd.OWNER}/{repo}/pulls?state=open&per_page=100")
+        by_repo[repo] = {p["number"]: p["html_url"] for p in pulls}
         for pull in pulls:
             for m in sr.CLOSING_REF_RE.finditer(pull.get("body") or ""):
                 if m["ref_repo"] and m["ref_repo"] != repo:
                     continue
-                prs[f"{repo}#{m['num']}"] = pull["html_url"]
-    return prs
+                by_issue[f"{repo}#{m['num']}"] = pull["html_url"]
+    return by_issue, by_repo
+
+
+def pr_links_for(issue: dict, by_issue: dict[str, str], by_repo: dict[str, dict[int, str]]) -> list[str]:
+    """PR URLs linked to an issue, both directions: closing refs in open PR
+    bodies, and PR numbers referenced in the issue's own title/body."""
+    links = []
+    if issue["id"] in by_issue:
+        links.append(by_issue[issue["id"]])
+    seen = set(links)
+    open_nums = by_repo.get(issue["repo"], {})
+    text = f"{issue.get('title') or ''}\n{issue.get('body') or ''}"
+    for m in re.finditer(r"#(\d+)", text):
+        url = open_nums.get(int(m.group(1)))
+        if url and url not in seen:
+            seen.add(url)
+            links.append(url)
+    return links
 
 
 def main() -> int:
@@ -65,7 +84,7 @@ def main() -> int:
     issues = sd.load_issues()
     eligible, blocked = sd.fail_on_missing(issues)
     a = sd.cpm(eligible)
-    prs = open_pr_map()
+    pr_by_issue, pr_by_repo = open_prs()
 
     lots: dict[int, list[dict]] = {}
     titles: dict[int, str] = {}
@@ -101,8 +120,8 @@ def main() -> int:
     print("Work order: dependency wave first (an issue with open dependencies cannot start),")
     print("then priority label (P0 first), then slack (critical path first), then issue number.")
     print()
-    print("| # | Issue | PR | Priority (fr) | Summary | Details | Lot |")
-    print("|---|-------|----|---------------|---------|---------|-----|")
+    print("| Issue / PR | Priority (fr) | Summary | Details | Lot |")
+    print("|------------|---------------|---------|---------|-----|")
     for i in lot_issues:
         iid = i["id"]
         critical = "★ critical path, " if iid in a["cp"] else ""
@@ -110,11 +129,12 @@ def main() -> int:
             f"{critical}wave {a['wave'][iid]}, {len(a['succ'].get(iid, []))} dependent(s), "
             f"size {i['size']} ({a['T'][iid]} pts), slack {a['slack'][iid]}"
         )
-        pr = prs.get(iid, "—")
+        prs = pr_links_for(i, pr_by_issue, pr_by_repo)
+        pr_cell = "<br>".join(f"PR: [#{u.rsplit('/', 1)[-1]}]({u})" for u in prs) if prs else "PR: —"
+        issue_cell = f"issue: [{iid}]({issue_url(i['repo'], i['number'])})<br>{pr_cell}"
         print(
-            f"| {i['number']} | [{iid}]({issue_url(i['repo'], i['number'])}) | {pr} "
-            f"| {PRIO_FR.get(i['prio_label'], i['prio_label'])} | {sd.short_title(i, 60)} "
-            f"| {details} | {i['milestone'].split(' (')[0]} |"
+            f"| {issue_cell} | {PRIO_FR.get(i['prio_label'], i['prio_label'])} "
+            f"| {sd.short_title(i, 60)} | {details} | {i['milestone'].split(' (')[0]} |"
         )
     blocked_in_lot = [b for b in blocked if b[0] in {i["id"] for i in lots[current]}]
     if blocked_in_lot:
