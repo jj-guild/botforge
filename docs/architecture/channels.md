@@ -14,8 +14,8 @@ treat them as law.
   used on first creation; a human renaming a salon in Discord must
   never break the bot.
 - The registry heals **on demand**: the boot pass provisions a virgin
-  guild, and the sync button ("Synchroniser") re-provisions anything
-  missing afterwards (salon deleted, message unpinned, post deleted).
+  guild, and the Sync button re-provisions anything missing afterwards
+  (channel deleted, message unpinned, post deleted).
   While an entity exists in the database and is not disabled, its
   salon/pinned message comes back at the next sync — nothing watches
   Discord in real time, nothing runs in a loop.
@@ -28,14 +28,13 @@ treat them as law.
   **ephemeral view**; the pinned message itself is edited in place when
   its content changes.
 - **Auto-refresh.** The guild's pinned views are NEVER refreshed
-  wholesale — the single trigger is a **guild language change** (the
-  pins re-read their labels). Every other mutation heals at its own
-  surface (forum posts through the action's sync, counters at the
-  Synchroniser or the boot); a per-action full-pin refresh burns the
-  channel's PATCH budget.~~ When the language changes, the surface calls
-  the pin-refresher registry
+  wholesale — the single trigger is a **guild language change**: the
+  surface calls the pin-refresher registry
   (`pinned_views.refresh_registered_pins`) so every registered pin is
-  rebuilt with fresh data.
+  rebuilt with fresh data. Every other mutation heals at its own
+  surface (forum posts through the action's sync, counters at the Sync
+  button or at boot); a per-action full-pin refresh burns the
+  channel's PATCH budget.
 - **Read-only by default.** Pinned salons are locked (`send_messages`
   denied for @everyone, the bot keeps writing through its own
   overwrite). The bot-admin panel exposes a per-category read-only

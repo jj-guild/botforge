@@ -1,182 +1,181 @@
-# Channel tree — organisation des salons et des menus
+# Channel tree — channels and menus organization
 
-> Source de vérité : comment chaque mod/jeu organise ses salons,
-> où vivent les menus épinglés, et comment faire évoluer l'arbre.
-> Le provisioning applique ces règles automatiquement (SDK panels).
+> Source of truth: how each mod/game organizes its channels, where the
+> pinned menus live, and how to evolve the tree. Provisioning applies
+> these rules automatically (SDK panels).
 
-## L'arbre de référence
+## Reference tree
 
 ```
 GUILD
 │
-├── # 🗺️ général ………………… [menu: view:home]
-├── # 💬 discussions …………… (libre, public)
+├── # 🗺️ general ………… [menu: view:home]
+├── # 💬 discussions … (open, public)
 │
-├── 📂 🤖 bot
+├── 📂 bot
 │   ├── # 📜 logs
-│   ├── # 🛠️ admin …………… [menu: view:bot:admin]
-│   └── # ⚖️ décisions ……… (libre, admin)
+│   ├── # 🛠️ admin ……… [menu: view:bot:admin]
+│   └── # ⚖️ decisions … (open, admin)
 │
-├── 📂 🎮 games
-│   ├── # 🗺️ général ……… [menu: view:games:home]
-│   └── # 🛠️ admin ………… [menu: view:games:admin]
+├── 📂 games
+│   ├── # 🗺️ general … [menu: view:games:home]
+│   └── # 🛠️ admin ……… [menu: view:games:admin]
 │
 ├── 📂 ⚔️ games/aoe2
-│   ├── # 🗺️ général ……… [menu: view:aoe2:home]
-│   ├── # 📡 live …………… [dashboard: view:aoe2:live]
-│   ├── # 🏛️ civilisations (forum, sync)
-│   ├── # 🌍 maps …………… (forum, sync)
-│   ├── # 🧱 map pools …… (forum, sync)
-│   └── # 🛠️ admin ………… [menu: view:aoe2:admin]
+│   ├── # 🗺️ general … [menu: view:aoe2:home]
+│   ├── # 📡 live ……… [dashboard: view:aoe2:live]
+│   ├── # 🏛️ civilizations (forum, sync)
+│   ├── # 🌍 maps ………… (forum, sync)
+│   ├── # 🧩 map pools … (forum, sync)
+│   └── # 🛠️ admin ……… [menu: view:aoe2:admin]
 │
 ├── 📂 🧩 mods
-│   ├── # 🗺️ général ……… [menu: view:mods:home]
-│   └── # 🛠️ admin ………… [menu: view:mods:admin]
+│   ├── # 🗺️ general … [menu: view:mods:home]
+│   └── # 🛠️ admin ……… [menu: view:mods:admin]
 │
-├── 📂 🧩 mods/<mod>   (un dossier par mod, à venir)
-│   ├── # 🗺️ général ……… [menu: view:<mod>:home]
-│   ├── # 💬 discussions (libre, public)
-│   ├── # <data-*> ………… (readonly, sync)
-│   ├── # 🛠️ admin ………… [menu: view:<mod>:admin]
-│   └── # ⚖️ décisions … (libre, admin)
+├── 📂 🧩 mods/<mod>   (one folder per mod, upcoming)
+│   ├── # 🗺️ general … [menu: view:<mod>:home]
+│   ├── # 💬 discussions (open, public)
+│   ├── # <data-*> ……… (readonly, sync)
+│   ├── # 🛠️ admin ……… [menu: view:<mod>:admin]
+│   └── # ⚖️ decisions … (open, admin)
 │
-└── 📂 🎮 games/<jeu>   (un dossier par jeu, à venir)
-    ├── # 🗺️ général ……… [menu: view:<jeu>:home]
-    ├── # 💬 discussions (libre, public)
-    ├── # <forums> ………… (forums, sync)
-    ├── # 🛠️ admin ………… [menu: view:<jeu>:admin]
-    └── # ⚖️ décisions … (libre, admin)
+└── 📂 🎮 games/<game>   (one folder per game, upcoming)
+    ├── # 🗺️ general … [menu: view:<game>:home]
+    ├── # 💬 discussions (open, public)
+    ├── # <forums> ……… (forums, sync)
+    ├── # 🛠️ admin ……… [menu: view:<game>:admin]
+    └── # ⚖️ decisions … (open, admin)
 
-Les dossiers de **regroupement** (games, mods, games/<jeu>) ne portent
-que `général` et `admin` : les échanges et décisions vivent dans les
-dossiers de **périmètre** (mods/<mod>, games/<jeu>), jamais dans les
-dossiers de regroupement.
+Grouping folders (games, mods, games/<game>) carry only `general` and
+`admin`: exchanges and decisions live in the **perimeter** folders
+(mods/<mod>, games/<game>), never in the grouping folders.
 ```
 
-## Les règles structurelles
+## Structural rules
 
-1. **Un périmètre = un dossier** (catégorie avec slash :
-   `games/aoe2`, `mods/ladder`). Les salons du dossier ne répètent
-   pas le scope (`# civs`, pas `# aoe2-civs`). Le scope racine
-   (`root`) porte `général` et `discussions` **sans catégorie**.
+1. **One perimeter = one folder** (category with a slash:
+   `games/aoe2`, `mods/ladder`). The folder's channels do not repeat the
+   scope (`# civs`, not `# aoe2-civs`). The root scope (`root`) carries
+   `general` and `discussions` **without a category**.
 
-2. **Le bot s'autorise toujours** : chaque salon provisionné porte
-   un overwrite explicite pour le bot lui-même (view, send, manage,
-   embed, attach) — sinon un `view_channel=False` pour @everyone
-   verrouille le bot hors de son propre salon et toutes les surfaces
-   (pins, syncs, dashboards) se dégradent en 403. Règle appliquée
-   par le provisioning, jamais contournée à la main.
+2. **The bot always allows itself**: every provisioned channel carries
+   an explicit overwrite for the bot itself (view, send, manage, embed,
+   attach) — otherwise a `view_channel=False` for @everyone locks the
+   bot out of its own channel and every surface (pins, syncs,
+   dashboards) degrades to 403. Rule enforced by provisioning, never
+   bypassed by hand.
 
-3. **Best-effort par salon, jamais par scope** : une opération
-   Discord qui échoue sur un salon (403 sur un déplacement, quota,
-   etc.) saute ce salon et poursuit le scope — les résolutions des
-   autres salons se persistent quand même. Un échec de salon ne
-   doit jamais vider tout un dossier (leçon du 2026-10-13 : un
-   seul 403 sur `channel.edit(category=...)` laissait tout un scope
-   non résolu, donc vide).
+3. **Best-effort per channel, never per scope**: a Discord operation
+   that fails on one channel (403 on a move, rate limit, …) skips that
+   channel and continues the scope — the other channels' resolutions
+   still persist. A channel failure must never empty a whole folder
+   (lesson of 2026-10-13: a single 403 on `channel.edit(category=...)`
+   left a whole scope unresolved, hence empty).
 
-4. **La résolution se fait par id stocké, jamais par nom** :
-   chaque salon provisionné est persisté sous
-   `tree:<scope>:<clé>` (collection `channels`) ; les syncs, pins
-   et dashboards résolvent par cet id. Le nom affiché n'est qu'un
-   libellé traduit — aucun code ne résout par nom. Le
-   provisioning est le **seul** propriétaire de la création : une
-   résolution qui ne trouve pas d'id stocké ne crée rien (no-op).
-5. **L'ordre canonique** dans chaque dossier :
-   `général` → `discussions` (public, unique — jamais de doublon
-   chat/discussions) → salons data (readonly, sync) → `admin` →
-   `décisions`. `admin` et `décisions` ferment toujours le dossier.
-6. **La catégorie `bot` est privée** (bot-admins). Les échanges
-   publics vivent dans `# discussions` à la racine ; il n'y a pas
-   de `bot/chat` ni de `admin-chat` à la racine.
-7. **Traduction à la création** : chaque salon est nommé dans la
-   langue de la guilde au provisioning (`général`, `discussions`,
-   `décisions`, `civs`...). La clé interne (locale key) est stable ;
-   seul le nom affiché est traduit ; le heal reconnaît les salons
-   par leur clé, jamais par leur nom affiché.
-8. **Les salons à menu sont readonly** (personne n'écrit dedans,
-   admins compris). Les échanges vont dans `discussions` (public)
-   ou `décisions` (admin du périmètre).
-9. **Les ids de vues sont plats** : le scope d'un id de vue est le
-   **dernier segment** du scope du dossier — `games/aoe2` donne
-   `view:aoe2:home`, `view:aoe2:admin`, `view:aoe2:live` ;
-   `mods/ladder` donnera `view:ladder:news`. Jamais de slash dans un
-   id de vue : ils doivent rester quotables.
+4. **Resolution by stored id, never by name**: each provisioned channel
+   is persisted under `tree:<scope>:<key>` (collection `channels`);
+   syncs, pins and dashboards resolve by that id. The display name is
+   only a translated label — no code resolves by name. Provisioning is
+   the **only** owner of creation: a resolution that finds no stored id
+   creates nothing (no-op).
 
-0. **Chaque menu est un `PanelSpec`** (SDK `kingdoms.discord.ui`) :
-   `name` (registre `view:<guild-id>:<slug>`), `pinned_on`
-   (channel + PinMode LATEST_ONLY|ALL|None), `autoheal`,
-   `navigable` (False partout : figé, ephemerals), `permissions`
-   (rôles requis), `build`. Le SDK provisionne, épingle, traduit ; la cicatrisation
-   est à la demande (le bouton Synchroniser du périmètre), jamais
-   en temps réel.
+5. **Canonical order** in each folder: `general` → `discussions` (public,
+   unique — never a chat/discussions duplicate) → data channels
+   (readonly, sync) → `admin` → `decisions`. `admin` and `decisions`
+   always close the folder.
 
-## Les menus : figés + navigation ephemeral
+6. **The `bot` category is private** (bot-admins). Public exchanges live
+   in `# discussions` at the root; there is no `bot/chat` nor
+   `admin-chat` at the root.
 
-Un menu épinglé est **statique** : sa page ne change jamais. Ses
-boutons ouvrent des **vues ephemeral** dans lesquelles on navigue
-(retour, sous-vues, modals). Les surfaces publiques n'exposent
-**jamais** de bouton d'action directement.
+7. **Translation at creation**: each channel is named in the guild's
+   language at provisioning time (`general`, `discussions`,
+   `decisions`, `civs`…). The internal key (locale key) is stable; only
+   the display name is translated; the heal recognizes channels by their
+   key, never by their display name.
 
-### Le bouton Admin unique
+8. **Menu channels are readonly** (nobody writes in them, admins
+   included). Exchanges go to `discussions` (public) or `decisions`
+   (perimeter admin).
 
-Sur un post public (forum map, pool, civ), un seul bouton visible :
-**⚙️ Admin**. Il ouvre un ephemeral de gestion, vérifie la
-permission au clic, et propose les boutons contextualisés **grisés
-selon l'état** :
+9. **View ids are flat**: a view id's scope is the **last segment** of
+   the folder scope — `games/aoe2` gives `view:aoe2:home`,
+   `view:aoe2:admin`, `view:aoe2:live`; `mods/ladder` will give
+   `view:ladder:news`. Never a slash in a view id: they must stay
+   quotable.
 
-| Post | Ephemeral admin |
+10. **Every menu is a `PanelSpec`** (SDK `kingdoms.discord.ui`):
+    `name` (registry `view:<guild-id>:<slug>`), `pinned_on`
+    (channel + PinMode LATEST_ONLY|ALL|None), `autoheal`,
+    `navigable` (False everywhere: pinned, ephemerals), `permissions`
+    (required roles), `build`. The SDK provisions, pins, translates;
+    healing is **on demand** (the perimeter's Sync button), never in
+    real time.
+
+## Menus: pinned + ephemeral navigation
+
+A pinned menu is **static**: its page never changes. Its buttons open
+**ephemeral views** in which you navigate (back, sub-views, modals).
+Public surfaces **never** expose an action button directly.
+
+### The single Admin button
+
+On a public post (map forum post, pool, civ), a single visible button:
+**⚙️ Admin**. It opens a management ephemeral, checks the permission at
+click time, and offers buttons **greyed out by context**:
+
+| Post | Admin ephemeral |
 |---|---|
-| Map | [Ajouter à un pool] [Supprimer] — supprimer grisé si la map est dans un pool actif ; ajouter grisé si aucun pool éditable |
-| Map pool | [Éditer] [Publier] [Fermer] [Supprimer] — grisés selon le lifecycle (édition → Publier actif ; publiée → Fermer actif ; fermée → Supprimer actif, confirmation par le nom) |
+| Map | [Add to a pool] [Delete] — delete greyed if the map is in an active pool; add greyed if no editable pool |
+| Map pool | [Edit] [Publish] [Close] [Delete] — greyed by lifecycle (editing → Publish active; published → Close active; closed → Delete active, confirmed by name) |
 
-**Règle à retenir** : les boutons dangereux ne sont jamais exposés
-sur une surface publique ; ils vivent derrière le bouton Admin,
-en ephemeral, vérifiés au clic, grisés par contexte.
+**Rule to remember**: dangerous buttons are never exposed on a public
+surface; they live behind the Admin button, in an ephemeral, checked at
+click time, greyed by context.
 
-## Comment ajouter un périmètre (jeu ou mod)
+## How to add a perimeter (game or mod)
 
-1. **Déclarer les salons** du dossier (clé stable + label i18n +
-   kind: text/forum/category + access: public/admin/readonly).
-2. **Déclarer les PanelSpecs** : `<scope>-home` (public, readonly,
-   autoheal), `<scope>-admin` (bot-admins du périmètre),
-   éventuellement `<scope>-live` ou data panels.
-3. **Enregistrer** au boot : le SDK provisionne le dossier dans la
-   langue de la guilde, épingle les menus, cicatrise.
-4. **Les données** (posts de forum) restent gérées par les syncs
-   périodiques — un post par entité, avec son bouton Admin.
+1. **Declare the folder's channels** (stable key + i18n label + kind:
+   text/forum/category + access: public/admin/readonly).
+2. **Declare the PanelSpecs**: `<scope>-home` (public, readonly,
+   autoheal), `<scope>-admin` (perimeter bot-admins), optionally
+   `<scope>-live` or data panels.
+3. **Register at boot**: the SDK provisions the folder in the guild's
+   language, pins the menus, heals.
+4. **Data** (forum posts) stays managed by periodic syncs — one post
+   per entity, with its Admin button.
 
-### Exemple — mod ladder (à venir)
+### Example — ladder mod (upcoming)
 
 ```
 📁 mods/ladder
-   ├── # général        ……………………………………… [menu: ladder-home]
-   ├── # discussions    ……………………………………… (libre, public)
-   ├── # classement      ……………………………………… (readonly, sync — top N)
-   ├── # news            ……………………………………… (readonly, sync — résultats)
-   ├── # matchs          ……………………………………… (readonly, sync — matchs joués)
-   ├── # admin          ……………………………………… [menu: ladder-admin]
-   └── # décisions      ……………………………………… (libre, admin)
+   ├── # general        ……… [menu: ladder-home]
+   ├── # discussions    ……… (open, public)
+   ├── # leaderboard    ……… (readonly, sync — top N)
+   ├── # news           ……… (readonly, sync — results)
+   ├── # matches        ……… (readonly, sync — played matches)
+   ├── # admin          ……… [menu: ladder-admin]
+   └── # decisions      ……… (open, admin)
 ```
 
-### Exemple — mod kingdoms (à venir)
+### Example — kingdoms mod (upcoming)
 
 ```
 📁 mods/kingdoms
-   ├── # général        ……………………………………… [menu: kingdoms-home]
-   ├── # discussions    ……………………………………… (libre, public)
-   ├── # carte          ……………………………………… (readonly, sync)
-   ├── # admin          ……………………………………… [menu: kingdoms-admin]
-   └── # décisions      ……………………………………… (libre, admin)
+   ├── # general        ……… [menu: kingdoms-home]
+   ├── # discussions    ……… (open, public)
+   ├── # map            ……… (readonly, sync)
+   ├── # admin          ……… [menu: kingdoms-admin]
+   └── # decisions      ……… (open, admin)
 ```
 
-## Faire évoluer l'arbre
+## Evolving the tree
 
-- **Ajouter un salon data** : clé + label + provisioning — le heal
-  le recrée ; aucun code de menu à toucher s'il n'a pas de menu.
-- **Ajouter un menu** : un PanelSpec de plus ; le SDK l'épingle au
-  prochain passage.
-- **Renommer** : la clé ne bouge jamais ; seul le label traduit
-  change — le heal suit par clé.
-- **Retirer** : retirer la déclaration ; le salon devient orphelin
-  (à archiver manuellement — le SDK ne supprime jamais).
+- **Add a data channel**: key + label + provisioning — the heal
+  recreates it; no menu code to touch if it has no menu.
+- **Add a menu**: one more PanelSpec; the SDK pins it on the next pass.
+- **Rename**: the key never moves; only the translated label changes —
+  the heal follows by key.
+- **Remove**: remove the declaration; the channel becomes orphan
+  (archive it manually — the SDK never deletes).
