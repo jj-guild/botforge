@@ -38,20 +38,20 @@ botforge-infra docs/DEPLOY-TEST-APP.md). `prod` deploys only from **released tag
 pinned image), run manually by identified production deployers gated by
 GitHub rulesets (see [VIBEWORKFLOW.md](../VIBEWORKFLOW.md)). The former
 `dev` environment is renamed `test`: it is a validation environment on
-the VPS, not a developer machine. The `staging` environment is dropped:
+the hosting, not a developer machine. The `staging` environment is dropped:
 two environments cover the workflow (on-demand validation, released
 production).
 
 **Deployment mechanism (2026 revision, botforge-infra#2):** CD jobs run
-on a **GitHub Actions self-hosted runner installed on the VPS** (chosen
+on a **GitHub Actions self-hosted runner installed on the hosting** (chosen
 over SSH-from-Actions and cron-pull: it injects secrets from the GitHub
-environment secrets at deploy time instead of storing them on the VPS,
+environment secrets at deploy time instead of storing them on the hosting,
 attaches deployment to the merge event, and needs no inbound SSH
 exposure). The runner carries the labels `self-hosted, botforge, env-test`
-(one runner — one VPS — per environment; each future environment VPS
+(one runner — one hosting — per environment; each future environment hosting
 gets its own `env-*` label, and the CD jobs target the matching label).
 Full installation procedure:
-[botforge-infra docs/VPS-SETUP.md](https://github.com/jj-guild/botforge-infra/blob/main/docs/VPS-SETUP.md).
+[botforge-infra docs/HOSTING-SETUP.md](https://github.com/jj-guild/botforge-infra/blob/main/docs/HOSTING-SETUP.md).
 
 ## Alternatives Considered
 

@@ -29,7 +29,7 @@ guard test is a story, not a memory.
 
 No entry yet — the first fixed incident lands here.
 
-## Scope: deploy & infra (botforge-infra, VPS, runners)
+## Scope: deploy & infra (botforge-infra, hosting, runners)
 
 ### 2026-10-16 — Hours of hypotheses on a silent failure
 - Symptom: a flow silently does nothing; no error, no logs.

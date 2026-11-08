@@ -87,8 +87,8 @@ This platform is a pure vibe-coding test: the agent does 100% of the
 technical work. Never propose a solution that requires a human to run a CLI
 command, a script, or any local tooling — the only manual technical actions
 are **clicks in the GitHub web UI** (approving PRs, production deployment
-approvals, one-time admin: teams, rulesets, environments, secrets, VPS
-runner install following the infra VPS-SETUP guide), performed by authorized
+approvals, one-time admin: teams, rulesets, environments, secrets, hosting
+runner install following the infra HOSTING-SETUP guide), performed by authorized
 humans. When a GitHub admin action is needed that the agent cannot perform,
 point the human at the exact web UI page — never at a terminal or a command
 to copy.

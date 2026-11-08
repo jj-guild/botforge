@@ -1,7 +1,7 @@
 # Vibe-coding workflow
 
 This document describes the operating model used to build BotForge: the full
-interaction loop between the AI agent, GitHub, the VPS, Discord, and the humans
+interaction loop between the AI agent, GitHub, the hosting, Discord, and the humans
 (game designer, developer).
 
 BotForge is built by AI agent sessions that have **no access to previous
@@ -58,7 +58,7 @@ org owner):
 | Implementation | Feature branches `vibe/<slug>` → PRs | Agent |
 | Approvals & merges | PR review, GitHub rulesets | CODEOWNERS review; GitHub automerges the ready PR (rebase-only — see [GUIDES/rulesets.md](GUIDES/rulesets.md)) |
 | Versions | Git tags + GitHub releases | Agent executes on request; permissions enforced by GitHub |
-| Deployment | `botforge-infra` GitOps (test / prod, self-hosted runner on the VPS) | Agent via CI/CD; ops approves prod |
+| Deployment | `botforge-infra` GitOps (test / prod, self-hosted runner on the hosting) | Agent via CI/CD; ops approves prod |
 
 ## End-to-end flow
 
@@ -75,8 +75,8 @@ flowchart TD
     REV -->|"Approve + merge"| MAIN["main branch"]
     A -->|"On request"| TAG["Tag vX.Y.Z"]
     TAG -->|"Release"| REL["GitHub Release"]
-    REL -->|"GitOps trigger"| VPS["VPS - Docker Compose"]
-    VPS -->|"Bot running"| DISC["Discord"]
+    REL -->|"GitOps trigger"| hosting["hosting - Docker Compose"]
+    hosting -->|"Bot running"| DISC["Discord"]
     DISC -->|"Game Designer validates"| GD
 ```
 
@@ -283,9 +283,9 @@ An agent session (which starts with no memory of previous conversations):
   The reviewer remains free to merge or ask for changes at any time.
 - Every feature is validated by the game designer in Discord before a release
   is tagged.
-- Environments (all on the BotForge VPS, deployed by the CD pipeline
+- Environments (all on the BotForge hosting, deployed by the CD pipeline
   running on its self-hosted runner — installation guide:
-  [VPS-SETUP.md](https://github.com/jj-guild/botforge-infra/blob/main/docs/VPS-SETUP.md)):
+  [HOSTING-SETUP.md](https://github.com/jj-guild/botforge-infra/blob/main/docs/HOSTING-SETUP.md)):
   - **personal (`<alias>`)**: deployed **on demand** — the `/deploy` PR
     comment default (the requestor's env, from the roster alias; the PR
     image, commit-SHA tagged, is pinned in the `deploy/<alias>` state

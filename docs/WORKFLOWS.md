@@ -265,7 +265,7 @@ which runs on the environment's own runner:
 | `/logs [env] [--service S] [--since 30m] [--from iso] [--to iso] [--tail N]` | `env-logs` | ops, dev on test | `env-logs` workflow: filtered `docker compose logs` dump, posted back in the thread + private artifact. Read-only. |
 | `/restart [env]` | `env-control` | ops, dev on test | `env-control` workflow (restart): in-place restart, no pull, no recreate. |
 | `/rollback [env]` | `rollback` | ops | `rollback-state` dispatch: reverts the last pin on the state branch, the push re-triggers the deployment of the previous known-good image. |
-| `/dump-db [env]` | `db-dump` | ops | `db-daily-dump` workflow on demand: mongodump + Redis snapshot, VPS archive + private artifact. |
+| `/dump-db [env]` | `db-dump` | ops | `db-daily-dump` workflow on demand: mongodump + Redis snapshot, hosting archive + private artifact. |
 
 The daily cron (04:30 UTC) runs the same `db-daily-dump` on every
 environment — no gate needed: the dump is read-only for the data.

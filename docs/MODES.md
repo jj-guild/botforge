@@ -106,11 +106,11 @@ the org:
 
 | Environment | Branch | Runner label | Discord | Who deploys |
 |---|---|---|---|---|
-| `env-<alias>` (personal) | `vibe/<alias>/main` | `<alias>` (shared VPS ok) | Personal server, personal bot | The owner (any mode) |
+| `env-<alias>` (personal) | `vibe/<alias>/main` | `<alias>` (shared hosting ok) | Personal server, personal bot | The owner (any mode) |
 | `test` (shared validation) | `deploy/test` | `test` | Shared validation server | Any user, via `/deploy test` |
-| `prod` | `deploy/prod` | `prod` (own VPS) | Production server | Release pipeline + ops approval |
+| `prod` | `deploy/prod` | `prod` (own hosting) | Production server | Release pipeline + ops approval |
 
-Co-located personal environments on one VPS use **per-env debug host
+Co-located personal environments on one hosting use **per-env debug host
 ports** (`botforge-infra` docs/ENVIRONMENTS.md); each environment
 remains an isolated sandbox (own compose project, own data volumes).
 

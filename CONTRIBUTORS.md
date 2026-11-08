@@ -98,7 +98,7 @@ the session checks its human's agent-scope before acting):
 | `/restart`, `/status`, `/stop`, `/start` — control a running env (env-control workflow) | `vibe`+ on **their personal env**; `dev`+ on shared envs (`test`); `ops`+ anywhere; maintainers everywhere | Prod control additionally requires the GitHub environment approval |
 | `/clean-env [env] [--deep]` — clean an env runner's Docker residue (dangling images, stopped containers, build cache; never the running stack) | `vibe`+ on **their personal env**; `dev`+ on shared envs (`test`); `ops`+ anywhere; maintainers everywhere | Never on prod; `--deep` also drops unused volumes/images (referenced ones stay) |
 | `/logs [env] [--service S] [--since 30m] [--from iso] [--to iso] [--tail N]` — dump an env's logs (read-only) | `vibe`+ on **their personal env**; `dev`+ on shared envs (`test`); `ops`+ anywhere; maintainers everywhere | Read-only; posted back on the thread, full dump as a private artifact |
-| `/dump-db [env]` — dump an env's databases | `ops` | mongodump + Redis snapshot; VPS archive + private artifact; also runs daily on cron (04:30 UTC) |
+| `/dump-db [env]` — dump an env's databases | `ops` | mongodump + Redis snapshot; hosting archive + private artifact; also runs daily on cron (04:30 UTC) |
 | `/release` — tag and release | `dev` or `platform` | Released tags only; prod deployment stays a separate ops approval |
 | `/rollback <env>` — revert a pin | `ops` | Prod reverts go through the revert PR + environment gate |
 | `/reset-env [env]` — wipe an env's data and reseed | the env's owner (self), or `ops` | Destructive: a contributor may reset only their own environment (their roster alias); ops may reset any. **Never allowed on prod** — no role, no approval path |
@@ -184,7 +184,7 @@ then reported to the maintainers) — a login present in the doc but
 missing on GitHub is **added automatically**.
 
 **Shared infrastructure pools**: a team may declare a `shared-infra`
-capacity — machines (VPS/RPi/runner fleet) shared by its members for
+capacity — machines (hosting/RPi/runner fleet) shared by its members for
 their personal test environments, maintained by the team for its own
 members (a dev team hosting its runners, a mod team its test bots).
 Anyone can still run their own machine instead; the pool is an
@@ -194,7 +194,7 @@ self-hosted runner groups consistent with the roster.
 | Team slug | Parent | Repos & role | Purpose |
 | --------- | ------ | ------------ | ------- |
 | `maintainers` | — | botforge: `maintain` · botforge-services: `maintain` · botforge-infra: `maintain` | Platform maintainers: review every non-delegated path (CODEOWNERS default), own governance docs, resolve drift |
-| `ops` | — | botforge: `write` · botforge-services: `write` · botforge-infra: `maintain` | Infra & environments: deploy approvals, secrets, VPS runner. `shared-infra`: hosts the org's shared runner fleet (test envs of members without their own machine) |
+| `ops` | — | botforge: `write` · botforge-services: `write` · botforge-infra: `maintain` | Infra & environments: deploy approvals, secrets, hosting runner. `shared-infra`: hosts the org's shared runner fleet (test envs of members without their own machine) |
 | `devs` | — | botforge: `write` · botforge-services: `write` · botforge-infra: `write` | Platform developers: review core/platform code, challenge designs. `shared-infra`: may pool member machines as runners for the team's test envs |
 | `game-designers` | — | botforge: `write` · botforge-services: `write` · botforge-infra: `read` | Game designers: own their mods (rules, docs, environments), review their mod PRs |
 | `vibe-coders` | — | botforge: `write` · botforge-services: `write` · botforge-infra: `read` | Anyone running vibe-coding sessions: drive PRs to ready, deploy to test |

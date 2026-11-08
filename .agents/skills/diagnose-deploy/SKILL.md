@@ -1,12 +1,12 @@
 ---
 name: diagnose-deploy
-description: Diagnose a stuck or pending deployment on botforge-infra (test or prod) before suspecting the VPS or runner. Use when a Deploy environment run stays pending/queued for a long time, when a deployment never finishes, or when the developer reports a stuck deploy.
+description: Diagnose a stuck or pending deployment on botforge-infra (test or prod) before suspecting the hosting or runner. Use when a Deploy environment run stays pending/queued for a long time, when a deployment never finishes, or when the developer reports a stuck deploy.
 ---
 
 # Diagnose a stuck deploy
 
 A deployment that never finishes is almost never the runner's fault. Run
-the diagnosis tooling **before** suspecting the VPS: in the 2026-09-24 prod
+the diagnosis tooling **before** suspecting the hosting: in the 2026-09-24 prod
 incident, the runner was healthy and idle the whole time while every deploy
 stayed pending for hours with no notification.
 
@@ -58,7 +58,7 @@ Read the output top-down:
 3. **Broken `runs-on`** (one comma-joined label instead of a 3-element
    array — the pre-`fromJSON` bug) → no runner will ever match: cancel.
 4. **Everything green on GitHub** → then, and only then, check the
-   runner on the VPS (VPS-SETUP troubleshooting).
+   runner on the hosting (HOSTING-SETUP troubleshooting).
 
 Agent sessions exit early: `--json` returns
 `{environment, newest_run, stale_runs, approval_pending_run, deploy_jobs,

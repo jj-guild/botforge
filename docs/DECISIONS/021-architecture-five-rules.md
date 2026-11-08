@@ -13,7 +13,7 @@ The 2026-11-05 audit found the process split (ADR-0020) eroded on five axes:
 the bot spoke directly to ext-librematch, the AoE2 game code lived in `core`,
 the ext providers imported game code, collections were read across ownership
 lines, and nothing prevented any of it from coming back. A provider ban
-(Liquipedia 429s) had condemned every environment on the VPS — the blast
+(Liquipedia 429s) had condemned every environment on the hosting — the blast
 radius of one leaky seam.
 
 ## Decision

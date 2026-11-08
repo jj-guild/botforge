@@ -156,7 +156,7 @@ deployments instead of guessing.
    (`workflow_dispatch` with the tag), which pins the released image on
    `deploy/prod`.
 
-## 4. Production deployment (released code → prod VPS)
+## 4. Production deployment (released code → prod hosting)
 
 Production is the most protected environment. Three gates stack:
 
@@ -172,7 +172,7 @@ Production is the most protected environment. Three gates stack:
 
 | | Game designer | Developer | Ops |
 |--|--|--|--|
-| Does | Validates the release in Discord on the test environment | Nothing on prod (cannot deploy) | Runs the `Promote release` workflow for the validated tag and **clicks Approve** on the `prod` environment protection; provisions the prod VPS + `env-prod` runner; sets the `prod` environment secrets in the UI |
+| Does | Validates the release in Discord on the test environment | Nothing on prod (cannot deploy) | Runs the `Promote release` workflow for the validated tag and **clicks Approve** on the `prod` environment protection; provisions the prod hosting + `env-prod` runner; sets the `prod` environment secrets in the UI |
 
 **Incident handle:** on a prod bug ticket, ops (or the agent working for
 them) can comment `/logs prod`, `/restart prod`, `/rollback prod`,

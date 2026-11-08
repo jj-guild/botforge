@@ -50,7 +50,7 @@ throughput, 5 GB monthly bandwidth, TLS + IP allowlist, persistence on.
    and it is serverless, but it is a third-party HTTP-based Redis dialect
    and meters per command. Rejected in favor of the official Redis
    offering, consistent with Atlas-for-Mongo.
-2. **Self-hosted Redis on the same VPS as the bot**: no external dependency
+2. **Self-hosted Redis on the same hosting as the bot**: no external dependency
    but adds ops burden (persistence, restarts, monitoring) for a hobby
    project. Rejected.
 3. **MongoDB for hot state too** (drop Redis from prod): fewer services but

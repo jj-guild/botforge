@@ -39,7 +39,7 @@ CAPABILITY_RULES: dict[str, dict] = {
     "env-logs": {"roles": ["ops", "dev", "mod", "vibe"], "own_env_roles": ["vibe", "mod", "dev", "ops"], "shared_env_roles": ["dev", "ops"], "help": "read an env's logs",
                  "usage": "/logs [env] [--service S] [--since 30m] [--from iso] [--to iso] [--tail N] — collect logs and post them back (read-only)."},
     "db-dump": {"roles": ["ops"], "help": "dump an env's databases",
-                "usage": "/dump-db [env] — mongodump + Redis snapshot, VPS archive + private artifact."},
+                "usage": "/dump-db [env] — mongodump + Redis snapshot, hosting archive + private artifact."},
     "release": {"roles": ["dev", "platform"], "help": "tag and release",
                 "usage": "/release — cut a release from main (auto-bumped from Conventional Commits, never hand-picked)."},
     "rollback": {"roles": ["ops"], "help": "revert a pin",

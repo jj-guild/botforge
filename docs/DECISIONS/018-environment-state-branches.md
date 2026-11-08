@@ -7,7 +7,7 @@
 ## Context
 
 ADR-0007 established GitOps deployment: manifests live in Git on `main`,
-deploys run on the self-hosted VPS runners, and audit comes from Git history.
+deploys run on the self-hosted hosting runners, and audit comes from Git history.
 Two gaps surfaced while validating the `/status` deploy-link feature:
 
 1. **Floating image tag.** `deploy/test/docker-compose.yml` referenced
@@ -82,7 +82,7 @@ state of that environment as a single state file per deployed service.**
   the exact pushed image, even if a same-named tag moved).
 - Failed deploys leave the tip pointing at something not running: the state
   commit links its run, and the next state commit supersedes it; the health
-  gate keeps the VPS on the last healthy state.
+  gate keeps the hosting on the last healthy state.
 - One commit per deployment on the environment branch — the accepted price
   of a Git-native audit trail.
 

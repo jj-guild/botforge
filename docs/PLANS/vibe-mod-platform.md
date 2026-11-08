@@ -75,7 +75,7 @@ explicit ADR validated by the developer.
 ## 4. Quality of service
 
 - **Concurrency:** how many agent sessions can run simultaneously? (Cost,
-  VPS load, CI queue length.) Needs a session-scheduler design and a hard
+  hosting load, CI queue length.) Needs a session-scheduler design and a hard
   cap per environment.
 - **Cost control:** each session consumes model tokens + CI minutes + deploy
   time. Needs per-designer quota and budget alerts before community stage.
