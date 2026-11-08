@@ -64,10 +64,10 @@ jobs:
       verdict: ${{ steps.matrix.outputs.verdict }}
       reason: ${{ steps.matrix.outputs.reason }}
     steps:
-      - name: Check out the roster (kingdoms main — the source of truth)
+      - name: Check out the roster (botforge main — the source of truth)
         uses: actions/checkout@v4
         with:
-          repository: merlin-pinpin-org/kingdoms
+          repository: jj-guild/botforge
           ref: main
           sparse-checkout: |
             CONTRIBUTORS.md

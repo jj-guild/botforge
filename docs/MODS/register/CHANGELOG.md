@@ -6,8 +6,8 @@ here.
 ## [Unreleased]
 
 - Initial mod documentation: purpose, onboarding flow references, role
-  assignment, admin notifications, UserModel fields (kingdoms#1).
+  assignment, admin notifications, UserModel fields (botforge#1).
 - Full rules: name uniqueness, game selection, role assignment, admin
-  notification format, workflow timeouts (kingdoms#5).
+  notification format, workflow timeouts (botforge#5).
 - Full environment: permissions, channel categories, MongoDB collections
-  and indexes, Redis keys, configuration options (kingdoms#5).
+  and indexes, Redis keys, configuration options (botforge#5).

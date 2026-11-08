@@ -6,7 +6,7 @@
 
 **Date:** 2026-09-21
 
-**Reference:** kingdoms#62
+**Reference:** botforge#62
 
 ## Context
 
@@ -51,8 +51,8 @@ Webapp API  ─┘
 
 ### 3. Versioned API, read models for stats
 
-- The webapp consumes a versioned HTTP API: `src/kingdoms/api/`
-  (FastAPI), mounted under `/api/v1/`, in `kingdoms-services`. It calls
+- The webapp consumes a versioned HTTP API: `src/botforge/api/`
+  (FastAPI), mounted under `/api/v1/`, in `botforge-services`. It calls
   application services only.
 - **Write side**: application services (same code path as the bot).
 - **Read side**: a `StatsService`/query layer over MongoDB aggregation
@@ -66,11 +66,11 @@ Webapp API  ─┘
 
 ### 4. Deployment boundary
 
-- The API ships as one more service in the same `kingdoms-services`
+- The API ships as one more service in the same `botforge-services`
   deployment (its own container in the compose manifests,
-  `kingdoms-infra`), behind a reverse proxy with HTTPS.
+  `botforge-infra`), behind a reverse proxy with HTTPS.
 - The frontend (SPA or server-rendered) lives in a separate repository
-  `kingdoms-webapp`, created only when the API contract stabilizes.
+  `botforge-webapp`, created only when the API contract stabilizes.
 - OAuth redirect URIs and client credentials are provisioned per
   environment (GitHub secrets, host `.env`), like existing tokens.
 
@@ -123,9 +123,9 @@ flowchart TD
     subgraph FE["Frontends"]
         DBOT["Discord bot"]
         TBOT["Twitch bot (later)"]
-        SPA["Webapp UI (kingdoms-webapp repo, later)"]
+        SPA["Webapp UI (botforge-webapp repo, later)"]
     end
-    subgraph KSERV["kingdoms-services"]
+    subgraph KSERV["botforge-services"]
         API["api/ - FastAPI /api/v1"]
         APP["Application layer (core + mods + games)"]
         WFE["WorkflowEngine"]

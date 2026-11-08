@@ -16,6 +16,6 @@ labels: documentation
 ## Details
 
 <!-- Context: prior discussion with the game designer or developer, the
-     options considered, links to the related kingdoms-services or
-     kingdoms-infra issues and PRs. Docs changes track code changes —
+     options considered, links to the related botforge-services or
+     botforge-infra issues and PRs. Docs changes track code changes —
      an ADR is Proposed until the developer reviews it. -->

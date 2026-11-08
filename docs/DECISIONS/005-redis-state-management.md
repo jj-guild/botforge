@@ -2,7 +2,7 @@
 
 **Status:** Accepted
 **Date:** 2026-09-18
-**Reference:** kingdoms#6
+**Reference:** botforge#6
 
 ## Context
 
@@ -51,4 +51,4 @@ Use **Redis** for:
 
 - [ADR-0002](002-workflow-engine.md) — the durable/hot state split
 - [ARCHITECTURE.md](../ARCHITECTURE.md) — `StateService`
-- kingdoms-services#9 (StateService)
+- botforge-services#9 (StateService)

@@ -111,7 +111,7 @@ the org:
 | `prod` | `deploy/prod` | `prod` (own VPS) | Production server | Release pipeline + ops approval |
 
 Co-located personal environments on one VPS use **per-env debug host
-ports** (`kingdoms-infra` docs/ENVIRONMENTS.md); each environment
+ports** (`botforge-infra` docs/ENVIRONMENTS.md); each environment
 remains an isolated sandbox (own compose project, own data volumes).
 
 ## Agent rules (binding)

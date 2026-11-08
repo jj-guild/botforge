@@ -784,7 +784,7 @@ Seigneurs global devient le leaderboard Scriptorium). Les images
   3. ⏱️ **Gestion du temps** — Lancer / Pause / Décaler Jour J /
      Clôturer + dashboard épinglé + fenêtre de protection D56
      (absorbe le salon Gestion-saison de la phase 1.1 de l'épic
-     kingdoms-services#214 ; le marker `kingdoms:season:dashboard`
+     botforge-services#214 ; le marker `botforge:season:dashboard`
      reste inchangé) ;
   4. 🎯 **Compensation/Sanction** — trois objets : 📥 En attente
      d'arbitrage · 📖 Journal (rollback intégré) · 🚫 Bannis ;
@@ -851,7 +851,7 @@ Seigneurs global devient le leaderboard Scriptorium). Les images
   bannissement suit D72 (parcours du départ volontaire +
   compensation Seigneur de Guerre D67). La dissolution-sanction
   reste un cas séparé dans le dossier.
-- Mise en œuvre : kingdoms-services, épic #214 — une étape = une
+- Mise en œuvre : botforge-services, épic #214 — une étape = une
   PR = un déploiement = validation terrain ; le socle commun
   (Journal + Snapshot + Rollback) est construit avec la première
   PR du salon Royaume.

@@ -1,6 +1,6 @@
 # VIEWS — the map of menus and panels
 
-<!-- Generated from kingdoms-services config/views.yaml — edit the
+<!-- Generated from botforge-services config/views.yaml — edit the
      YAML, then regenerate (scripts/generate_views_doc.py). -->
 
 Every view of the bot: its id, its kind (a **menu** only navigates; a **panel** informs or acts), where it pins, and its buttons — each a link to its target.
@@ -219,7 +219,7 @@ Category: `ui.panels.categories.mods`.
 
 Platform views live in `config/views.yaml`; a mod's own views live in
 its own `config/mods/<mod>.views.yaml` (a mod's files never scatter —
-kingdoms#179) and merge into the same registry.
+botforge#179) and merge into the same registry.
 
 1. **Declare** the view in the right YAML:
    id, kind, pin scope, buttons (target/label/admin/sync/action);

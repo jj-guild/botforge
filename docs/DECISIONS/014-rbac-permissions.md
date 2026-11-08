@@ -6,13 +6,13 @@
 
 **Date:** 2026-09-21
 
-**Reference:** kingdoms#61
+**Reference:** botforge#61
 
 ## Context
 
 Roles today are Discord-centric: mods declare logical role keys
 (`ladder_admin`) resolved to Discord roles by `RoleService`, and
-`AdminService` (kingdoms-services#35) distinguishes bot admins from guild
+`AdminService` (botforge-services#35) distinguishes bot admins from guild
 admins. This cannot survive a second frontend. A Discord role does not
 exist on the webapp; a Twitch viewer has no roles at all. If each frontend
 re-implements access control, the same player will have different rights
@@ -144,4 +144,4 @@ flowchart TD
 - [ADR-0012](012-taxonomy-repo-strategy.md) — data ownership and
   application-layer enforcement
 - [ADR-0015](015-webapp-api-boundary.md) — webapp API boundary
-- kingdoms-services#35 — `AdminService` (bot vs guild admins)
+- botforge-services#35 — `AdminService` (bot vs guild admins)

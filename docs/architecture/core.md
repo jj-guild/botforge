@@ -1,7 +1,7 @@
 # Core services design
 
 This page is the design deep-dive of the generic core
-(`kingdoms-services/src/kingdoms/core/`). It complements
+(`botforge-services/src/botforge/core/`). It complements
 [ARCHITECTURE.md](../ARCHITECTURE.md), which stays the system overview. When
 the two disagree, the overview wins and this page must be fixed.
 
@@ -9,9 +9,9 @@ The core is **platform-agnostic**: it contains everything reusable across
 Discord or Twitch, and never imports platform-specific code (see
 [ADR-0001](../DECISIONS/001-multi-platform-architecture.md)). Implementation
 is tracked by the Phase 2 issues of
-[kingdoms-services](https://github.com/merlin-pinpin-org/kingdoms-services)
-(kingdoms-services#3–kingdoms-services#10, kingdoms-services#16,
-kingdoms-services#17).
+[botforge-services](https://github.com/jj-guild/botforge-services)
+(botforge-services#3–botforge-services#10, botforge-services#16,
+botforge-services#17).
 
 ## Service map
 
@@ -22,7 +22,7 @@ kingdoms-services#17).
 | `StateService` | Manages hot state in Redis (current step, short-lived payloads, locks) with MongoDB as durable backing store | [ADR-0005](../DECISIONS/005-redis-state-management.md) |
 
 Models and enums are described in the
-[overview](../ARCHITECTURE.md#2-generic-core-kingdoms-servicessrckingdomscore)
+[overview](../ARCHITECTURE.md#2-generic-core-botforge-servicessrcbotforgecore)
 and in [ADR-0004](../DECISIONS/004-mongodb-schema-design.md) for the MongoDB
 schema.
 
@@ -36,7 +36,7 @@ management, restart recovery, and event routing.
 Responsibilities:
 
 1. **Registry** — keep a registry of available `IWorkflow` implementations,
-   loaded from mod declarations (`kingdoms-services/config/mods/<mod>.yaml`)
+   loaded from mod declarations (`botforge-services/config/mods/<mod>.yaml`)
    at startup
 2. **Execution** — start a workflow instance for a user (or a channel),
    move it forward at each `handle_interaction` call, and complete or
@@ -137,7 +137,7 @@ Mods and workflows ask for a channel by **category**, never by name or
 ID. Categories are **mod-scoped**: the core enum keeps only platform-level
 categories (`ADMIN`, `REPORTS`, `LOGS`); each mod declares its own channel
 categories (e.g. the ladder mod: admins, rankings, info) in its mod config,
-provisioned automatically via `ModRegistry` (kingdoms-services#26). A mod
+provisioned automatically via `ModRegistry` (botforge-services#26). A mod
 category is addressed as `mod:key` (e.g. `ladder:ladder_rankings`).
 Resolution order is cache → database → platform creation, described in
 [ADR-0003](../DECISIONS/003-channel-categories.md) and diagrammed in the
@@ -166,7 +166,7 @@ issue raw Redis commands; they call typed accessors:
 
 Everything written through `StateService` must be reproducible from durable
 data (MongoDB or YAML config): Redis loss degrades performance, never
-correctness. Key naming follows `kingdoms:{scope}:{key}` (see
+correctness. Key naming follows `botforge:{scope}:{key}` (see
 [ADR-0005](../DECISIONS/005-redis-state-management.md)).
 
 ## 4. Extension points
@@ -187,8 +187,8 @@ implementations satisfy them structurally, without inheritance.
 ## 5. Testing strategy for core services
 
 Core services have no platform dependency, so they are tested with an
-in-memory `IPlatform` implementation (MockPlatform, kingdoms-services#24 —
-distinct from the `MockDiscord` mock objects of kingdoms-services#2)
+in-memory `IPlatform` implementation (MockPlatform, botforge-services#24 —
+distinct from the `MockDiscord` mock objects of botforge-services#2)
 plus in-memory MongoDB/Redis substitutes. Full strategy:
 [testing.md](testing.md).
 

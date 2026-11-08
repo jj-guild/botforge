@@ -2,7 +2,7 @@
 
 **Status:** Accepted
 **Date:** 2026-09-18
-**Reference:** kingdoms#6
+**Reference:** botforge#6
 
 ## Context
 
@@ -68,4 +68,4 @@ atomicity*.
 ## References
 
 - [ARCHITECTURE.md](../ARCHITECTURE.md) — models
-- kingdoms-services#4 (DB models)
+- botforge-services#4 (DB models)

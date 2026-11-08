@@ -19,8 +19,8 @@ lives in an issue, never only in a conversation.
    - Who can do it, where, how often? (gating, scope, cooldowns)
    - What happens in edge cases — offline player, missing role, tie,
      cancellation? (fail-closed behavior)
-   - Is it a rule (kingdoms docs), a bot feature (kingdoms-services),
-     an environment change (kingdoms-infra), or a mix?
+   - Is it a rule (botforge docs), a bot feature (botforge-services),
+     an environment change (botforge-infra), or a mix?
 2. **Simplify toward automation** — prefer:
    - deterministic rules over judgment calls (no "the bot decides");
    - explicit states over free text (a workflow enum, not a chat);
@@ -30,8 +30,8 @@ lives in an issue, never only in a conversation.
    - explaining the rule in one sentence a player would understand.
 3. **Write the issue** in the relevant repo, following its template
    (`## Objective` / `## Context` / `## Specifications` /
-   `## Acceptance criteria` / `## Dependencies` in kingdoms-services and
-   kingdoms-infra; `## Summary` / `## Details` in kingdoms). The issue must
+   `## Acceptance criteria` / `## Dependencies` in botforge-services and
+   botforge-infra; `## Summary` / `## Details` in botforge). The issue must
    be self-contained: future sessions have no conversation memory.
    - Acceptance criteria are **checkable** (a human can tick each box
      after testing in Discord).

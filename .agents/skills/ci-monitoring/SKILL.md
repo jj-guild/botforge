@@ -16,12 +16,12 @@ lint conclusion).
 1. **Before pushing — run the local checks in the sandbox** (systematic,
    every push, so CI confirms a result instead of discovering a failure
    five minutes later). The repo's Makefile is the menu; everything
-   sandbox-runnable runs there — kingdoms-services: `make lint`,
+   sandbox-runnable runs there — botforge-services: `make lint`,
    `make typecheck`, `make test`, `make docs-check`. Fix locally, then
    push.
 2. **List the runs** of the branch:
    ```bash
-   gh run list --repo merlin-pinpin-org/<repo> --branch <branch> \
+   gh run list --repo jj-guild/<repo> --branch <branch> \
      --json databaseId,workflowName,status,conclusion
    ```
 3. **Wait for completion by polling the status every 10-30s until the
@@ -59,7 +59,7 @@ lint conclusion).
 - **Required checks**: a required status check never uses a `paths:`
   filter — if a required check is missing on a PR, verify the workflow's
   `on:` triggers, not the ruleset first.
-- **Generated pydoc stale** (kingdoms-services Docs workflow: `docs/DEVELOPMENT/pydoc is stale — regenerate with 'make docs' and commit`): any edit under `src/` — a docstring counts — changes the generated pydoc. Local repro: `make docs-check`; fix: `make docs` in kingdoms-services and commit the regenerated HTML on the same branch.
+- **Generated pydoc stale** (botforge-services Docs workflow: `docs/DEVELOPMENT/pydoc is stale — regenerate with 'make docs' and commit`): any edit under `src/` — a docstring counts — changes the generated pydoc. Local repro: `make docs-check`; fix: `make docs` in botforge-services and commit the regenerated HTML on the same branch.
 
 ## Conventions kept
 

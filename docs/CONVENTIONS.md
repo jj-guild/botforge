@@ -1,7 +1,7 @@
-# Kingdoms conventions
+# BotForge conventions
 
-Shared conventions for the three Kingdoms repositories (`kingdoms`,
-`kingdoms-services`, `kingdoms-infra`). These rules apply everywhere; each
+Shared conventions for the three BotForge repositories (`botforge`,
+`botforge-services`, `botforge-infra`). These rules apply everywhere; each
 repo keeps only its local specifics in its own `AGENTS.md` and
 `docs/DEVELOPER.md`.
 
@@ -206,11 +206,11 @@ has a squash-or-rebase question to answer. The full ruleset reference
 and policy live in
 [GUIDES/rulesets.md](GUIDES/rulesets.md).
 
-A PR touching **mod-only code** (a mod's `src/kingdoms/mods/<mod>/`,
+A PR touching **mod-only code** (a mod's `src/botforge/mods/<mod>/`,
 its YAML declaration, its docs, its tests) is reviewed by the mod's
 designer only — no platform review. **Everything else — core, platform,
 infra, docs, workflows — requires a maintainer review**: the CODEOWNERS
-default rule (`* @merlin-pinpin-org/maintainers`) owns every path not
+default rule (`* @jj-guild/maintainers`) owns every path not
 explicitly delegated to a mod's designer, and each mod's paths are
 delegated by one explicit line (GitHub CODEOWNERS has no negative or
 regex patterns — per-mod lines added in the mod's own bootstrap PR are
@@ -273,7 +273,7 @@ No session can merge a PR through `gh` or the API (the org rulesets
 block it); ready PRs automerge, or a human clicks Merge. The cowboy
 equivalent of "merge a PR" is: push the PR's commits directly to
 `main`, bypassing the ruleset — allowed only when the human is a
-maintainer (read `CONTRIBUTORS.md` in the kingdoms repo), only
+maintainer (read `CONTRIBUTORS.md` in the botforge repo), only
 after the human explicitly activates cowboy mode, and only after
 the session asks for and receives an explicit confirmation for
 **each** push to `main`. **Cowboy activation is single-shot:** it
@@ -350,7 +350,7 @@ is the GitHub **environment variable** `TEST_GUILD_ID` on the env
 
 Entities carry **visible, unambiguous ids**, shown in every UI footer. **Every view carries its view id as its
 footer** — a `-#` line with the id in backticks (`view:aoe2:admin`),
-built through `kingdoms.core.ids.footer` or `MenuSpec.view_id`: the id
+built through `botforge.core.ids.footer` or `MenuSpec.view_id`: the id
 is the anchor every human feedback refers to, no view ships without
 one:
 
@@ -405,7 +405,7 @@ needs, trunk-based style:
    a doc commit and its lint conclusion). Admins can merge with pending
    checks, so the discipline is the agent's, not GitHub's.
 2. **A user-facing change is validated live first.** Deploy the PR to the
-   environment (the `/deploy` PR comment on `kingdoms-services` — the
+   environment (the `/deploy` PR comment on `botforge-services` — the
    requestor's personal env by default, `test` explicitly),
    **verify the deployment yourself** (healthchecks green, stack
    healthy, no crash loop), **then** mark the PR ready and ask the human
@@ -421,7 +421,7 @@ needs, trunk-based style:
    merged PR is the one that was deployed there.
 4. **Normal-size PRs, always.** One PR = one coherent, reviewable scope
    (a feature slice, a fix, a doc change). Never a session-long
-   mega-PR — oversized PRs caused the 2026-10 drifts (kingdoms#152,
+   mega-PR — oversized PRs caused the 2026-10 drifts (botforge#152,
    #154, #155). When a scope grows, ship the completed part first and
    open the next PR for the rest: small PRs merge fast and review
    honestly. Each commit stays a self-contained logical unit that
@@ -443,16 +443,16 @@ Every artifact mentioned **anywhere** — a session report, a PR
 description, an issue comment, a review comment, a chat answer — is a
 **descriptive Markdown link** (`[label](url)`), never a bare reference:
 
-- an issue: `[kingdoms-services#309](https://github.com/merlin-pinpin-org/kingdoms-services/issues/309)` — never "issue 309";
-- a PR: `[kingdoms#198](https://github.com/merlin-pinpin-org/kingdoms/pull/198)` — never "PR 198";
-- a **build/run**: `[run 42273875545](https://github.com/merlin-pinpin-org/kingdoms-services/actions/runs/42273875545)` — **never "build #123" without its URL**;
-- a file: `[CONVENTIONS.md](https://github.com/merlin-pinpin-org/kingdoms/blob/main/docs/CONVENTIONS.md)` (or a permalink to the exact commit when the line matters);
-- a commit: `[24b375f](https://github.com/merlin-pinpin-org/kingdoms/commit/24b375f)`;
+- an issue: `[botforge-services#309](https://github.com/jj-guild/botforge-services/issues/309)` — never "issue 309";
+- a PR: `[botforge#198](https://github.com/jj-guild/botforge/pull/198)` — never "PR 198";
+- a **build/run**: `[run 42273875545](https://github.com/jj-guild/botforge-services/actions/runs/42273875545)` — **never "build #123" without its URL**;
+- a file: `[CONVENTIONS.md](https://github.com/jj-guild/botforge/blob/main/docs/CONVENTIONS.md)` (or a permalink to the exact commit when the line matters);
+- a commit: `[24b375f](https://github.com/jj-guild/botforge/commit/24b375f)`;
 - a **GitHub settings/config menu**: link the page itself —
-  `[Settings → Branches](https://github.com/merlin-pinpin-org/<repo>/settings/branches)`,
-  `[Rulesets](https://github.com/merlin-pinpin-org/<repo>/settings/rulesets)`,
-  `[Milestones](https://github.com/merlin-pinpin-org/<repo>/milestones)`,
-  `[Environments](https://github.com/merlin-pinpin-org/<repo>/settings/environments)` —
+  `[Settings → Branches](https://github.com/jj-guild/<repo>/settings/branches)`,
+  `[Rulesets](https://github.com/jj-guild/<repo>/settings/rulesets)`,
+  `[Milestones](https://github.com/jj-guild/<repo>/milestones)`,
+  `[Environments](https://github.com/jj-guild/<repo>/settings/environments)` —
   never "go to the branch protection settings".
 
 Humans never open a terminal, so links are their only way to reach the
@@ -485,8 +485,8 @@ answer without reading everything (see `docs/INDEX.md`), and a doc that
 contradicts the code is a bug in the doc. When in doubt: delete the
 redundancy, not the reader's patience.
 
-`kingdoms` is the source of truth: a change in `kingdoms-services` or
-`kingdoms-infra` without its doc update there is incomplete.
+`botforge` is the source of truth: a change in `botforge-services` or
+`botforge-infra` without its doc update there is incomplete.
 
 **Every code change induces a doc pass (developer-mandated).** The
 documentation is not a mirror written after the fact — it is the source
@@ -498,11 +498,11 @@ code is incomplete, never marked ready, and never merged.
 
 **Issue references use GitHub autolink formats only:** same-repo references
 as `#12`, cross-repo references as `owner/repo#12` (e.g.
-`merlin-pinpin-org/kingdoms-services#12`) — GitHub renders both as links
+`jj-guild/botforge-services#12`) — GitHub renders both as links
 with backlinks and timeline entries. A bare `repo#12` (no owner) is **plain
 text**: no link, no backlink — never write it. Never reference the
 pre-rename owner `merlin-pinpin/...` (now a user account) — always
-`merlin-pinpin-org/...`.
+`jj-guild/...`.
 
 **Enrich the docs and skills proactively (developer-mandated).** A session
 updates `AGENTS.md`, the vibe-coding docs (`docs/CONVENTIONS.md`,
@@ -549,16 +549,16 @@ understand the choices and their reasons without asking anyone.
   disabled. Create every issue from the template matching its kind
   (`gh issue create --template <name>`) and keep its required sections
   (`## Objective`, `## Context`, `## Specifications`,
-  `## Acceptance criteria`, `## Dependencies` in `kingdoms-services` and
-  `kingdoms-infra`; `## Summary`, `## Details` in `kingdoms`). A
+  `## Acceptance criteria`, `## Dependencies` in `botforge-services` and
+  `botforge-infra`; `## Summary`, `## Details` in `botforge`). A
   "Validate issue" workflow labels non-compliant issues `invalid` —
   recreate them properly rather than editing around the flag.
-- Every open issue in `kingdoms-services` and `kingdoms-infra` carries
+- Every open issue in `botforge-services` and `botforge-infra` carries
   exactly one `size/*` label (XS/S/M/L/XL), one `priority/P0-P3` label
   (critical-path slack, maintained by
-  `kingdoms/.github/workflows/scripts/sync_dependencies.py` — do not set by hand unless the
+  `botforge/.github/workflows/scripts/sync_dependencies.py` — do not set by hand unless the
   analysis is wrong) and a `phase-N` label.
-- `kingdoms` issues that belong to the platform work (the epics and
+- `botforge` issues that belong to the platform work (the epics and
   tasks the roadmap tracks: SDK, packaging, guides, docs reconciliation,
   the content bar) join the dependency graph too: they carry the same
   `size/*` + `priority/*` labels and a `## Dependencies` section as the
@@ -598,7 +598,7 @@ or extend the workflow that validates it; never leave it unverified.
 ## Diagnose before blaming the infrastructure
 
 When a deployment is stuck, run the diagnosis tooling before reporting a
-cause: `make doctor` / `make diagnose-deploy-<env>` in `kingdoms-infra`
+cause: `make doctor` / `make diagnose-deploy-<env>` in `botforge-infra`
 ([Diagnose a stuck deploy](../.agents/skills/diagnose-deploy/SKILL.md) skill). The most
 common trap: a run left `waiting` for an environment approval holds the
 `deploy-<env>` concurrency group forever, and every newer run stays
@@ -624,7 +624,7 @@ surface. Concretely:
   localization. Pinned/public messages render in the **server's
   language** (`guild.preferred_locale`, Server Settings → Language) —
   one public message, one language. Both resolve through the single
-  seam `kingdoms.discord.locales`. No language picker anywhere — core
+  seam `botforge.discord.locales`. No language picker anywhere — core
   or mod; the Discord language settings drive everything. The guild timezone lives in the core guild settings,
   persisted once per guild — it would be the same for every installed
   mod, so a per-mod copy is a duplication by definition. If a mod
@@ -688,7 +688,7 @@ owner, under its lock or transaction. Each owner is answerable for its
 data: a corruption or a bad exposure is its bug — it can never blame
 another service.
 
-Enforcement today is the AST layering guard (ADR-0021 R5, `kingdoms-services`
+Enforcement today is the AST layering guard (ADR-0021 R5, `botforge-services`
 `tests/architecture/test_layering.py`, runs on every commit — allowlists
 shrink, never rot). The target is **one distinct MongoDB user per owner**,
 so the isolation is enforced by the database itself; until then, no new
@@ -703,7 +703,7 @@ flags (`admin_only`, `read_only`, …), locale strings, view layouts,
 per-mod tunables, provider site descriptors. The pattern already in
 place is the rule everywhere: `config/views.yaml` (every Discord
 surface), the mod channel declarations
-(`kingdoms-services/config/mods/<mod>.yaml`), the locale catalogs, the
+(`botforge-services/config/mods/<mod>.yaml`), the locale catalogs, the
 provider site configs.
 
 Why: a YAML block is readable by a non-developer (the game designers),

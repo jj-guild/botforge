@@ -19,7 +19,7 @@ they declare?".
 Responsibilities:
 
 1. **Discovery** — read mod declarations from
-   `kingdoms-services/config/mods/<mod>.yaml` at startup
+   `botforge-services/config/mods/<mod>.yaml` at startup
 2. **Enablement** — honor the `enabled` flag; disabled mods are never
    loaded (no commands registered, no workflows, no channels created)
 3. **Declaration surface** — expose, per mod:
@@ -34,11 +34,11 @@ Responsibilities:
 
 ### Declaration example
 
-The repo ships a fully documented template: `kingdoms-services/config/mods/_example.yaml`.
+The repo ships a fully documented template: `botforge-services/config/mods/_example.yaml`.
 Mods are added by copying it as `config/mods/<mod>.yaml` — no core change.
 
 ```yaml
-# kingdoms-services/config/mods/<mod>.yaml — schema (validated at startup)
+# botforge-services/config/mods/<mod>.yaml — schema (validated at startup)
 id: example            # simple slug, must match the mod package name
 enabled: false         # disabled mods are never loaded
 seasonal: false        # MANDATORY mod type: true = season-based (root
@@ -64,7 +64,7 @@ dependencies: []        # mod ids this mod depends on
 Channel and role declarations are **mod-scoped**: the core never
 enumerates mod channels or roles; it only provides the generic services
 (`ChannelService`, `RoleService`, `ModRegistry`) that provision them
-(kingdoms-services#26).
+(botforge-services#26).
 
 `ModRegistry` validates the declaration (schema, known categories, known
 locales, resolvable workflow classes) before the mod is loaded; an invalid
@@ -124,19 +124,19 @@ Anti-patterns (enforced by review, not by code):
 
 To be loadable, a mod package must provide:
 
-1. A YAML declaration in `kingdoms-services/config/mods/<mod>.yaml`
+1. A YAML declaration in `botforge-services/config/mods/<mod>.yaml`
    (schema shared with the [template](../../templates/mod-template/))
 2. A Python package implementing its workflows against `IWorkflow` and
    calling only core services
-3. A documentation set in `kingdoms/docs/MODS/<mod-name>/`:
+3. A documentation set in `botforge/docs/MODS/<mod-name>/`:
    `README.md`, `RULES.md`, `ENVIRONMENT.md` (+ `CHANGELOG.md` when rules
    evolve) — validated by `.github/workflows/scripts/validate_docs.py`
 4. Locale entries for every user-facing string in
-   `kingdoms-services/config/locales/{en,fr}.yaml`
+   `botforge-services/config/locales/{en,fr}.yaml`
    ([ADR-0008](../DECISIONS/008-i18n-system.md))
 
 Mods are wired into Discord as cogs (see
-[ARCHITECTURE.md](../ARCHITECTURE.md#3-discord-implementation-kingdoms-servicessrckingdomsdiscord)),
+[ARCHITECTURE.md](../ARCHITECTURE.md#3-discord-implementation-botforge-servicessrcbotforgediscord)),
 but cogs contain no game logic: they translate platform events into core
 calls.
 
@@ -179,18 +179,18 @@ cross-mod imports, config-relative references only.
 
 - **The cog is the only Discord layer of a mod**: it declares commands
   and views, calls the mod's gRPC service, and builds its UI through
-  the kingdoms-services UI SDK (the discord-ui skill rules apply
+  the botforge-services UI SDK (the discord-ui skill rules apply
   unchanged).
 - **One PyPI artifact per mod** (the cogs package + the gRPC server
   package); the bot Docker image is built **above the published PyPI
   artifacts**, never from source copies.
 - **Multi-bot, same image**: the image aggregates the bot core + the
   cogs of every authorized mod; each bot container loads its cogs from
-  a `KINGDOMS_MODS` environment variable (comma-separated mod names) at
+  a `BOTFORGE_MODS` environment variable (comma-separated mod names) at
   startup — at least 3 distinct bots in test and prod, each with a
   different mod set, running the same code.
 - Retrofit: the existing game migrates onto this layout and onto the
-  mod declaration seam (tracked: kingdoms-services#310, #311).
+  mod declaration seam (tracked: botforge-services#310, #311).
 
 ## See also
 

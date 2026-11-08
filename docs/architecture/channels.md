@@ -42,7 +42,7 @@ treat them as law.
 
 ## 3. Mod types are mandatory
 
-Every mod declaration (`kingdoms-services/config/mods/<mod>.yaml`)
+Every mod declaration (`botforge-services/config/mods/<mod>.yaml`)
 must state its type:
 
 ```yaml
@@ -67,7 +67,7 @@ the next pass.
 core:
 
 - shared wiring seams (game-data service builder, admin guard,
-  guild-category resolution) — `kingdoms.discord.wiring`
+  guild-category resolution) — `botforge.discord.wiring`
 - maps / map pools / per-game maps forum / per-pool pool forums
 - seasons provisioning (roles + salons created at season creation)
 - the mod admin channel mechanism, pinned menus, read-only policy,

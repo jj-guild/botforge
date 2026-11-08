@@ -1,16 +1,16 @@
-# Code ownership (kingdoms — source of truth).
+# Code ownership (botforge — source of truth).
 # The ruleset on main requires a code-owner review (1 approval); this file
 # maps every path to its owner. Mod rule/environment docs are owned by the
 # mod's game designer; governance, conventions and sync scripts stay
 # maintainer-owned.
 
 ## Default: a maintainer reviews everything not explicitly delegated
-*                       @merlin-pinpin-org/maintainers
+*                       @jj-guild/maintainers
 
 ## Mod docs & rules: owned by the mod's designer — mod-only changes never
 # require a maintainer review; each mod is delegated by one explicit line
 # (added in the mod's own bootstrap PR).
-/docs/MODS/kingdoms/     @Drasahaoe
+/docs/MODS/botforge/     @Drasahaoe
 /docs/MODS/marriage/    @Drasahaoe
 # Default mod ownership: unclaimed mods belong to Merlin (the platform
 # developer) until a designer claims them — the roster 'owns' column and
@@ -19,17 +19,17 @@
 /docs/MODS/register/   @merlin-pinpin
 
 ## Governance and process docs
-/AGENTS.md              @merlin-pinpin-org/maintainers
-/docs/DECISIONS/        @merlin-pinpin-org/maintainers
+/AGENTS.md              @jj-guild/maintainers
+/docs/DECISIONS/        @jj-guild/maintainers
 
 ## CI/CD workflows: the sync and validation machinery — maintainer-only,
-## symmetric with kingdoms-services and kingdoms-infra
-/.github/workflows/    @merlin-pinpin-org/maintainers
+## symmetric with botforge-services and botforge-infra
+/.github/workflows/    @jj-guild/maintainers
 
 ## Sync and workflow scripts: they regenerate generated/, drive the roster
 ## gates and the authority matrix — maintainer-only, CODEOWNERS-protected
 ## under the workflows path
-/scripts/               @merlin-pinpin-org/maintainers
+/scripts/               @jj-guild/maintainers
 
 ## Contributors roster: the source of truth for roles and teams
-/CONTRIBUTORS.md      @merlin-pinpin-org/maintainers
+/CONTRIBUTORS.md      @jj-guild/maintainers

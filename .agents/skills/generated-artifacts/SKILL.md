@@ -7,7 +7,7 @@ description: The generated artifacts (ROADMAP.md, DEPENDENCIES.md, pydoc) — th
 
 `generated/ROADMAP.md`, `generated/DEPENDENCIES.md` and
 `generated/pydoc/` are **generated artifacts**: the `sync-generated`
-workflow (kingdoms repo) is their **single writer**. It regenerates and
+workflow (botforge repo) is their **single writer**. It regenerates and
 publishes them on the `sync/generated-artifacts` branch on every merge
 to `main`, daily at 06:00 UTC, or on demand. **Agents and humans never
 edit, regenerate or commit them by hand** — they are not on `main`
@@ -15,7 +15,7 @@ anymore; the sync branch is workflow-owned.
 
 ## What a session does
 
-1. **Detect drift** — from the kingdoms repo root:
+1. **Detect drift** — from the botforge repo root:
    ```bash
    python3 .github/workflows/scripts/sync_roadmap.py --check
    ```
@@ -33,7 +33,7 @@ anymore; the sync branch is workflow-owned.
 
 3. **If drift is reported**, trigger the single writer:
    ```bash
-   gh workflow run sync-generated.yml --repo merlin-pinpin-org/kingdoms
+   gh workflow run sync-generated.yml --repo jj-guild/botforge
    ```
    **A session token gets 403 on `workflow_dispatch`** (the trust
    design — see the
@@ -95,7 +95,7 @@ delaying the project; set manually, the script only reports drift):
 Every open issue must have exactly one `size/*` and one `priority/*`
 label, and a `## Dependencies` section (even if "Depends on: none").
 Cross-repo dependencies use fully qualified references
-(`merlin-pinpin-org/kingdoms-infra#2`), same-repo ones the short form
+(`jj-guild/botforge-infra#2`), same-repo ones the short form
 (`#4`).
 
 ## Rules
@@ -106,9 +106,9 @@ Cross-repo dependencies use fully qualified references
   unreadable repository — never a partial regeneration.
 - The canonical reading links are on the `sync/generated-artifacts`
   branch:
-  [generated/ROADMAP.md](https://github.com/merlin-pinpin-org/kingdoms/blob/sync/generated-artifacts/generated/ROADMAP.md)
+  [generated/ROADMAP.md](https://github.com/jj-guild/botforge/blob/sync/generated-artifacts/generated/ROADMAP.md)
   and
-  [generated/DEPENDENCIES.md](https://github.com/merlin-pinpin-org/kingdoms/blob/sync/generated-artifacts/generated/DEPENDENCIES.md).
+  [generated/DEPENDENCIES.md](https://github.com/jj-guild/botforge/blob/sync/generated-artifacts/generated/DEPENDENCIES.md).
 
 ## See also
 

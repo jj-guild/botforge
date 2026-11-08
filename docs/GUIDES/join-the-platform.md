@@ -1,6 +1,6 @@
 # Guide — Join the platform (potential contributor)
 
-You want to contribute to Kingdoms — as a game designer, a mod
+You want to contribute to BotForge — as a game designer, a mod
 developer, or any role. This page explains **how the platform works
 for you** and what you need. No development experience is required to
 run vibe-coding sessions; everything technical is done by your AI
@@ -9,9 +9,9 @@ agent.
 ## What you need
 
 1. **A GitHub account** — your identity on the platform. Everything is
-   public and open: [kingdoms](https://github.com/merlin-pinpin-org/kingdoms)
-   (docs), [kingdoms-services](https://github.com/merlin-pinpin-org/kingdoms-services)
-   (code), [kingdoms-infra](https://github.com/merlin-pinpin-org/kingdoms-infra)
+   public and open: [botforge](https://github.com/jj-guild/botforge)
+   (docs), [botforge-services](https://github.com/jj-guild/botforge-services)
+   (code), [botforge-infra](https://github.com/jj-guild/botforge-infra)
    (infrastructure).
 2. **A Mistral account with the GitHub connector** — the AI agent
    (Mistral Vibe Code) acts **through your GitHub account**: the
@@ -58,7 +58,7 @@ agent.
 2. Sign and email the CLA.
 3. The maintainer's roster PR adds you (alias, teams, roles, agent
    scope) — GitHub follows the doc automatically.
-4. Open your first Mistral Vibe session on the kingdoms repo; the
+4. Open your first Mistral Vibe session on the botforge repo; the
    agent reads the docs, greets you by your alias, and asks what you
    want to build.
 5. Optionally, set up [your test environment](your-test-env.md) so

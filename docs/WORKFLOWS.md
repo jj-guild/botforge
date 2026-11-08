@@ -1,6 +1,6 @@
 # Game workflows — user-facing flows (registration, ladder, …)
 
-This document is the definitive reference for Kingdoms user interactions and
+This document is the definitive reference for BotForge user interactions and
 system behavior. All workflows are described **platform-agnostically**: they
 are expressed against the generic core (see
 [ARCHITECTURE.md](ARCHITECTURE.md)), so they apply to Discord today and to
@@ -8,12 +8,12 @@ future platforms (Twitch) without changes.
 
 Components referenced here (`WorkflowEngine`, `ChannelService`,
 `ChannelCategory`, `WorkflowState`) are documented in
-[ARCHITECTURE.md](ARCHITECTURE.md#2-generic-core-kingdoms-servicessrckingdomscore).
+[ARCHITECTURE.md](ARCHITECTURE.md#2-generic-core-botforge-servicessrcbotforgecore).
 UI component conventions (buttons, select menus, modals, `custom_id`) are
 documented in [architecture/discord.md](architecture/discord.md).
 
 > The `/report` command is **out of scope** (dropped, see
-> kingdoms-services#18). Moderation is admin-driven.
+> botforge-services#18). Moderation is admin-driven.
 
 ## 1. Registration workflow
 
@@ -254,10 +254,10 @@ stateDiagram-v2
 
 ## Ops commands workflows (PR/issue comments)
 
-The `ops-commands` workflow (kingdoms-services) intercepts four keywords
+The `ops-commands` workflow (botforge-services) intercepts four keywords
 on any PR or issue comment, acknowledges immediately (what will happen,
 why the requestor may ask), gates through the reusable `authorize.yml`
-against the roster authority matrix, then dispatches to kingdoms-infra
+against the roster authority matrix, then dispatches to botforge-infra
 which runs on the environment's own runner:
 
 | Keyword | Capability | Who | What it does |

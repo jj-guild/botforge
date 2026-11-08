@@ -2,9 +2,9 @@
 
 > Rewritten from the JeanJack V2.0 reference
 > ([../PLANS/reference/ladder-1v1-jeanjack-v2.md](../../PLANS/reference/ladder-1v1-jeanjack-v2.md))
-> for Kingdoms v0.4.0. The reference is the **functional source of truth**
+> for BotForge v0.4.0. The reference is the **functional source of truth**
 > (rules, state machine, data model, intents, acceptance criteria — its
-> §1–§9). This directory adapts it to the Kingdoms stack: process split
+> §1–§9). This directory adapts it to the BotForge stack: process split
 > (ADR-0020), seams (ADR-0011), i18n, seasons, pluggable rating.
 
 ## Purpose
@@ -61,11 +61,11 @@ state transitions; declared provider capabilities with clean degradation.
 
 - Category "Ladder 1v1" + surfaces: `#play`, `#leaderboard`, `#matches`,
   `#players`, `#admins` — provisioned via ChannelService (mod-declared
-  keys, kingdoms-services#26/#57).
+  keys, botforge-services#26/#57).
 - Roles: "Ladder 1v1 admin", "Ladder 1v1 player" (RoleService).
 - Views: PlayView, QueueView, LeaderboardView, MatchView, PlayerView,
   AdminView; modals per reference §7.4. Persistent views survive restarts
-  (kingdoms-services#122); every interaction respects the 3-second rule
+  (botforge-services#122); every interaction respects the 3-second rule
   (defer, then followup).
 - Admin surface: full game-data CRUD (maps/civs/rules), map pools &
   packs, settings, rating adjustments, audit — **Discord-first**, no dev

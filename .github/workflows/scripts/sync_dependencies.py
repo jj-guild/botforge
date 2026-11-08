@@ -2,7 +2,7 @@
 """Regenerate generated/DEPENDENCIES.md from GitHub issue dependencies.
 
 Reads the `## Dependencies` section of every open issue in the three repos
-(written as GitHub task-list checkboxes: `- [ ] kingdoms-services#N` or
+(written as GitHub task-list checkboxes: `- [ ] botforge-services#N` or
 `- [ ] #N` for same-repo refs), runs critical-path analysis (CPM) on the
 resulting graph, and rewrites:
 
@@ -34,21 +34,21 @@ import sys
 from collections import defaultdict, deque
 from pathlib import Path
 
-REPOS = ("kingdoms", "kingdoms-services", "kingdoms-infra")
-OWNER = "merlin-pinpin-org"
+REPOS = ("botforge", "botforge-services", "botforge-infra")
+OWNER = "jj-guild"
 SIZE_POINTS = {"XS": 1, "S": 3, "M": 5, "L": 8, "XL": 13}
 PRIO_RANK = {"P0": 0, "P1": 1, "P2": 2, "P3": 3}
 PHASE_LABEL = re.compile(r"^phase-(\d+)$")
 PRIORITY_LABEL = re.compile(r"^priority/(P[0-3])$")
 DEP_LINE = re.compile(
-    r"^-\s+\[([ x])\]\s+(?:merlin-pinpin-org/)?(kingdoms-services|kingdoms-infra|kingdoms)#(\d+)$"
+    r"^-\s+\[([ x])\]\s+(?:jj-guild/)?(botforge-services|botforge-infra|botforge)#(\d+)$"
 )
 DEP_LINE_SAME_REPO = re.compile(r"^-\s+\[([ x])\]\s+#(\d+)$")
 DEP_LINE_OWNER = re.compile(
-    r"^-\s+\[([ x])\]\s+merlin-pinpin-org/(kingdoms-services|kingdoms-infra|kingdoms)#(\d+)$"
+    r"^-\s+\[([ x])\]\s+jj-guild/(botforge-services|botforge-infra|botforge)#(\d+)$"
 )
 DEPS_SECTION = re.compile(r"(?s)## Dependencies\n(.*?)(?=\n## |\Z)")
-DOCS_URL = "https://github.com/merlin-pinpin-org/kingdoms/blob/sync/generated-artifacts/generated/DEPENDENCIES.md"
+DOCS_URL = "https://github.com/jj-guild/botforge/blob/sync/generated-artifacts/generated/DEPENDENCIES.md"
 
 
 def gh_api(path: str) -> dict | list:
@@ -270,9 +270,9 @@ def short_title(i: dict, limit: int = 40) -> str:
 def node_key(i: dict) -> str:
     return (
         i["id"].replace("#", "_")
-        .replace("kingdoms-services", "ks")
-        .replace("kingdoms-infra", "ki")
-        .replace("kingdoms", "k")
+        .replace("botforge-services", "ks")
+        .replace("botforge-infra", "ki")
+        .replace("botforge", "k")
     )
 
 
@@ -294,9 +294,9 @@ def render(issues: list[dict], a: dict, blocked: list[tuple[str, str]]) -> str:
         "> edit the `## Dependencies` sections of the issues instead, then",
         "> regenerate this page (see the [Generated artifacts](../.agents/skills/generated-artifacts/SKILL.md) skill).",
         "",
-        f"Source: open issues in [kingdoms](https://github.com/merlin-pinpin-org/kingdoms/issues), "
-        f"[kingdoms-services](https://github.com/merlin-pinpin-org/kingdoms-services/issues) "
-        f"and [kingdoms-infra](https://github.com/merlin-pinpin-org/kingdoms-infra/issues).",
+        f"Source: open issues in [botforge](https://github.com/jj-guild/botforge/issues), "
+        f"[botforge-services](https://github.com/jj-guild/botforge-services/issues) "
+        f"and [botforge-infra](https://github.com/jj-guild/botforge-infra/issues).",
         "",
         "Current state and next steps only — the history lives in the git log of",
         "the `sync/generated-artifacts` branch.",

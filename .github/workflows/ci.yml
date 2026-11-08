@@ -23,42 +23,42 @@ jobs:
         run: actionlint -color
 
   services-docs:
-    name: Generate kingdoms-services pydoc
+    name: Generate botforge-services pydoc
     runs-on: ubuntu-latest
     steps:
-      - name: Resolve the kingdoms-services ref matching this branch
+      - name: Resolve the botforge-services ref matching this branch
         run: |
-          # Branch-adaptive source ref: if kingdoms-services carries a branch
+          # Branch-adaptive source ref: if botforge-services carries a branch
           # with the same name, document that one; otherwise fall back to main.
           CANDIDATE_REF="${GITHUB_HEAD_REF:-main}"
           if git ls-remote --exit-code --heads \
-            "https://github.com/merlin-pinpin-org/kingdoms-services.git" \
+            "https://github.com/jj-guild/botforge-services.git" \
             "${CANDIDATE_REF}" >/dev/null 2>&1; then
             echo "SERVICES_REF=${CANDIDATE_REF}" >> "$GITHUB_ENV"
           else
             echo "SERVICES_REF=main" >> "$GITHUB_ENV"
           fi
-      - name: Checkout kingdoms-services (read-only)
+      - name: Checkout botforge-services (read-only)
         uses: actions/checkout@v4
         with:
-          repository: merlin-pinpin-org/kingdoms-services
+          repository: jj-guild/botforge-services
           ref: ${{ env.SERVICES_REF }}
-          path: kingdoms-services
+          path: botforge-services
       - uses: astral-sh/setup-uv@v5
         with:
           python-version: "3.12.14"
       - name: Install dependencies
-        working-directory: kingdoms-services
+        working-directory: botforge-services
         run: uv sync --frozen
       - name: Generate pydoc
-        working-directory: kingdoms-services
+        working-directory: botforge-services
         run: |
           uv run python .github/workflows/scripts/generate_pydoc.py \
-            --source src/kingdoms \
+            --source src/botforge \
             --output "${GITHUB_WORKSPACE}/pydoc-out"
       - name: Upload pydoc artifact
         uses: actions/upload-artifact@v4
         with:
-          name: kingdoms-services-pydoc
+          name: botforge-services-pydoc
           path: pydoc-out/
           retention-days: 30

@@ -6,7 +6,7 @@
 
 **Date:** 2026-09-27
 
-**Reference:** ADR-0012, kingdoms#109
+**Reference:** ADR-0012, botforge#109
 
 ## Context
 
@@ -36,7 +36,7 @@ surface the game designer must understand to create a mod.
 
 ## Decision
 
-Kingdoms stays a **modular monolith** (one runtime, one container)
+BotForge stays a **modular monolith** (one runtime, one container)
 until an ADR-0012 extraction trigger fires. To make the future
 separation a non-event, every seam that is a **network-extraction
 candidate** must satisfy the following contract rules from day one:
@@ -49,7 +49,7 @@ candidate** must satisfy the following contract rules from day one:
    collections, accessed only through its own database seam. No
    cross-domain collection reads.
 3. **Explicit error taxonomy.** Seams raise the typed exception
-   hierarchy (kingdoms-services#10), not library exceptions — a
+   hierarchy (botforge-services#10), not library exceptions — a
    network boundary must be able to map errors without importing the
    library that raised them.
 4. **Calls are async and idempotent-friendly.** Every seam method is
@@ -110,5 +110,5 @@ ADR and interface contract, per ADR-0012):
   matrix and extraction triggers
 - [ADR-0011](011-protocol-interfaces.md) — Protocol seams
 - [ADR-0015](015-webapp-api-boundary.md) — webapp boundary
-- kingdoms-services#10 — typed exception hierarchy (rule 3)
-- kingdoms#109 — product plan phases where extractions are expected
+- botforge-services#10 — typed exception hierarchy (rule 3)
+- botforge#109 — product plan phases where extractions are expected

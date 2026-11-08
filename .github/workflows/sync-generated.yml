@@ -1,5 +1,5 @@
 # Regenerate the synced artifacts (generated/ROADMAP.md,
-# generated/DEPENDENCIES.md, generated/pydoc/ — the kingdoms-services
+# generated/DEPENDENCIES.md, generated/pydoc/ — the botforge-services
 # Python API doc, copied from that repo's committed pydoc which its own
 # CI keeps fresh) and publish them on the sync/generated-artifacts
 # branch — never in PRs, never by an agent's hand, never on main. The
@@ -37,34 +37,34 @@ jobs:
     name: Regenerate generated/ (roadmap, dependencies, pydoc)
     runs-on: ubuntu-latest
     steps:
-      - name: Mint the kingdoms-deployer App token (single writer)
+      - name: Mint the botforge-deployer App token (single writer)
         id: app-token
         uses: actions/create-github-app-token@v2
         with:
-          app-id: ${{ secrets.KINGDOMS_DEPLOYER_APP_ID }}
-          private-key: ${{ secrets.KINGDOMS_DEPLOYER_APP_PRIVATE_KEY }}
-          owner: merlin-pinpin-org
-          repositories: kingdoms
+          app-id: ${{ secrets.BOTFORGE_DEPLOYER_APP_ID }}
+          private-key: ${{ secrets.BOTFORGE_DEPLOYER_APP_PRIVATE_KEY }}
+          owner: jj-guild
+          repositories: botforge
 
-      - name: Check out kingdoms (main)
+      - name: Check out botforge (main)
         uses: actions/checkout@v4
         with:
           ref: main
-          path: kingdoms
+          path: botforge
           fetch-depth: 0
           token: ${{ steps.app-token.outputs.token }}
 
-      # kingdoms-services is public — checked out anonymously, no token
+      # botforge-services is public — checked out anonymously, no token
       # needed; the App installation does not cover it.
-      - name: Check out kingdoms-services (main, pydoc source)
+      - name: Check out botforge-services (main, pydoc source)
         uses: actions/checkout@v4
         with:
-          repository: merlin-pinpin-org/kingdoms-services
+          repository: jj-guild/botforge-services
           ref: main
-          path: kingdoms-services
+          path: botforge-services
 
       - name: Restore the previous generated state (bootstrap included)
-        working-directory: kingdoms
+        working-directory: botforge
         run: |
           # sync_roadmap rewrites the file in place, so it needs the
           # previous generated state. It lives on the sync branch; when
@@ -95,25 +95,25 @@ jobs:
           git add -f generated/
 
       - name: Regenerate the artifacts
-        working-directory: kingdoms
+        working-directory: botforge
         env:
           GH_TOKEN: ${{ steps.app-token.outputs.token }}
         run: |
           python3 .github/workflows/scripts/sync_roadmap.py
           python3 .github/workflows/scripts/sync_dependencies.py
-          # pydoc: kingdoms-services commits its own generated pydoc and
+          # pydoc: botforge-services commits its own generated pydoc and
           # its CI (docs.yml) fails when it is stale — copying it is both
           # cheaper and always as fresh as that repo's main.
           rm -rf generated/pydoc
-          cp -r ../kingdoms-services/docs/DEVELOPMENT/pydoc generated/pydoc
+          cp -r ../botforge-services/docs/DEVELOPMENT/pydoc generated/pydoc
 
       - name: Publish the regenerated artifacts on the sync branch
-        working-directory: kingdoms
+        working-directory: botforge
         env:
           GH_TOKEN: ${{ steps.app-token.outputs.token }}
         run: |
-          git config user.name "kingdoms-deployer[bot]"
-          git config user.email "kingdoms-deployer[bot]@users.noreply.github.com"
+          git config user.name "botforge-deployer[bot]"
+          git config user.email "botforge-deployer[bot]@users.noreply.github.com"
           if git diff --quiet --cached -- generated/ && git diff --quiet -- generated/; then
             echo "artifacts up to date — nothing to do"
             exit 0

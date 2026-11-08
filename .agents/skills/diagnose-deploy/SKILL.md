@@ -1,6 +1,6 @@
 ---
 name: diagnose-deploy
-description: Diagnose a stuck or pending deployment on kingdoms-infra (test or prod) before suspecting the VPS or runner. Use when a Deploy environment run stays pending/queued for a long time, when a deployment never finishes, or when the developer reports a stuck deploy.
+description: Diagnose a stuck or pending deployment on botforge-infra (test or prod) before suspecting the VPS or runner. Use when a Deploy environment run stays pending/queued for a long time, when a deployment never finishes, or when the developer reports a stuck deploy.
 ---
 
 # Diagnose a stuck deploy
@@ -10,7 +10,7 @@ the diagnosis tooling **before** suspecting the VPS: in the 2026-09-24 prod
 incident, the runner was healthy and idle the whole time while every deploy
 stayed pending for hours with no notification.
 
-**Mechanism:** `kingdoms-infra` ships `scripts/diagnose_deploy.sh <env>`
+**Mechanism:** `botforge-infra` ships `scripts/diagnose_deploy.sh <env>`
 (+ `--json` for agent sessions) wrapped in Makefile targets
 (`make doctor`, `make diagnose-deploy-<env>`). It walks the blocking causes
 in order and prints the exact fix with links.
@@ -29,19 +29,19 @@ the workflow does not unblock it. Only cancelling the zombie does.
 
 Comment `/logs [env] [--service S] [--since 30m] [--from <iso>] [--to
 <iso>] [--tail N]` on the PR (or the bug issue): the `ops-commands`
-workflow (kingdoms-services) gates it against the roster authority
+workflow (botforge-services) gates it against the roster authority
 matrix (capability `env-logs` — ops, or dev on test), dispatches the
-`env-logs` workflow on kingdoms-infra, and the environment's own runner
+`env-logs` workflow on botforge-infra, and the environment's own runner
 dumps the filtered `docker compose logs` back into the thread (full dump
 as a private artifact). Use it **before** any hypothesis: the bot's
 own traceback names the failing service more often than any inference.
 Filters are docker-native: `--since 30m`, `--from`/`--to` ISO8601
-windows, `--service kingdoms-bot` to isolate one process.
+windows, `--service botforge-bot` to isolate one process.
 
 ## Procedure
 
 ```bash
-# from the kingdoms-infra clone
+# from the botforge-infra clone
 make diagnose-deploy-test
 make diagnose-deploy-prod
 make doctor          # both envs + script checks

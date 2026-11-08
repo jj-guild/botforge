@@ -1,15 +1,15 @@
-# Kingdoms (documentation repo) — session automation.
+# BotForge (documentation repo) — session automation.
 #
 # The targets mirror the session checklist of docs/CONVENTIONS.md; the agent
 # runs `make session-check` before opening any PR and at the end of a session.
 
-KINGDOMS_SERVICES ?= ../kingdoms-services
+BOTFORGE_SERVICES ?= ../botforge-services
 
 .PHONY: help session-check sync-artifacts validate contributors-check contributors-sync roadmap-next
 
 # List the available targets (human entry point).
 help:
-	@echo "Kingdoms docs repo — available targets:"
+	@echo "BotForge docs repo — available targets:"
 	@echo "  make help                        — show this help"
 	@echo "  make session-check               — full validation (docs + roadmap + dependencies)"
 	@echo "  make roadmap-next                — print the current lot's ordered work table (read-only)"
@@ -17,12 +17,12 @@ help:
 	@echo "  make sync-artifacts              — regenerate generated/ROADMAP.md and generated/DEPENDENCIES.md"
 	@echo "  make contributors-check          — roster dry-run (report org drift, no mutation)"
 	@echo "  make contributors-sync           — reconcile the org with CONTRIBUTORS.md (mutates)"
-	@echo "  KINGDOMS_SERVICES=<path>          — where the kingdoms-services clone lives (default: ../kingdoms-services)"
+	@echo "  BOTFORGE_SERVICES=<path>          — where the botforge-services clone lives (default: ../botforge-services)"
 
 # Mechanical session checklist: docs validation, roadmap drift,
 # dependency-graph drift. Fails closed with the exact artefacts to fix.
 session-check:
-	python3 scripts/session_check.py --source $(KINGDOMS_SERVICES)/src/kingdoms --config $(KINGDOMS_SERVICES)/config --scripts-dir .github/workflows/scripts
+	python3 scripts/session_check.py --source $(BOTFORGE_SERVICES)/src/botforge --config $(BOTFORGE_SERVICES)/config --scripts-dir .github/workflows/scripts
 
 # Current lot's work order, straight from the issues (read-only; reuses the
 # workflow scripts' parsers). This is what the roadmap-unroll skill runs.
@@ -49,4 +49,4 @@ contributors-sync:
 # Restack the open PRs of a repository on top of each other (stacking
 
 validate:
-	python3 .github/workflows/scripts/validate_docs.py --check --source $(KINGDOMS_SERVICES)/src/kingdoms --config $(KINGDOMS_SERVICES)/config
+	python3 .github/workflows/scripts/validate_docs.py --check --source $(BOTFORGE_SERVICES)/src/botforge --config $(BOTFORGE_SERVICES)/config

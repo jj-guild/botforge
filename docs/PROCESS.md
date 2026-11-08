@@ -87,7 +87,7 @@ someone wants to check behavior in the real bot.
 
 | | Game designer | Developer | Ops |
 |--|--|--|--|
-| Does | Asks the agent (session) to deploy; plays with the bot in Discord | Same, plus the `/deploy` PR comment for a specific PR | Guarantees the runner is online, the `test` environment secrets exist; creates the kingdoms-deployer GitHub App and its ruleset once (see kingdoms-infra docs/DEPLOY-TEST-APP.md) |
+| Does | Asks the agent (session) to deploy; plays with the bot in Discord | Same, plus the `/deploy` PR comment for a specific PR | Guarantees the runner is online, the `test` environment secrets exist; creates the botforge-deployer GitHub App and its ruleset once (see botforge-infra docs/DEPLOY-TEST-APP.md) |
 
 **Two entry points:**
 
@@ -95,17 +95,17 @@ someone wants to check behavior in the real bot.
   this on test" — the agent posts the **`/deploy` comment** on the
   feature PR (the comment is the trigger; the agent does not need workflow
   permissions), the workflow builds the PR image and pins it in the
-  `deploy/test` **state branch** through the **kingdoms-deployer
+  `deploy/test` **state branch** through the **botforge-deployer
   GitHub App** (ephemeral token; Contents: write for the state commit),
-  and the push to `deploy/test` triggers the kingdoms-infra Deploy test
+  and the push to `deploy/test` triggers the botforge-infra Deploy test
   workflow, which reads the pinned image from Git (ADR-0018). The agent
   **monitors the run** and reports the result with the logs analyzed on
   failure. No human click is needed.
-- **PR comment `/deploy`** (any PR on `kingdoms-services`): same
+- **PR comment `/deploy`** (any PR on `botforge-services`): same
   mechanism, usable by anyone authorized — the PR image (tag
   `pr-<id>-<timestamp>-<sha7>`) is built and deployed automatically, and the PR gets a
   ✅/❌ comment with the run links. Fork PRs are rejected
-  (kingdoms-services#67).
+  (botforge-services#67).
 
 Test-config changes on `main` also retrigger the deployment automatically,
 with no human action at all.
@@ -136,11 +136,11 @@ deployments instead of guessing.
    classifier on the base the rc cycle validated.
 2. Tag and release permissions are **enforced by GitHub** (rulesets); the
    agent executes, it is not granted by convention.
-3. Pushing the tag makes the `kingdoms-services` Docker workflow publish
+3. Pushing the tag makes the `botforge-services` Docker workflow publish
    the **released image**
-   `ghcr.io/merlin-pinpin-org/kingdoms-services:vX.Y.Z` (or `vX.Y.Z-rc<n>`
+   `ghcr.io/jj-guild/botforge-services:vX.Y.Z` (or `vX.Y.Z-rc<n>`
    for a pre-release) and then pin it on `deploy/test` (dispatch to the
-   infra `Pin state` workflow, written by the kingdoms-deployer App) — the
+   infra `Pin state` workflow, written by the botforge-deployer App) — the
    release is **validated on the test environment** before any production
    deploy. Pre-releases headline as `Pre-release` in `/status`; a final
    release is celebrated (🎉 Version). A `-rc` tag is **never promotable
@@ -152,7 +152,7 @@ deployments instead of guessing.
    promoted to prod by re-tagging; a release is cut instead.
 4. Production promotion is a separate, human-triggered step: once the
    release is validated in Discord on test, an authorized collaborator
-   runs the `Promote release` workflow on `kingdoms-services`
+   runs the `Promote release` workflow on `botforge-services`
    (`workflow_dispatch` with the tag), which pins the released image on
    `deploy/prod`.
 
@@ -161,7 +161,7 @@ deployments instead of guessing.
 Production is the most protected environment. Three gates stack:
 
 1. **Released image only** — the prod manifest **fails closed** unless
-   `KINGDOMS_BOT_IMAGE` is set to a released `vX.Y.Z` image.
+   `BOTFORGE_IMAGE` is set to a released `vX.Y.Z` image.
 2. **GitHub environment `prod`** — required reviewers (deployment waits for
    a human approval in the GitHub UI).
 3. **Human-triggered promotion** — the released image is pinned on
@@ -178,7 +178,7 @@ Production is the most protected environment. Three gates stack:
 them) can comment `/logs prod`, `/restart prod`, `/rollback prod`,
 `/dump-db prod` — each gated by the roster authority matrix
 ([CONTRIBUTORS.md](../CONTRIBUTORS.md)), acknowledged immediately, and
-executed on the prod runner through the kingdoms-infra workflows.
+executed on the prod runner through the botforge-infra workflows.
 
 **Current status:** the prod deploy chain is functional (env `prod`,
 `env-prod` runner, `deploy/prod` state branch with its ruleset); the `prod`

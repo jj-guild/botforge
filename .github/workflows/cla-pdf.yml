@@ -30,7 +30,7 @@ jobs:
         run: |
           git config user.name "Merlin"
           git config user.email "merlin.pp@pm.me"
-          git remote set-url origin "https://x-access-token:${{ secrets.CONTRIBUTORS_SYNC_TOKEN || github.token }}@github.com/merlin-pinpin-org/kingdoms.git"
+          git remote set-url origin "https://x-access-token:${{ secrets.CONTRIBUTORS_SYNC_TOKEN || github.token }}@github.com/jj-guild/botforge.git"
           if git diff --quiet CLA.pdf; then
             echo "CLA.pdf already up to date."
             exit 0

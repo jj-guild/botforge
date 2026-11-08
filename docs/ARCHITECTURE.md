@@ -1,6 +1,6 @@
 # Architecture
 
-This document describes the technical architecture of Kingdoms: a modular,
+This document describes the technical architecture of BotForge: a modular,
 multi-platform Discord bot platform. It is the reference for how the three
 repositories fit together, how the generic core is organized, and how data
 flows through the system.
@@ -15,24 +15,24 @@ The five architectural pillars:
 
 ## 1. Overview
 
-Kingdoms is split across three repositories:
+BotForge is split across three repositories:
 
 | Repository | Role |
 | ---------- | ---- |
-| `kingdoms` (this repo) | Source of truth: architecture, workflows, ADRs, mods docs, generated dev docs |
-| `kingdoms-services` | All Python code: generic core, Discord platform implementation, mods, YAML configs |
-| `kingdoms-infra` | Docker, CI/CD, GitOps manifests, deployment scripts |
+| `botforge` (this repo) | Source of truth: architecture, workflows, ADRs, mods docs, generated dev docs |
+| `botforge-services` | All Python code: generic core, Discord platform implementation, mods, YAML configs |
+| `botforge-infra` | Docker, CI/CD, GitOps manifests, deployment scripts |
 
 ### Global architecture
 
 ```mermaid
 flowchart TD
-    subgraph Infra["kingdoms-infra"]
+    subgraph Infra["botforge-infra"]
         DOCKER["Docker Compose"]
         CI["GitHub Actions"]
     end
 
-    subgraph Services["kingdoms-services"]
+    subgraph Services["botforge-services"]
         subgraph Core["Generic core"]
             IPLAT["IPlatform"]
             CHANSVC["ChannelService"]
@@ -61,16 +61,16 @@ flowchart TD
 
 ### Data flow between repositories
 
-- `kingdoms` (docs) describes rules and decisions; `kingdoms-services`
-  implements them; `kingdoms-infra` deploys the implementation.
-- Any code change in `kingdoms-services` or `kingdoms-infra` must come with — or
+- `botforge` (docs) describes rules and decisions; `botforge-services`
+  implements them; `botforge-infra` deploys the implementation.
+- Any code change in `botforge-services` or `botforge-infra` must come with — or
   be followed by — a doc update in this repo (see [docs/CONVENTIONS.md](CONVENTIONS.md)).
 - Technical docs are generated **in the repository hosting the sources**:
-  the pydoc of `kingdoms-services` is produced by that repo itself
+  the pydoc of `botforge-services` is produced by that repo itself
   (`scripts/generate_pydoc.py`, `make docs`) and freshness-checked on every
   one of its PRs.
 
-## 2. Generic core (`kingdoms-services/src/kingdoms/core/`)
+## 2. Generic core (`botforge-services/src/botforge/core/`)
 
 The generic core contains everything platform-agnostic. Mods and workflows are
 written against the core only; they never import Discord-specific code.
@@ -143,13 +143,13 @@ workflow payloads evolve with the game rules):
 - **`ChannelService`**: channel category management. Mods ask for a channel by
   category, never by name or ID. Resolution order: cache → database → platform
   creation.
-- **`IdentityService`** (kingdoms-services#130): internal `user_id` ↔
+- **`IdentityService`** (botforge-services#130): internal `user_id` ↔
   platform account resolution. Identities are multi-platform by design — one
-  Kingdoms user may be bound to accounts on several platforms; the binding
+  BotForge user may be bound to accounts on several platforms; the binding
   lives in its own `platform_identities` collection, never in mod data. Mods
   reference users by `user_id` only. Cache-aside (Redis → MongoDB), idempotent
   `get_or_create_user` per `(platform, platform_user_id)`.
-- **`MessageRegistryService`** (kingdoms-services#130): the **only** place
+- **`MessageRegistryService`** (botforge-services#130): the **only** place
   platform message IDs ever live — `(platform, message_key, entity_id)` →
   `(channel_id, message_id)`. Mods register persistent messages by logical key
   and resolve them back to re-render in place; re-registration replaces
@@ -157,7 +157,7 @@ workflow payloads evolve with the game rules):
   channel IDs. Complements the `custom_id` state reconstruction
   (§ *Persistent components*): reconstruction survives component clicks, the
   registry lets a mod find its own message back.
-- **`SurfaceService`** (kingdoms-services#130): named surfaces — a mod's
+- **`SurfaceService`** (botforge-services#130): named surfaces — a mod's
   declared channel categories resolved through the ChannelService seam
   (`surface_channel`), and surface permission queries (« is ladder
   admin/player ») delegated to the runtime PermissionService
@@ -165,7 +165,7 @@ workflow payloads evolve with the game rules):
 - **`StatusService`**: operational report (version label, uptime, configured
   games, enabled mods with their declared channels/roles, bot admins,
   deploy label + URL) — powers the generic `/status` command.
-- **`AdminService`** (kingdoms-services#35): distinguishes **bot admins**
+- **`AdminService`** (botforge-services#35): distinguishes **bot admins**
   (operators, defined by the `BOT_ADMINS` environment variable — provisioned
   as a GitHub environment *variable*, not a secret, since user IDs are not
   sensitive) from **guild admins**
@@ -185,7 +185,7 @@ workflow payloads evolve with the game rules):
 - **`WorkflowStatus`**: `PENDING`, `IN_PROGRESS`, `COMPLETED`, `CANCELLED`,
   `TIMED_OUT`
 
-## 3. Discord implementation (`kingdoms-services/src/kingdoms/discord/`)
+## 3. Discord implementation (`botforge-services/src/botforge/discord/`)
 
 ### `platform/`
 
@@ -205,18 +205,18 @@ workflow payloads evolve with the game rules):
   link, games, enabled mods with their declared channels/roles, and one
   merged Admins bullet list of bot admins (`BOT_ADMINS`) and the invoking
   guild's admins as Discord mentions). Not a mod: it is a platform
-  capability, gated by admin levels (kingdoms-services#35). Every link is
+  capability, gated by admin levels (botforge-services#35). Every link is
   rendered with a short label, never a bare URL. The Version field is a
-  labeled GitHub link built from `KINGDOMS_DEPLOY_LABEL` +
-  `KINGDOMS_DEPLOY_URL`: the services source tree at the deployed commit
+  labeled GitHub link built from `BOTFORGE_DEPLOY_LABEL` +
+  `BOTFORGE_DEPLOY_URL`: the services source tree at the deployed commit
   for PR and main deploys (`pr-<id>-<timestamp>-<sha7>`, `main@<sha>`), the
-  GitHub release for `vX.Y.Z` (kingdoms-infra#39). The Deploy field links
-  the kingdoms-infra deploy job itself (`KINGDOMS_DEPLOY_RUN_URL`, label
+  GitHub release for `vX.Y.Z` (botforge-infra#39). The Deploy field links
+  the botforge-infra deploy job itself (`BOTFORGE_DEPLOY_RUN_URL`, label
   `deploy run`), falling back to the artifact link.
 - **`admin.py`**: the generic `/admin` command — an operator panel built
   as a Components V2 `LayoutView` (ADR-0009): a container with a text
   header and a section whose button reacts live. The first concrete use
-  of the layout system in a shipped command (kingdoms-services#102):
+  of the layout system in a shipped command (botforge-services#102):
   further admin features reuse the section + accessory button pattern
   and the `<mod>:<component>:<payload>` custom-id convention.
 
@@ -229,7 +229,7 @@ workflow payloads evolve with the game rules):
 UI conventions (persistent views, dynamic items, `custom_id` scheme) are
 documented in [architecture/discord.md](architecture/discord.md).
 
-## 4. Configuration (`kingdoms-services/config/`)
+## 4. Configuration (`botforge-services/config/`)
 
 All configuration is versioned YAML, loaded at startup:
 
@@ -249,16 +249,16 @@ flowchart LR
     BOT --> CORE
 ```
 
-## 5. Infra (`kingdoms-infra/`)
+## 5. Infra (`botforge-infra/`)
 
 - **`deploy/`**: Docker Compose manifests per environment (test,
   production). One command launches the bot and its dependencies (MongoDB,
   Redis).
 - **Images**: the bot image is a **multi-stage build** (deps → build →
-  runtime) published by the `kingdoms-services` `Docker` workflow to
-  `ghcr.io/merlin-pinpin-org/kingdoms-services` (tags: `main`, `vX.Y.Z`, `sha-*`).
+  runtime) published by the `botforge-services` `Docker` workflow to
+  `ghcr.io/jj-guild/botforge-services` (tags: `main`, `vX.Y.Z`, `sha-*`).
   Environments pull it from GHCR; production pins the exact tag via
-  `KINGDOMS_BOT_IMAGE`.
+  `BOTFORGE_IMAGE`.
 - **Backups**: every deployment runs a **mandatory pre-deploy backup of both
   stores** (`scripts/backup_db.sh`): MongoDB via `mongodump --archive --gzip`,
   Redis via a `BGSAVE` RDB snapshot. Both artifacts share a timestamp prefix,
@@ -326,7 +326,7 @@ flowchart LR
     PUSH["Push to main"] --> CI["CI: lint, test, build"]
     CI -->|"tag / manual"| DEPLOY["Deploy job"]
     DEPLOY --> ENV["Docker Compose environment"]
-    ENV --> BOT["kingdoms bot container"]
+    ENV --> BOT["botforge bot container"]
     ENV --> MONGO["MongoDB"]
     ENV --> REDIS["Redis"]
 ```
@@ -355,7 +355,7 @@ New major decisions follow the ADR process in [DECISIONS/](DECISIONS/)
 
 ## 8. Frontends and application layer
 
-Beyond Discord, Kingdoms is planned to grow a Twitch bot and a webapp.
+Beyond Discord, BotForge is planned to grow a Twitch bot and a webapp.
 All three are **frontends** over one application layer
 ([ADR-0012](DECISIONS/012-taxonomy-repo-strategy.md),
 [ADR-0015](DECISIONS/015-webapp-api-boundary.md)):

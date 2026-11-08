@@ -10,7 +10,7 @@ developer reviews.
 bot-discord ──gRPC──> svc-core ──gRPC──> ext-<provider> process(es) ──HTTPS──> external APIs
 ```
 
-- The **game module** (`src/kingdoms/games/<game_key>/` in svc-core)
+- The **game module** (`src/botforge/games/<game_key>/` in svc-core)
   holds the game's domain identity and the provider seam.
 - The **provider process** (`ext-<name>`) talks to the external API:
   its own rate limiting, caching, secrets and downtime. It never shares
@@ -43,17 +43,17 @@ capability added later lights up features without mod changes.
 2. **Contract**: extend `contracts/` with the provider seam
    (`make contracts`); payloads JSON-serializable, errors mapped onto
    the taxonomy, streams for lifecycle events, per-call deadlines.
-3. **Game module**: `src/kingdoms/games/<game_key>/` — identity
+3. **Game module**: `src/botforge/games/<game_key>/` — identity
    resolution, capability flags, game data (maps/civs catalog hook).
 4. **Provider process**: own secrets (never in bot/core), own
    rate-limit Redis keys, own retry policy; health endpoint for the
    deployment battery.
 5. **Deployment**: compose/GitOps service (see
-   [kingdoms-infra#89](https://github.com/merlin-pinpin-org/kingdoms-infra/issues/89));
-   OCI image labels in the same PR ([#144](https://github.com/merlin-pinpin-org/kingdoms-services/issues/144)).
+   [botforge-infra#89](https://github.com/jj-guild/botforge-infra/issues/89));
+   OCI image labels in the same PR ([#144](https://github.com/jj-guild/botforge-services/issues/144)).
 6. **Tests**: provider against recorded fixtures/mocks; degradation
    paths (zero-capability) in CI; rate-limit behaviour simulated.
-7. **Docs**: `docs/games/<game>/` in the kingdoms repo — capabilities,
+7. **Docs**: `docs/games/<game>/` in the botforge repo — capabilities,
    data sources, known limitations.
 
 ## Checklist (from the ladder migration decisions)

@@ -5,7 +5,7 @@
 - **Accepted with**: co-built with the developer across agent sessions (challenged and revised together)
 - **Date**: 2026-09-21
 - **Deciders**: developer (pending), game designer (requested)
-- **Reference**: kingdoms-services#55, kingdoms-services#56, kingdoms-services#57, kingdoms-services#58
+- **Reference**: botforge-services#55, botforge-services#56, botforge-services#57, botforge-services#58
 
 ## Context
 
@@ -27,14 +27,14 @@ follow:
 6. Roles and channels can be **synchronized on an admin's demand**.
 
 The existing pieces this builds on: logical role keys and `role_mappings`
-(ADR-0003, kingdoms-services#26), the dual UI system (ADR-0009), the i18n
-system (ADR-0008) and the admin levels (kingdoms-services#35). Rendering
+(ADR-0003, botforge-services#26), the dual UI system (ADR-0009), the i18n
+system (ADR-0008) and the admin levels (botforge-services#35). Rendering
 hints cannot be a security boundary: roles change, persistent views survive
 restarts, and any user can attempt an interaction on a stale message.
 
 ## Decision
 
-Kingdoms separates **rendering** (UX, per-destination) from **authorization**
+BotForge separates **rendering** (UX, per-destination) from **authorization**
 (runtime, per-interaction):
 
 - **Every send path carries an explicit destination** — `DM`, `CHANNEL` or
@@ -81,7 +81,7 @@ Full operating rules: [architecture/discord-permissions.md](../architecture/disc
    racy with human moderation. The sync is explicit; the audit provides the
    safety net between syncs.
 5. **Hardcoded Discord role/channel IDs in mods** — already rejected by
-   ADR-0003/kingdoms-services#26 (logical keys only); this ADR extends the
+   ADR-0003/botforge-services#26 (logical keys only); this ADR extends the
    same principle to component actions and channel access.
 
 ## Consequences

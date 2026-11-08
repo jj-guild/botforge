@@ -1,5 +1,5 @@
 blank_issues_enabled: false
 contact_links:
   - name: Vibe-coding workflow
-    url: https://github.com/merlin-pinpin-org/kingdoms/blob/main/docs/VIBEWORKFLOW.md
+    url: https://github.com/jj-guild/botforge/blob/main/docs/VIBEWORKFLOW.md
     about: How the agent, GitHub, the VPS, Discord and the humans interact before opening an issue.

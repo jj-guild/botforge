@@ -1,9 +1,9 @@
 name: Check Docs
 # Validates documentation completeness on every PR. Docstring and
-# mod-declaration checks require the kingdoms-services source, which is not
+# mod-declaration checks require the botforge-services source, which is not
 # part of this repository; the checkout is mandatory (fail-closed) —
 # partial validation is refused. Generated technical docs (pydoc) live in
-# kingdoms-services itself and are freshness-checked there.
+# botforge-services itself and are freshness-checked there.
 on:
   pull_request:
 
@@ -12,16 +12,16 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Checkout kingdoms-services (read-only)
+      - name: Checkout botforge-services (read-only)
         uses: actions/checkout@v4
         with:
-          repository: merlin-pinpin-org/kingdoms-services
-          path: kingdoms-services
+          repository: jj-guild/botforge-services
+          path: botforge-services
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
       - name: Check documentation completeness
         run: |
           python .github/workflows/scripts/validate_docs.py --check \
-            --source kingdoms-services/src/kingdoms \
-            --config kingdoms-services/config
+            --source botforge-services/src/botforge \
+            --config botforge-services/config

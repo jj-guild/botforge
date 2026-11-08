@@ -1,4 +1,4 @@
-# Contributing to Kingdoms (documentation repository)
+# Contributing to BotForge (documentation repository)
 
 New contributor? Read [docs/GUIDES/join-the-platform.md](docs/GUIDES/join-the-platform.md)
 first — it explains what you need (GitHub + Mistral accounts, connector,
@@ -13,18 +13,18 @@ with a public clone and no credentials.
 
 - Python 3.12+
 - `git`
-- A clone of [`kingdoms-services`](https://github.com/merlin-pinpin-org/kingdoms-services)
+- A clone of [`botforge-services`](https://github.com/jj-guild/botforge-services)
   next to this repository (the doc validation reads its source and configs):
 
 ```bash
-git clone https://github.com/merlin-pinpin-org/kingdoms.git
-git clone https://github.com/merlin-pinpin-org/kingdoms-services.git
+git clone https://github.com/jj-guild/botforge.git
+git clone https://github.com/jj-guild/botforge-services.git
 ```
 
 ## Set up
 
 ```bash
-cd kingdoms
+cd botforge
 ```
 
 No package installation is needed: the scripts use the Python standard
@@ -34,7 +34,7 @@ stdlib-only and type-hinted.
 ## Your first contribution
 
 1. **Pick or create an issue** (from a
-   [template](https://github.com/merlin-pinpin-org/kingdoms/issues/new/choose) —
+   [template](https://github.com/jj-guild/botforge/issues/new/choose) —
    blank issues are disabled; non-compliant ones are flagged `invalid`).
 2. **Create a branch** from `main`:
 
@@ -47,16 +47,16 @@ stdlib-only and type-hinted.
 4. **Validate before pushing** — this is the check CI runs on every PR:
 
    ```bash
-   make session-check KINGDOMS_SERVICES=../kingdoms-services
+   make session-check BOTFORGE_SERVICES=../botforge-services
    ```
 
    It runs docs validation (mod docs completeness, docstrings in the
-   kingdoms-services source, Mermaid syntax) plus roadmap and
+   botforge-services source, Mermaid syntax) plus roadmap and
    dependency-graph drift. It fails closed with the exact artifact to
    fix. To run docs validation alone:
 
    ```bash
-   make validate KINGDOMS_SERVICES=../kingdoms-services
+   make validate BOTFORGE_SERVICES=../botforge-services
    ```
 
 5. **Sync the generated artifacts if you created or closed issues.**
@@ -83,7 +83,7 @@ stdlib-only and type-hinted.
   open issues and in-flight PRs.
 - Mermaid diagrams must use GitHub-compatible syntax (quote node labels
   containing `->` or `{}`; no colons inside unquoted labels).
-- A change in `kingdoms-services` or `kingdoms-infra` without its doc
+- A change in `botforge-services` or `botforge-infra` without its doc
   update here is incomplete — docs and code change together.
 
 ## Code style (sync scripts)

@@ -1,6 +1,6 @@
 ---
 name: deploy-and-validate
-description: Deploy a pull request to the test environment and validate it yourself (healthchecks, stack healthy, no crash loop) before marking the PR ready. Use for any PR with something to deploy on kingdoms-services (the /deploy flow), and to decide whether the test environment may be re-aligned to main after a merge.
+description: Deploy a pull request to the test environment and validate it yourself (healthchecks, stack healthy, no crash loop) before marking the PR ready. Use for any PR with something to deploy on botforge-services (the /deploy flow), and to decide whether the test environment may be re-aligned to main after a merge.
 ---
 
 # Deploy to test and validate before ready
@@ -23,13 +23,13 @@ ready.
 - Nothing to redeploy (doc-only, workflow-only PRs) → skip the deployment,
   keep the rest of the lifecycle.
 
-## Procedure (kingdoms-services PRs)
+## Procedure (botforge-services PRs)
 
 1. **Know your target**: your personal env (the default — no
    overwrite risk, it is yours) or the shared `test` env (explicit
    `/deploy test`). For `test`, first read the pinned image on the
    `deploy/test` state branch —
-   `git show origin/deploy/test:envs/test/state/kingdoms-bot.yml`;
+   `git show origin/deploy/test:envs/test/state/botforge-bot.yml`;
    if a **different** PR is pinned there and still under validation, do
    not deploy on top of it: wait for its cycle to finish (never
    overwrite another PR's shared-env deployment).
@@ -37,7 +37,7 @@ ready.
    (this comment is the agent's action, never the human's — the gate
    checks the human's roster rights, the session acts on their behalf;
    never ask the human to post it)
-   (`gh pr comment <n> --repo merlin-pinpin-org/kingdoms-services --body "/deploy"` —
+   (`gh pr comment <n> --repo jj-guild/botforge-services --body "/deploy"` —
    no argument: the workflow targets your **personal env** from your
    roster alias — **never** the shared `test` env; a bare `/deploy` on a
    personal alias therefore deploys to the personal env (e.g. `merlin`),
@@ -56,14 +56,14 @@ ready.
    the gate verdict (a deny means the deploy never started).
 4. **Follow the pipeline**: the `Deploy PR (comment)` workflow builds the
    image (`pr-<id>-<timestamp>-<sha>`), pushes it to GHCR, then dispatches
-   the `Pin state` workflow on kingdoms-infra which pins it on the target's
+   the `Pin state` workflow on botforge-infra which pins it on the target's
    `deploy/<env>` state branch; the pin push triggers `Deploy environment`,
    which runs on the env's self-hosted runner.
 5. **Validate the deployment yourself** — all of:
    - `Deploy PR (comment)` run: conclusion `success`;
    - `Pin state` + `Deploy environment` runs: `success`;
    - Deploy environment logs end with `deployment to '<env>' applied and
-     healthy` — kingdoms-bot, kingdoms-mongo and kingdoms-redis all
+     healthy` — botforge-bot, botforge-mongo and botforge-redis all
      report healthy (the bot healthcheck probes `/healthz`);
    - the pinned image on `deploy/<env>` matches the PR head sha.
    A crash loop, an exited container or a failed healthcheck → the PR
@@ -85,7 +85,7 @@ action, done by deploying the `main` state or the next release — never on
 top of another PR's validation run. A personal env is re-aligned by its
 owner whenever they choose (it is their sandbox).
 
-## Infra PRs (kingdoms-infra)
+## Infra PRs (botforge-infra)
 
 Infra PRs have no `/deploy`: their CI **boots the real stack** from the
 branch (compose validation, smoke test, backup/restore round-trip). The

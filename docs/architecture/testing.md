@@ -1,18 +1,18 @@
 # Testing strategy
 
-This page defines how Kingdoms is tested: the in-memory test doubles, the
+This page defines how BotForge is tested: the in-memory test doubles, the
 test pyramid, and the rules that keep tests fast and hermetic.
-`MockDiscord` is tracked by kingdoms-services#2 and the behavioral layer by
-kingdoms-services#22 / #24; this page is the strategy all test work must
+`MockDiscord` is tracked by botforge-services#2 and the behavioral layer by
+botforge-services#22 / #24; this page is the strategy all test work must
 follow. It will be enriched with concrete examples as the code lands in
-`kingdoms-services`.
+`botforge-services`.
 
 ## 1. Principle: no test touches the real Discord API
 
 Discord is an external, rate-limited, hard-to-reproduce dependency. Every
 test runs against in-process test doubles, at two complementary depths:
 
-- **`MockDiscord`** (kingdoms-services#2) — mock *objects*: subclasses of
+- **`MockDiscord`** (botforge-services#2) — mock *objects*: subclasses of
   the real discord.py classes (`MockInteraction`, `MockGuild`,
   `MockMessage`…) built from plain Python data. Ideal for adapters, UI
   builders and fast surgical unit tests; permissive by design (no
@@ -29,8 +29,8 @@ test runs against in-process test doubles, at two complementary depths:
   simulated with a controllable clock
 
 Real-API verification (token present, intents correct) runs in CI against a
-**dedicated CI/CD bot** whose token lives in the `kingdoms-services` secret
-`CICD_DISCORD_TOKEN` (kingdoms-services#34): the `Discord smoke` job boots
+**dedicated CI/CD bot** whose token lives in the `botforge-services` secret
+`CICD_DISCORD_TOKEN` (botforge-services#34): the `Discord smoke` job boots
 the real bot container, asserts the gateway-ready signal, and soaks it. The
 job is **fail-closed** on the secret: when the token is not configured the
 job fails with an explicit error — a missing CI/CD bot token is a broken CI
@@ -59,16 +59,16 @@ agent can produce a plausible mock that confirms its own assumptions.*
 | Integration | Multi-component flows: `WorkflowEngine` + `ChannelService` + `StateService` + stores | Every push/PR | pytest |
 | Behavioral (journeys) | Complete user journeys driven as a user: slash commands, buttons, selects, modals, permissions, timeouts, Components V2 | Every push/PR | pytest + SimCord (`simcord_env`) |
 | Smoke (preflight) | Real container entrypoint: environment, MongoDB, Redis, locale catalogs — no Discord gateway | Every push/PR | GitHub Actions (`Bot preflight` step) |
-| Smoke (real Discord) | Real bot container, real gateway connection via the dedicated CI/CD bot | Every push/PR to `main`; **fails** if `CICD_DISCORD_TOKEN` is missing | GitHub Actions (`Discord smoke`, kingdoms-services#34) |
+| Smoke (real Discord) | Real bot container, real gateway connection via the dedicated CI/CD bot | Every push/PR to `main`; **fails** if `CICD_DISCORD_TOKEN` is missing | GitHub Actions (`Discord smoke`, botforge-services#34) |
 
 Behavioral tests are the template for mod journeys
-(`tests/integration/test_simcord_journeys.py` in `kingdoms-services`):
+(`tests/integration/test_simcord_journeys.py` in `botforge-services`):
 arrange the world with builders, act as a user through actors, assert on
 observable state (responses, channel messages, roles).
 
-## 3. MockDiscord (mock objects — kingdoms-services#2)
+## 3. MockDiscord (mock objects — botforge-services#2)
 
-`tests/mocks/discord_mock.py` in `kingdoms-services` provides mock
+`tests/mocks/discord_mock.py` in `botforge-services` provides mock
 *objects*: `MockInteraction` (with `MockResponse`/`MockFollowup` recorders),
 `MockUser`, `MockMember`, `MockRole`, `MockGuild`, `MockMessage`,
 `MockTextChannel`/`MockVoiceChannel`/`MockCategoryChannel`/`MockDMChannel`,
@@ -78,7 +78,7 @@ history, and — per [ADR-0009](../DECISIONS/009-discord-components-v2.md) —
 records **both UI surfaces**: embed-based (`.embeds` + `.components`) and
 Components V2 (`.layout` + flattened `walk_children()` tree).
 
-### Capabilities (contract for kingdoms-services#2)
+### Capabilities (contract for botforge-services#2)
 
 - Channel creation/lookup by category, mirroring guild structure
 - Role assignment and membership tracking
@@ -100,10 +100,10 @@ Components V2 (`.layout` + flattened `walk_children()` tree).
 
 ## 4. SimCord (behavioral simulator)
 
-`simcord[pytest]` is a dev-dependency of `kingdoms-services`. The pytest
+`simcord[pytest]` is a dev-dependency of `botforge-services`. The pytest
 plugin provides the `simcord_env` fixture; each test class overrides the
 `simcord_bot` fixture with the bot it drives (calibration bots today, the
-real bot factory once kingdoms-services#12 lands).
+real bot factory once botforge-services#12 lands).
 
 ### Rules for behavioral tests
 
@@ -146,8 +146,8 @@ real bot factory once kingdoms-services#12 lands).
    order
 3. User-facing strings are asserted through locale keys or localized
    content, never raw hardcoded text
-4. CI (lint, test) runs on every PR in `kingdoms-services` and
-   `kingdoms-infra`; docs validation runs on every PR in this repo
+4. CI (lint, test) runs on every PR in `botforge-services` and
+   `botforge-infra`; docs validation runs on every PR in this repo
 5. **Anything the dev sandbox cannot run is validated by GitHub Actions
    instead**: Docker builds, Compose boots, stack healthchecks,
    backup/restore round-trips and entrypoint runs are CI jobs, not manual

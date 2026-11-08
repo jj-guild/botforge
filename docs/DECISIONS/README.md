@@ -1,6 +1,6 @@
 # Architecture Decision Records (ADR)
 
-ADRs document the major technical decisions of the Kingdoms project: the
+ADRs document the major technical decisions of the BotForge project: the
 context, the decision, the alternatives considered, and the consequences.
 They are **permanent documentation** — the rationale behind our choices must
 survive the people who made them.

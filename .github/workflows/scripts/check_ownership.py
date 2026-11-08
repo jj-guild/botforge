@@ -5,19 +5,19 @@ The roster (CONTRIBUTORS.md) is the single source of truth for who owns
 what. This check enforces the ownership rules the platform runs on:
 
 1. **Every mod and game has a rostered owner.** A mod directory
-   (``docs/MODS/<mod>/`` in kingdoms, ``src/kingdoms/mods/<mod>/`` in
-   kingdoms-services, ``config/mods/<mod>.yaml``) or a game directory
-   (``src/kingdoms/core/games/<game>/``) without a matching `owns`
+   (``docs/MODS/<mod>/`` in botforge, ``src/botforge/mods/<mod>/`` in
+   botforge-services, ``config/mods/<mod>.yaml``) or a game directory
+   (``src/botforge/core/games/<game>/``) without a matching `owns`
    entry in the roster is a violation: nobody is accountable for it and
    no CODEOWNERS line can legitimately exist. Creating a mod or a game
    without a roster entry is proscribed (CONVENTIONS.md) — this check
    is the automated enforcement.
 
 2. **CODEOWNERS matches the roster.** Every mod/game delegation line in
-   the CODEOWNERS files (kingdoms and kingdoms-services) must point at
+   the CODEOWNERS files (botforge and botforge-services) must point at
    a contributor whose roster `owns` column names that mod/game;
    conversely, every roster-claimed mod/game must have its CODEOWNERS
-   delegation lines (docs in kingdoms, code in kingdoms-services).
+   delegation lines (docs in botforge, code in botforge-services).
 
 Exit 0 when consistent; every violation is reported and makes the run
 fail (the sync workflow surfaces it to the maintainers).
@@ -32,8 +32,8 @@ from pathlib import Path
 
 REPO = Path(__file__).resolve().parents[3]
 MOD_DIRS = ("docs/MODS",)
-KINGDOMS_SERVICES_MODS = "src/kingdoms/mods"
-KINGDOMS_SERVICES_GAMES = "src/kingdoms/core/games"
+BOTFORGE_SERVICES_MODS = "src/botforge/mods"
+BOTFORGE_SERVICES_GAMES = "src/botforge/core/games"
 CONFIG_MODS = "config/mods"
 
 MEMBER_ROW = re.compile(r"^\|\s*@([A-Za-z0-9-]+)\s*\|")
@@ -63,7 +63,7 @@ def claimed_mods_and_games(owns_cell: str) -> tuple[set[str], set[str]]:
     for group in mods:
         for name in re.split(r"[,/]", group):
             name = name.strip().strip("`").lower()
-            if name and name not in ("kingdoms",):  # the org's own mods count
+            if name and name not in ("botforge",):  # the org's own mods count
                 flat_mods.add(name)
     backtick = {m.lower() for m in re.findall(r"`([a-z0-9-]+)`", owns_cell)}
     games = {g for g in backtick if g in KNOWN_GAMES}
@@ -100,19 +100,19 @@ def codeowners_delegations(codeowners_path: Path) -> dict[str, str]:
         if not line or line.startswith("#"):
             continue
         parts = line.split()
-        if len(parts) >= 2 and not parts[1].startswith("@merlin-pinpin-org/"):
+        if len(parts) >= 2 and not parts[1].startswith("@jj-guild/"):
             delegations[parts[0].rstrip("/")] = parts[1].lstrip("@")
     return delegations
 
 
 def services_paths(services_repo: Path) -> tuple[set[str], set[str]]:
-    """Mod and game names found in a kingdoms-services checkout."""
+    """Mod and game names found in a botforge-services checkout."""
     mods: set[str] = set()
     games: set[str] = set()
-    mods_dir = services_repo / KINGDOMS_SERVICES_MODS
+    mods_dir = services_repo / BOTFORGE_SERVICES_MODS
     if mods_dir.is_dir():
         mods = {p.name.lower() for p in mods_dir.iterdir() if p.is_dir()}
-    games_dir = services_repo / KINGDOMS_SERVICES_GAMES
+    games_dir = services_repo / BOTFORGE_SERVICES_GAMES
     if games_dir.is_dir():
         games = {p.name.lower() for p in games_dir.iterdir() if p.is_dir() and p.name != "__pycache__"}
     return mods, games
@@ -136,23 +136,23 @@ def main() -> int:
             f"— creating a mod without a rostered owner is proscribed"
         )
 
-    # kingdoms-services (sibling checkout when present): mod code and games
-    services = REPO.parent / "github__merlin-pinpin-org__kingdoms-services"
+    # botforge-services (sibling checkout when present): mod code and games
+    services = REPO.parent / "github__jj-guild__botforge-services"
     if not services.is_dir():
         services = Path(
-            os.environ.get("KINGDOMS_SERVICES_REPO", str(REPO.parent / "kingdoms-services"))
+            os.environ.get("BOTFORGE_SERVICES_REPO", str(REPO.parent / "botforge-services"))
         )
     if services.is_dir():
         svc_mods, svc_games = services_paths(services)
         for name in sorted(svc_mods - claimed - template_dirs - {"__pycache__"}):
             violations.append(
-                f"mod code 'src/kingdoms/mods/{name}' exists but no roster entry "
+                f"mod code 'src/botforge/mods/{name}' exists but no roster entry "
                 f"claims it (CONTRIBUTORS.md 'owns') — creating a mod without a "
                 f"rostered owner is proscribed"
             )
         for name in sorted(svc_games - claimed - KNOWN_GAMES_UNOWNED):
             violations.append(
-                f"game 'src/kingdoms/core/games/{name}' exists but no roster entry "
+                f"game 'src/botforge/core/games/{name}' exists but no roster entry "
                 f"claims it (CONTRIBUTORS.md 'owns') — creating a game without a "
                 f"rostered owner is proscribed"
             )

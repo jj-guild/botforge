@@ -1,11 +1,11 @@
 #!/usr/bin/env python3
-"""Validate Kingdoms documentation completeness.
+"""Validate BotForge documentation completeness.
 
 Checks:
-- every mod declared in kingdoms-services config/mods/ has a doc directory
+- every mod declared in botforge-services config/mods/ has a doc directory
   in docs/MODS/ with README.md, RULES.md and ENVIRONMENT.md
 - every Python module, public class and public function in
-  kingdoms-services has a docstring (skipped when the source tree is absent)
+  botforge-services has a docstring (skipped when the source tree is absent)
 - every Mermaid block in docs/ is syntactically plausible
   (declared diagram type, balanced subgraph/end, non-empty)
 
@@ -167,16 +167,16 @@ def main() -> int:
     parser.add_argument(
         "--source",
         type=Path,
-        default=repo_root().parent / "kingdoms-services" / "src" / "kingdoms",
+        default=repo_root().parent / "botforge-services" / "src" / "botforge",
         help="Python source root for docstring checks "
-        "(default: ../kingdoms-services/src/kingdoms)",
+        "(default: ../botforge-services/src/botforge)",
     )
     parser.add_argument(
         "--config",
         type=Path,
-        default=repo_root().parent / "kingdoms-services" / "config",
-        help="kingdoms-services config root for mod declarations "
-        "(default: ../kingdoms-services/config)",
+        default=repo_root().parent / "botforge-services" / "config",
+        help="botforge-services config root for mod declarations "
+        "(default: ../botforge-services/config)",
     )
     args = parser.parse_args()
 
@@ -190,14 +190,14 @@ def main() -> int:
 
     if source_root is None:
         print(
-            "error: kingdoms-services source not found — the docstring check "
+            "error: botforge-services source not found — the docstring check "
             "is mandatory; refusing to validate partially",
             file=sys.stderr,
         )
         return 1
     if config_root is None:
         print(
-            "error: kingdoms-services config not found — mod-declaration "
+            "error: botforge-services config not found — mod-declaration "
             "validation is mandatory; refusing to validate partially",
             file=sys.stderr,
         )

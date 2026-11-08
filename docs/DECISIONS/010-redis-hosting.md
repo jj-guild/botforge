@@ -79,4 +79,4 @@ throughput, 5 GB monthly bandwidth, TLS + IP allowlist, persistence on.
 - [ADR-0005](005-redis-state-management.md) — what Redis stores
 - [ADR-0006](006-docker-compose-infra.md) — Docker Compose environments
 - [Redis Cloud Essentials plan details](https://redis.io/docs/latest/operate/rc/subscriptions/view-essentials-subscription/essentials-plan-details/)
-- kingdoms-services#9 (StateService), kingdoms-services#23 (caching integration)
+- botforge-services#9 (StateService), botforge-services#23 (caching integration)

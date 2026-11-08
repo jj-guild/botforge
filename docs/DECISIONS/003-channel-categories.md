@@ -2,7 +2,7 @@
 
 **Status:** Accepted
 **Date:** 2026-09-18
-**Reference:** kingdoms#2, kingdoms#6
+**Reference:** botforge#2, botforge#6
 
 ## Context
 
@@ -27,7 +27,7 @@ categories**:
 - The core enum keeps only platform-level categories (`ADMIN`, `REPORTS`,
   `LOGS`); **mods declare their own categories** (e.g. ladder: admin,
   rankings, info) via their mod config and `ModRegistry`
-  (kingdoms-services#26) — mods never extend core enums
+  (botforge-services#26) — mods never extend core enums
 - Categories are addressed as `mod:key` (e.g. `ladder:ladder_rankings`)
 - Maps `guild_id + category → channel_id`
 - Creates channels automatically if missing (via `IPlatform`)
@@ -65,4 +65,4 @@ categories**:
 - [ARCHITECTURE.md](../ARCHITECTURE.md) — channel management diagram
 - [WORKFLOWS.md](../WORKFLOWS.md) — channel category management and message
   routing
-- kingdoms-services#5 (ChannelService), kingdoms-services#7 (enums), kingdoms-services#26 (per-mod channel/role management)
+- botforge-services#5 (ChannelService), botforge-services#7 (enums), botforge-services#26 (per-mod channel/role management)

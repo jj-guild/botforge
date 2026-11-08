@@ -1,6 +1,6 @@
 # AGENTS.md
 
-Kingdoms documentation repo — the **source of truth** for the Kingdoms
+BotForge documentation repo — the **source of truth** for the BotForge
 Discord bot platform (architecture, ADRs, operating docs, mods
 documentation, generated roadmap and dependency graph).
 
@@ -160,7 +160,7 @@ Rules of the map:
 
 ## Read first — the detailed entries
 
-**A mod's files never scatter** (kingdoms#179): a mod's declaration,
+**A mod's files never scatter** (botforge#179): a mod's declaration,
 views (`config/mods/<mod>.views.yaml`), code and locales live
 together — never in the platform's shared config/locales, never in
 the platform's views.yaml. The same holds for a game's files.
@@ -190,13 +190,13 @@ the **user-facing UI content** (locale catalogs, rendered labels).
 
 ## Repositories
 
-- `kingdoms` (this repo): docs, ADRs, sync/validation scripts
-- `kingdoms-services`: all Python code (core, Discord platform, mods)
-- `kingdoms-infra`: Docker, CI/CD, GitOps manifests, deploy scripts
+- `botforge` (this repo): docs, ADRs, sync/validation scripts
+- `botforge-services`: all Python code (core, Discord platform, mods)
+- `botforge-infra`: Docker, CI/CD, GitOps manifests, deploy scripts
 
 ## Local rules
 
-- Run `python3 .github/workflows/scripts/validate_docs.py --check --source <kingdoms-services>/src/kingdoms --config <kingdoms-services>/config`
+- Run `python3 .github/workflows/scripts/validate_docs.py --check --source <botforge-services>/src/botforge --config <botforge-services>/config`
   before opening any PR (the `Check Docs` required check re-runs it).
 - Never edit or regenerate `generated/ROADMAP.md` or `generated/DEPENDENCIES.md`: the
   `sync-generated` workflow owns both files and publishes them on the
@@ -214,8 +214,8 @@ the **user-facing UI content** (locale catalogs, rendered labels).
   automatically** and flags what it will not touch (unrostered org members,
   undeclared teams). Sessions read the roster to know who they work with
   (alias, email, teams, agent scope).
-- Keep the docs in sync with any change made in `kingdoms-services` or
-  `kingdoms-infra` — a code change without its doc update here is
+- Keep the docs in sync with any change made in `botforge-services` or
+  `botforge-infra` — a code change without its doc update here is
   incomplete.
 - **Enrich the docs and skills proactively** (developer-mandated,
   CONVENTIONS.md *Documentation is part of the change*): when a

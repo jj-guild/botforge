@@ -9,7 +9,7 @@ Sessions have no memory; this skill is the platform's. Every incident
 already met and fixed lives here, **per scope**, one dated entry per
 incident, newest first. Before diagnosing a problem from scratch, check
 whether the wall has already been met — and when a session fixes a
-problem, the same PR adds the entry (PRIORITY 0 rule 7, kingdoms
+problem, the same PR adds the entry (PRIORITY 0 rule 7, botforge
 CONVENTIONS.md *Troubleshooting is part of the fix*).
 
 **Entry shape (all four, always):**
@@ -25,11 +25,11 @@ CONVENTIONS.md *Troubleshooting is part of the fix*).
 A fix without its test and its entry is incomplete; an entry without a
 guard test is a story, not a memory.
 
-## Scope: platform code (kingdoms-services)
+## Scope: platform code (botforge-services)
 
 No entry yet — the first fixed incident lands here.
 
-## Scope: deploy & infra (kingdoms-infra, VPS, runners)
+## Scope: deploy & infra (botforge-infra, VPS, runners)
 
 ### 2026-10-16 — Hours of hypotheses on a silent failure
 - Symptom: a flow silently does nothing; no error, no logs.
@@ -42,7 +42,7 @@ holding the deploy group forever — is documented with its diagnosis
 procedure in the
 [diagnose-deploy](../diagnose-deploy/SKILL.md) skill.)
 
-## Scope: docs & CI (kingdoms, workflows, checks)
+## Scope: docs & CI (botforge, workflows, checks)
 
 No entry yet — the first fixed incident lands here.
 

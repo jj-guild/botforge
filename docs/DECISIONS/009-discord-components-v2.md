@@ -3,12 +3,12 @@
 - **Status**: Accepted
 - **Date**: 2026-09-20
 - **Deciders**: developer
-- **Reference**: kingdoms-services#13
+- **Reference**: botforge-services#13
 
 ## Context
 
 Discord shipped **Components V2**, a new message layout system, supported by
-discord.py since **2.6** (we pin `discord.py>=2.7.1` in kingdoms-services#1).
+discord.py since **2.6** (we pin `discord.py>=2.7.1` in botforge-services#1).
 It replaces the `content` + `embeds` + action-rows model with composable
 blocks: `ui.LayoutView` as the root, then `ui.Container`, `ui.Section`,
 `ui.TextDisplay`, `ui.MediaGallery`, `ui.File`, `ui.Separator`,
@@ -47,13 +47,13 @@ discord.py 2.6 changelog):
    iteration uses `walk_children()` (components nest deeply), and disabling
    items must walk that tree.
 
-The UI layer (kingdoms-services#13) has not been implemented yet, so we are
+The UI layer (botforge-services#13) has not been implemented yet, so we are
 choosing the system before writing the first component — the cheapest time
 to decide.
 
 ## Decision
 
-Kingdoms uses **both** systems, chosen per message by a simple rule the
+BotForge uses **both** systems, chosen per message by a simple rule the
 game designer can apply:
 
 - **Embed** (`discord.Embed`, optionally with a `ui.View` for buttons):
@@ -68,7 +68,7 @@ game designer can apply:
 
 Concretely:
 
-- kingdoms-services#13 ships **both** `ui/embeds.py` (EmbedBuilder for
+- botforge-services#13 ships **both** `ui/embeds.py` (EmbedBuilder for
   consistent sober styling) **and** `ui/layouts.py` (LayoutView
   subclasses for rich cards), with the same shared patterns:
   `interaction_check`, `on_timeout` + `walk_children()` disabling,
@@ -81,7 +81,7 @@ Concretely:
   (Discord rejects `content`/`embeds` on a V2 message). The flag is
   permanent per message: choose before sending.
 - `IPlatform` stays layout-agnostic: it sends "a message" (embed or
-  components); `MockDiscord` (kingdoms-services#2) **must** record both
+  components); `MockDiscord` (botforge-services#2) **must** record both
   embeds and the V2 component tree so journey tests can assert on either.
 - Mod issues state which system each of their messages uses; when in
   doubt, start with an embed and upgrade to V2 only when the layout
@@ -94,7 +94,7 @@ Concretely:
   discards the sober, familiar embed rendering the game designer wants.
   Rejected.
 - **Embeds only**: simpler and universally supported, but cannot express
-  the rich panels Kingdoms needs (sections with accessories, galleries,
+  the rich panels BotForge needs (sections with accessories, galleries,
   multi-block layouts). Rejected.
 - **Wait for discord.py V2 API surface to stabilize further**: discord.py
   2.6/2.7 already ship the full component set (`LayoutView`, `Container`,
@@ -132,4 +132,4 @@ Concretely:
 - discord.py changelog (Components V2, GH-10166):
   <https://discordpy.readthedocs.io/en/latest/whats_new.html>
 - [architecture/discord.md](../architecture/discord.md) — updated patterns
-- kingdoms-services#13 (UI components), kingdoms-services#2 (MockDiscord)
+- botforge-services#13 (UI components), botforge-services#2 (MockDiscord)

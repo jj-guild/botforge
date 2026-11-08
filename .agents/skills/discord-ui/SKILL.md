@@ -1,12 +1,12 @@
 ---
 name: discord-ui
-description: Build any Discord message, view, embed or Components V2 layout through the kingdoms-services UI SDK, never discord.ui directly. Use whenever a session builds, reviews or refactors a bot message, button, select menu, ranking, config panel or any user-facing Discord UI.
+description: Build any Discord message, view, embed or Components V2 layout through the botforge-services UI SDK, never discord.ui directly. Use whenever a session builds, reviews or refactors a bot message, button, select menu, ranking, config panel or any user-facing Discord UI.
 ---
 
 # Discord UI (the SDK rules)
 
 Every user-facing Discord message of the platform is built through the
-UI SDK in `kingdoms-services` — `src/kingdoms/discord/ui/`
+UI SDK in `botforge-services` — `src/botforge/discord/ui/`
 (`factory.py` for the bricks and builders, `screens.py` for the
 archetypes). No feature instantiates `discord.ui` / `discord.Embed`
 classes directly: the SDK is the single place where the Discord layout
@@ -25,7 +25,7 @@ Two builders cover the ADR-0009 dual system:
   `Action` (interactive button), `SelectMenu` (interactive select).
 
 ```python
-from kingdoms.discord.ui import UILayout, Container, Section, Text, Row, Button, Separator
+from botforge.discord.ui import UILayout, Container, Section, Text, Row, Button, Separator
 
 view = (
     UILayout()
@@ -193,8 +193,8 @@ Rules:
   id, one message end to end.
 
 Reference implementations: `MapsSyncButton.callback` and
-`GamesBulkImportModal.on_submit` (`kingdoms-services`,
-`src/kingdoms/discord/admin_dm_panel.py` / `admin_panel_games.py`).
+`GamesBulkImportModal.on_submit` (`botforge-services`,
+`src/botforge/discord/admin_dm_panel.py` / `admin_panel_games.py`).
 
 ## Runtime permission checks (the click-time mandate)
 
@@ -205,7 +205,7 @@ render and click. Rules:
 
 - every interactive item behind a privilege validates the interaction
   **at click time**, through the shared guards
-  (`kingdoms.discord.guards`: `require_admin` / `is_admin`);
+  (`botforge.discord.guards`: `require_admin` / `is_admin`);
 - the admin identity is: `BOT_ADMINS` (env-sourced operators), guild
   administrators (live Discord permissions), or the `bot-admins` guild
   role (resolved live through the RolesService, cache-aside Redis);
@@ -324,7 +324,7 @@ this with `ComponentValidationError`). The rule:
 Every user-facing string renders through the shared `MessageCatalog`
 (`config/locales/<locale>.yaml`, one top-level section per surface).
 Slash command names/description go through `locale_str` markers plus
-the `CatalogTranslator` (`kingdoms.discord.commands_i18n`) — the yaml
+the `CatalogTranslator` (`botforge.discord.commands_i18n`) — the yaml
 `commands.<name>_name` / `commands.<name>_description` keys are the
 only source; never a hardcoded localization dict.
 
@@ -333,7 +333,7 @@ The locale resolution rules (Discord-native signals, always stored):
 - **ephemeral / interaction surfaces** — the **clicker's client
   language first** (`interaction.locale`), then the server's language
   when the client speaks one the catalog does not carry — resolved
-  through `kingdoms.discord.locales.interaction_locale`. A French
+  through `botforge.discord.locales.interaction_locale`. A French
   client sees French even on an English server, exactly like Discord
   localizes slash commands;
 - **pinned / public messages** (panels, announcements, lifecycle
@@ -387,7 +387,7 @@ Adding a screen or message, the checklist (never skip the sweep):
 ## Menus, panels and the views registry
 
 Every view is **declared once** in `config/views.yaml`
-(kingdoms-services) — the single source of truth the runtime menu
+(botforge-services) — the single source of truth the runtime menu
 builder, the pins and the button router consume, and from which
 docs/DEVELOPMENT/VIEWS.md is generated
 (`scripts/generate_views_doc.py` — regenerate it in the same change).
@@ -398,7 +398,7 @@ wires at boot (`wire_action`) — an unwired action renders disabled.
 **A mod declares its own views in its own config**
 (`config/mods/<mod>.views.yaml`); the registry merges them with the
 platform's. A mod's files never scatter across the repo — its
-declaration, views, code and locales live together (kingdoms#179,
+declaration, views, code and locales live together (botforge#179,
 the modular-layout rule): never add a mod's i18n keys to the shared
 `config/locales/`, never add its views to the platform's YAML. Two kinds:
 
@@ -428,7 +428,7 @@ source of truth, the code is its executable mirror.
 
 ## Views organization (adding a screen)
 
-- one module per surface in `kingdoms/discord/` (admin.py, status.py…):
+- one module per surface in `botforge/discord/` (admin.py, status.py…):
   the builders, the callbacks and the command registration together;
 - the layout composition lives in `ui/screens.py` when the shape is
   reusable (an archetype), in the surface module when it is not;
@@ -440,7 +440,7 @@ source of truth, the code is its executable mirror.
   relative times (`<t:…:R>`);
 - **every view carries its view id as its footer** — a small `-#`
   line with the id in backticks (`view:aoe2:admin`), built through
-  `kingdoms.core.ids.footer` (or `MenuSpec.view_id` on the menu
+  `botforge.core.ids.footer` (or `MenuSpec.view_id` on the menu
   template). The id is the anchor every human feedback refers to:
   "the Create button on `view:games:pools:manage` is broken" — no
   view ships without one.

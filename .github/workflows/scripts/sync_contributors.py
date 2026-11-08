@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Synchronize the org's teams and memberships with CONTRIBUTORS.md.
 
-The roster (CONTRIBUTORS.md, kingdoms repo) is the single source of truth
+The roster (CONTRIBUTORS.md, botforge repo) is the single source of truth
 for org teams, team memberships and team repo grants. This script makes
 GitHub match the doc:
 
@@ -28,7 +28,7 @@ import urllib.request
 from dataclasses import dataclass, field
 
 GITHUB_API = "https://api.github.com"
-ORG = "merlin-pinpin-org"
+ORG = "jj-guild"
 
 
 @dataclass
@@ -65,7 +65,7 @@ class GitHub:
                 "Authorization": f"Bearer {self.token}",
                 "Accept": "application/vnd.github+json",
                 "Content-Type": "application/json",
-                "User-Agent": "kingdoms-sync-contributors",
+                "User-Agent": "botforge-sync-contributors",
             },
         )
         try:

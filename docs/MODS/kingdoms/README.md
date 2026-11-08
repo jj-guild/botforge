@@ -78,7 +78,7 @@ The mod's season data seeds with its own CLI, by visible ids (the
 panels' footers):
 
 ```
-python -m kingdoms.mods.kingdoms.kingdoms_seed_cli <seed_yaml> <guild_id>
+python -m botforge.mods.kingdoms.kingdoms_seed_cli <seed_yaml> <guild_id>
 ```
 
 The YAML file (see the ladder/core seeds for the deploy-time pattern):
@@ -119,11 +119,11 @@ Les salons déclarés par le mod incluent `⚔️-attaquer`,
 ## Faction/map localized content seeding
 
 The vendored aoe2techtree dataset (`data/core/aoe2techtree/` in
-kingdoms-services) feeds the `faction_content` Mongo collection for
+botforge-services) feeds the `faction_content` Mongo collection for
 every platform locale:
 
 ```
-python -m kingdoms.core.games.aoe2.faction_content_cli [dataset_dir]
+python -m botforge.core.games.aoe2.faction_content_cli [dataset_dir]
 ```
 
 Run once per environment (deploy-time seeding); the forums' posts
@@ -152,7 +152,7 @@ toutes les guildes.
 ## Refresh du contenu (maj du jeu)
 
 Le bouton « Rafraîchir le contenu civs/maps » (panneau DM bot admin)
-ou `python -m kingdoms.core.games.aoe2.content_refresh_cli`
+ou `python -m botforge.core.games.aoe2.content_refresh_cli`
 réconcilie le catalogue avec le dataset vendored : création des civs
 manquantes (ex. The Viking Sagas), upsert du contenu localisé (unités
 uniques, tech tree, textes d'aide — tout ce qui évolue à chaque maj).
@@ -173,8 +173,8 @@ est toujours référencée (ligne `Source :` en tête de post + panneau).
 ## Processus provider ext-aoe2techtree (API gRPC)
 
 Le contenu de jeu est servi par un processus provider dédié
-(`KINGDOMS_PROCESS: ext-aoe2techtree`, port 50063 sur le réseau docker
-uniquement) via le contrat gRPC `kingdoms.v1.Content` : contenu
+(`BOTFORGE_PROCESS: ext-aoe2techtree`, port 50063 sur le réseau docker
+uniquement) via le contrat gRPC `botforge.v1.Content` : contenu
 localisé de factions/maps, index de factions, capabilities. Le core le
 consomme via `EXT_AOE2TECHTREE_URI` ; sans cette variable, le refresh
 retombe sur la lecture du dataset vendored en-process (comportement

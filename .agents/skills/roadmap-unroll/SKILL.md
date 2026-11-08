@@ -17,7 +17,7 @@ of truth.
 
 ## When the human says "roadmap" / "unroll the roadmap" / "what's next?"
 
-1. From the kingdoms repo root, run:
+1. From the botforge repo root, run:
    ```bash
    python3 scripts/roadmap_next.py
    ```

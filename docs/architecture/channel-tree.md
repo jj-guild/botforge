@@ -105,7 +105,7 @@ Grouping folders (games, mods, games/<game>) carry only `general` and
    `view:ladder:news`. Never a slash in a view id: they must stay
    quotable.
 
-10. **Every menu is a `PanelSpec`** (SDK `kingdoms.discord.ui`):
+10. **Every menu is a `PanelSpec`** (SDK `botforge.discord.ui`):
     `name` (registry `view:<guild-id>:<slug>`), `pinned_on`
     (channel + PinMode LATEST_ONLY|ALL|None), `autoheal`,
     `navigable` (False everywhere: pinned, ephemerals), `permissions`
@@ -163,10 +163,10 @@ click time, greyed by context.
 
 ```
 📁 mods/kingdoms
-   ├── # general        ……… [menu: kingdoms-home]
+   ├── # general        ……… [menu: botforge-home]
    ├── # discussions    ……… (open, public)
    ├── # map            ……… (readonly, sync)
-   ├── # admin          ……… [menu: kingdoms-admin]
+   ├── # admin          ……… [menu: botforge-admin]
    └── # decisions      ……… (open, admin)
 ```
 

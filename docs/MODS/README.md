@@ -1,6 +1,6 @@
 # Mods
 
-Kingdoms uses a **modular architecture**: each game feature (register, ladder,
+BotForge uses a **modular architecture**: each game feature (register, ladder,
 clans, ...) is a separate mod built on the generic core. This directory is
 where the game designer defines and evolves mod rules and environments —
 without coding.
@@ -9,7 +9,7 @@ without coding.
 
 A mod is a self-contained feature that:
 
-- declares its configuration in YAML (`kingdoms-services/config/mods/<mod>.yaml`)
+- declares its configuration in YAML (`botforge-services/config/mods/<mod>.yaml`)
 - implements its logic against the generic core (`IPlatform`,
   `WorkflowEngine`, `ChannelService`) — never against a specific platform
 - documents its rules and environment here, in `docs/MODS/<mod-name>/`
@@ -88,7 +88,7 @@ flowchart TD
 ## Available mods
 
 The repo provides the generic mod tooling: the `config/mods/_example.yaml`
-declaration template and the `ModRegistry` (kingdoms-services#26). Each mod
+declaration template and the `ModRegistry` (botforge-services#26). Each mod
 lands with its own issue, implementation and documentation set.
 
 ## Mod catalogue
@@ -98,13 +98,13 @@ with its maturity level, categories and links in the
 [**mod catalogue**](CATALOGUE.md). The catalogue is the game designers'
 entry point for browsing and **prioritizing** ideas; the linked issue or doc
 holds the decisions. The register, ladder and kingdoms design docs live
-under [register/](register/), [ladder/](ladder/) and [kingdoms/](kingdoms/) —
+under [register/](register/), [ladder/](ladder/) and [botforge/](botforge/) —
 they describe the target behavior, not shipped code.
 
 ## Mod version history
 
 Mod rule and environment changes are tracked per mod (`register/CHANGELOG.md`)
-and in the [roadmap](https://github.com/merlin-pinpin-org/kingdoms/blob/sync/generated-artifacts/generated/ROADMAP.md).
+and in the [roadmap](https://github.com/jj-guild/botforge/blob/sync/generated-artifacts/generated/ROADMAP.md).
 
 ## See also
 

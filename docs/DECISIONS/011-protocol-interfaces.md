@@ -3,14 +3,14 @@
 - **Status**: Accepted
 - **Date**: 2026-09-20
 - **Deciders**: developer
-- **Reference**: kingdoms-services#3
+- **Reference**: botforge-services#3
 
 ## Context
 
 The platform-agnostic contracts (`IPlatform`, `IMessage`, `IChannel`, `IUser`,
 `IWorkflow`) were defined as abstract base classes (`abc.ABC` +
 `@abstractmethod`). The platform layer implements them through the adapter
-pattern (`kingdoms-services#8`): discord.py objects are converted into core
+pattern (`botforge-services#8`): discord.py objects are converted into core
 models. With nominal typing, every adapter model must explicitly inherit from
 an `I*` class, coupling the adapter module to the interface module for purely
 mechanical reasons.
@@ -20,8 +20,8 @@ structural typing is fully supported by the toolchain.
 
 ## Decision
 
-The core interfaces in `kingdoms-services`
-(`src/kingdoms/core/interfaces/platform.py`) are defined as
+The core interfaces in `botforge-services`
+(`src/botforge/core/interfaces/platform.py`) are defined as
 `typing.Protocol` classes, decorated with `@runtime_checkable`:
 
 - **Implementations satisfy the contracts structurally**: no inheritance
@@ -50,7 +50,7 @@ classes.
 
 - Adapters and `DiscordPlatform` are decoupled from the interface module
   (import direction inverts: only the core's consumers reference contracts)
-- Test doubles (MockDiscord, `kingdoms-services#2`) are trivial to write
+- Test doubles (MockDiscord, `botforge-services#2`) are trivial to write
 - The adapter pattern gains its natural typing model
 - Contracts remain fully checked by mypy strict
 
@@ -68,4 +68,4 @@ classes.
 - [ADR-0001](001-multi-platform-architecture.md) — multi-platform
   architecture (`IPlatform`)
 - [../ARCHITECTURE.md](../ARCHITECTURE.md) — generic core, `interfaces/`
-- `kingdoms-services#3` — IPlatform implementation
+- `botforge-services#3` — IPlatform implementation

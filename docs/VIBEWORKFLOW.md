@@ -1,10 +1,10 @@
 # Vibe-coding workflow
 
-This document describes the operating model used to build Kingdoms: the full
+This document describes the operating model used to build BotForge: the full
 interaction loop between the AI agent, GitHub, the VPS, Discord, and the humans
 (game designer, developer).
 
-Kingdoms is built by AI agent sessions that have **no access to previous
+BotForge is built by AI agent sessions that have **no access to previous
 conversations**. This repo is the source of truth, so the operating model
 itself is written down here. Any future session — and any human contributor —
 must be able to understand the model from this page alone.
@@ -45,20 +45,20 @@ org owner):
 
 | Team | Members | Repo permissions |
 |------|---------|-----------------|
-| `@merlin-pinpin-org/maintainers` | developer + ops | Write on the 3 repos; code owners (required reviewers on `main` PRs) |
-| `@merlin-pinpin-org/ops` | ops | Maintain on `kingdoms-infra` (environments + secrets), Read elsewhere; owns the `/deploy/prod/` CODEOWNERS paths |
-| `@merlin-pinpin-org/game-designers` | game designers | Write on `kingdoms` and `kingdoms-services`; each designer **owns and reviews their mod's code** (CODEOWNERS names them per mod), validates on the test Discord; core-touching PRs need a maintainer review per CODEOWNERS. Read on `kingdoms-infra` |
+| `@jj-guild/maintainers` | developer + ops | Write on the 3 repos; code owners (required reviewers on `main` PRs) |
+| `@jj-guild/ops` | ops | Maintain on `botforge-infra` (environments + secrets), Read elsewhere; owns the `/deploy/prod/` CODEOWNERS paths |
+| `@jj-guild/game-designers` | game designers | Write on `botforge` and `botforge-services`; each designer **owns and reviews their mod's code** (CODEOWNERS names them per mod), validates on the test Discord; core-touching PRs need a maintainer review per CODEOWNERS. Read on `botforge-infra` |
 
 ## Artifact map
 
 | Artifact | Location | Owner |
 |----------|----------|-------|
-| Ideas, rules, environments | `kingdoms` docs (`docs/MODS/`) | Game designer (via agent) |
+| Ideas, rules, environments | `botforge` docs (`docs/MODS/`) | Game designer (via agent) |
 | Work items | GitHub issues (3 repos) | Agent creates |
 | Implementation | Feature branches `vibe/<slug>` → PRs | Agent |
 | Approvals & merges | PR review, GitHub rulesets | CODEOWNERS review; GitHub automerges the ready PR (rebase-only — see [GUIDES/rulesets.md](GUIDES/rulesets.md)) |
 | Versions | Git tags + GitHub releases | Agent executes on request; permissions enforced by GitHub |
-| Deployment | `kingdoms-infra` GitOps (test / prod, self-hosted runner on the VPS) | Agent via CI/CD; ops approves prod |
+| Deployment | `botforge-infra` GitOps (test / prod, self-hosted runner on the VPS) | Agent via CI/CD; ops approves prod |
 
 ## End-to-end flow
 
@@ -124,7 +124,7 @@ Step by step:
    release — tag and release permissions are enforced by GitHub.
 6. PR deployments are **on demand** (`/deploy` PR comment posted by
    the session); the PR image (commit-SHA tagged) is pinned in the
-   environment **state branch** `deploy/test` by the kingdoms-deployer
+   environment **state branch** `deploy/test` by the botforge-deployer
    GitHub App (ephemeral Actions: write token), and the push to
    `deploy/test` triggers the deployment — the deploy reads the pinned
    image from Git, never from a workflow input (ADR-0018). Production
@@ -180,11 +180,11 @@ artifacts](../.agents/skills/generated-artifacts/SKILL.md)) is
 what the script reports (labels, references) — it **never commits the
 regenerated artifact**: no PR carries it, no rolling `automation/*` PR,
 no direct push to `main`. Generated
-technical docs (pydoc) live in `kingdoms-services` and are
+technical docs (pydoc) live in `botforge-services` and are
 freshness-checked there.
 
-- **Fail-closed:** both scripts read the issues of `kingdoms-services` and
-  `kingdoms-infra` through `gh api` (all three repositories are public, no
+- **Fail-closed:** both scripts read the issues of `botforge-services` and
+  `botforge-infra` through `gh api` (all three repositories are public, no
   custom secret); they fail with an explicit error when a repo is
   unreadable, never regenerating from partial data. Every sync script fails
   when its validation fails (unreadable repo, partial data, missing
@@ -199,7 +199,7 @@ freshness-checked there.
   the issue on merge.
 - **Issue references everywhere** (bodies, comments, `## Dependencies`
   checkboxes): same-repo as `#N`, cross-repo as `owner/repo#N` (e.g.
-  `merlin-pinpin-org/kingdoms-infra#78`) — GitHub renders both as clickable
+  `jj-guild/botforge-infra#78`) — GitHub renders both as clickable
   links with backlinks. A bare `repo#N` (no owner) is plain text on GitHub:
   never write it, and never use the pre-rename owner `merlin-pinpin/...`.
 
@@ -251,17 +251,17 @@ An agent session (which starts with no memory of previous conversations):
   protection rules. No agent-facing instruction grants or restricts access
   to a person.
 - **Required status checks**: the merge-blocking checks are enforced by the
-  `main` ruleset of each repository. For `kingdoms`: `check` (Check Docs —
+  `main` ruleset of each repository. For `botforge`: `check` (Check Docs —
   docstring completeness **and** generated-docs freshness) and `cla` (CLA
-  Check). For `kingdoms-services`: the full CI matrix (lint, typecheck, unit
+  Check). For `botforge-services`: the full CI matrix (lint, typecheck, unit
   tests, compose, smoke, Discord smoke, image build). All three repositories
   are public with an active `main` ruleset enforcing their required checks
-  (`kingdoms`: `check`, `cla`; `kingdoms-services`: the full CI matrix +
-  `cla`; `kingdoms-infra`: its CI matrix + `cla`). A PR cannot be merged
+  (`botforge`: `check`, `cla`; `botforge-services`: the full CI matrix +
+  `cla`; `botforge-infra`: its CI matrix + `cla`). A PR cannot be merged
   with a red check.
 - **Anyone can run the tests locally**, with no special access: `make lint`,
-  `make typecheck` and `make test` in `kingdoms-services`, the doc validation
-  in `kingdoms`, the shell checks in `kingdoms-infra`. The local toolchain
+  `make typecheck` and `make test` in `botforge-services`, the doc validation
+  in `botforge`, the shell checks in `botforge-infra`. The local toolchain
   only requires public clones — no credentials. (In practice no human ever
   runs them: the agent runs them, and CI re-runs them on every PR.)
 - **Humans never check out, write code, or run scripts.** The only manual
@@ -283,18 +283,18 @@ An agent session (which starts with no memory of previous conversations):
   The reviewer remains free to merge or ask for changes at any time.
 - Every feature is validated by the game designer in Discord before a release
   is tagged.
-- Environments (all on the Kingdoms VPS, deployed by the CD pipeline
+- Environments (all on the BotForge VPS, deployed by the CD pipeline
   running on its self-hosted runner — installation guide:
-  [VPS-SETUP.md](https://github.com/merlin-pinpin-org/kingdoms-infra/blob/main/docs/VPS-SETUP.md)):
+  [VPS-SETUP.md](https://github.com/jj-guild/botforge-infra/blob/main/docs/VPS-SETUP.md)):
   - **personal (`<alias>`)**: deployed **on demand** — the `/deploy` PR
     comment default (the requestor's env, from the roster alias; the PR
     image, commit-SHA tagged, is pinned in the `deploy/<alias>` state
-    branch by the kingdoms-deployer GitHub App).
+    branch by the botforge-deployer GitHub App).
   - **test**: deployed **on demand** — by the explicit `/deploy test` PR
     comment (the shared validation env; the PR image, commit-SHA
     tagged, is pinned in the `deploy/test`
-    state branch by the kingdoms-deployer GitHub App — setup guide:
-    kingdoms-infra docs/DEPLOY-TEST-APP.md); the push to `deploy/test`
+    state branch by the botforge-deployer GitHub App — setup guide:
+    botforge-infra docs/DEPLOY-TEST-APP.md); the push to `deploy/test`
     deploys the pinned image (ADR-0018). Test-config changes on `main`
     also redeploy (the pipeline pins the latest `sha-<sha>` image).
     It is the validation environment where the game designer checks the
@@ -317,5 +317,5 @@ An agent session (which starts with no memory of previous conversations):
   deployment, release, production) per role: game designer, developer, ops
 - [ARCHITECTURE.md](ARCHITECTURE.md) — technical architecture, including the
   deployment flow
-- `kingdoms-infra` — GitOps implementation of the deployment flow
-  (kingdoms-infra#2)
+- `botforge-infra` — GitOps implementation of the deployment flow
+  (botforge-infra#2)

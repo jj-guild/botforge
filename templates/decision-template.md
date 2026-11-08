@@ -3,7 +3,7 @@
 - **Status**: Proposed
 - **Date**: YYYY-MM-DD
 - **Deciders**: <who>
-- **Reference**: <issue or PR, e.g., kingdoms#12>
+- **Reference**: <issue or PR, e.g., botforge#12>
 
 ## Context
 

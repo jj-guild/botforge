@@ -1,6 +1,6 @@
 # GitHub rulesets — reference and policy
 
-This guide documents **every ruleset of the three Kingdoms repositories**,
+This guide documents **every ruleset of the three BotForge repositories**,
 the platform's policy on them, and the workflow that keeps them honest.
 Rulesets are the enforcement layer of the conventions: what the session
 discipline handles softly (draft status, self-review), GitHub enforces
@@ -46,10 +46,10 @@ PR to land as its exact commit list, one commit per logical unit.
 ## Rulesets per repository
 
 The authoritative live state is the GitHub API
-(`gh api repos/merlin-pinpin-org/<repo>/rulesets`); this section is the
+(`gh api repos/jj-guild/<repo>/rulesets`); this section is the
 **documented expectation** the check workflow compares against.
 
-### `kingdoms-services` — `main`
+### `botforge-services` — `main`
 
 - Target: `~DEFAULT_BRANCH`, enforcement **active**
 - Rules:
@@ -63,25 +63,25 @@ The authoritative live state is the GitHub API
     CI/CD bot), Build and test the image, Generate and check pydoc
     freshness, Check Docs
 
-### `kingdoms` — `main`
+### `botforge` — `main`
 
 - Target: `~DEFAULT_BRANCH`, enforcement **active**
 - Rules: `deletion`, `non_fast_forward`, `required_linear_history`,
   `pull_request` (0 blanket approvals, code-owner review required, **rebase-only**),
   `required_status_checks` (docs validation)
 
-### `kingdoms-infra` — `main`
+### `botforge-infra` — `main`
 
-- Same shape as `kingdoms` `main` (rebase-only, code-owner review).
+- Same shape as `botforge` `main` (rebase-only, code-owner review).
 
-### `kingdoms-infra` — `Deploy TEST` / `Deploy PROD` (state branches)
+### `botforge-infra` — `Deploy TEST` / `Deploy PROD` (state branches)
 
 - Targets: `refs/heads/deploy/test`, `refs/heads/deploy/prod`
 - Rules: `deletion`, `non_fast_forward`, `required_linear_history`,
   `required_status_checks`; `Deploy PROD` additionally requires a pull
   request and `required_deployments` (the `prod` environment approval) —
   **approving a prod deployment is merging that PR** (ADR-0018).
-- Bypass actors: `maintainers`, `ops` teams and the `kingdoms-deployer`
+- Bypass actors: `maintainers`, `ops` teams and the `botforge-deployer`
   App (the state-branch writer). The **production gate is the GitHub
   environment** (`environment: prod` in deploy-env.yml — required
   reviewers, secrets, `env-prod` runner), not the workflow and not the
@@ -92,7 +92,7 @@ The authoritative live state is the GitHub API
   `deploy/prod`. The push re-triggers the Deploy environment workflow,
   which re-applies the previous known-good image — **except when the
   re-pinned image is already the one running**, in which case the revert
-  is pushed without re-deploying (kingdoms-infra#96: silent re-pin).
+  is pushed without re-deploying (botforge-infra#96: silent re-pin).
 - **Day-to-day control** (`env-control.yml` + `scripts/envctl.sh`):
   start / stop / restart / status per environment, run on the env's
   runner from a workflow_dispatch with two choice lists (command +
@@ -100,7 +100,7 @@ The authoritative live state is the GitHub API
   touches the pinned state. Prod control operations pass the
   environment gate (required reviewers); `status` is read-only.
 
-### `kingdoms-services` — `release-tags` (target: tag)
+### `botforge-services` — `release-tags` (target: tag)
 
 - Guards tag creation (`vX.Y.Z`) — only the release pipeline may tag;
   see [../PROCESS.md](../PROCESS.md) *Releases*.
@@ -122,7 +122,7 @@ Trade-off, documented choice:
   would apply to test too, or the prod PR rule needs to stay a separate
   ruleset targeting `deploy/prod` explicitly.
 - **Per-env rulesets**: rules can differ per env (the current state —
-  `deploy/test` accepts a direct push from the kingdoms-deployer App,
+  `deploy/test` accepts a direct push from the botforge-deployer App,
   `deploy/prod` requires an approved PR + `required_deployments`);
   at N environments that is N rulesets to create and keep aligned.
 
@@ -136,7 +136,7 @@ matching the same ref — the strictest wins).
 
 Documented expectations for every future deploy ruleset: same rules as
 `Deploy TEST` for test-like envs; PR rule + `required_deployments` for
-prod-like ones; bypass actors `maintainers`, `ops`, `kingdoms-deployer`;
+prod-like ones; bypass actors `maintainers`, `ops`, `botforge-deployer`;
 the gate always lives in the GitHub environment (required reviewers),
 never in the workflow.
 
@@ -158,7 +158,7 @@ in the ruleset.
 
 **CODEOWNERS is the review router** — the ruleset only enforces "the
 owner(s) of every touched path approved". The default rule
-(`* @merlin-pinpin-org/maintainers`) makes everything non-mod
+(`* @jj-guild/maintainers`) makes everything non-mod
 maintainer-reviewed; each mod's paths are delegated to its designer
 (one line per mod, added in the mod's own PR — GitHub CODEOWNERS has no
 negative/regex patterns, so per-mod lines are the mechanism; a new mod
@@ -179,7 +179,7 @@ a maintainer approving it.
 Several checks are logically identical across the three repos but exist
 as three copies (CLA Check, Auto-triage, Validate issue): GitHub runs
 workflows per repository, so the *contexts* cannot be shared, but the
-*code* can: a single reusable implementation (a script in `kingdoms` or
+*code* can: a single reusable implementation (a script in `botforge` or
 a `workflow_call` workflow) with three thin per-repo wrappers keeps the
 behavior identical everywhere while the maintenance happens in one
 place. Required-check contexts stay per-repo (they match by exact
@@ -188,7 +188,7 @@ workflow/job name) — factorization reduces drift, not check count.
 ## Drift detection — the ruleset check workflow
 
 Documentation is the expectation; GitHub is the reality. A scheduled
-workflow (kingdoms-services #183, *Ruleset conformance*:
+workflow (botforge-services #183, *Ruleset conformance*:
 `.github/workflows/ruleset-conformance.yml`, daily at 06:00 UTC +
 `workflow_dispatch`) compares the live rulesets of the three repos
 against this guide's expected state:
@@ -206,8 +206,8 @@ against this guide's expected state:
 1. On each repo: `main` ruleset — linear history + PR rule (1 approval,
    code-owner review, conversation resolution, **rebase only**) +
    required checks (names must match the CI job names exactly).
-2. `release-tags` (kingdoms-services) and the deploy state-branch
-   rulesets (kingdoms-infra).
+2. `release-tags` (botforge-services) and the deploy state-branch
+   rulesets (botforge-infra).
 3. Repository-level user preferences: **Allow auto-merge** on,
    automatic head-branch deletion on (Settings → General → Pull
    Requests — the only settings outside the rulesets).

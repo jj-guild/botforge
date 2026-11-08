@@ -17,7 +17,7 @@ slow ones. The wait is a **poll loop on the real status**, not a timer.
 1. **Identify what to poll** — the run id(s) or check state that
    represents the outcome:
    ```bash
-   gh run list --repo merlin-pinpin-org/<repo> --branch <branch> \
+   gh run list --repo jj-guild/<repo> --branch <branch> \
      --json databaseId,workflowName,status,conclusion
    ```
 2. **Poll every 10–30s until terminal.** Short waits (gate verdicts,

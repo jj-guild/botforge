@@ -2,7 +2,7 @@
 
 **Status:** Accepted
 **Date:** 2026-09-18
-**Reference:** kingdoms#6
+**Reference:** botforge#6
 
 ## Context
 
@@ -23,7 +23,7 @@ Use **Docker Compose** for:
 
 ### Architecture
 
-- Single `docker-compose.yml` per environment (in `kingdoms-infra/deploy/`)
+- Single `docker-compose.yml` per environment (in `botforge-infra/deploy/`)
 - Shared Docker images across environments
 - Environment-specific configurations
 - Health checks for all services
@@ -51,5 +51,5 @@ Use **Docker Compose** for:
 
 ## References
 
-- `kingdoms-infra` — deploy manifests
-- kingdoms-infra#1 (repo structure), kingdoms-infra#4 (deployment scripts)
+- `botforge-infra` — deploy manifests
+- botforge-infra#1 (repo structure), botforge-infra#4 (deployment scripts)

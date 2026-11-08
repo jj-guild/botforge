@@ -21,7 +21,7 @@ through the bug workflow; apply judgment, not bureaucracy.
 | "I want to create a mod" | Mod bootstrap | Sandbox mode ([MODES.md](../../../docs/MODES.md)): `vibe/<alias>/main` branch, draft mod PR, personal env |
 | "I want to work on my mod" | Sandbox mode | Stack commits on `vibe/<alias>/main`, the mod PR's checks re-run, deploy on the personal env |
 | "I want to fix a bug in the platform" / "I want to add a platform feature" | Pro mode | Feature branch per subject → PR → CODEOWNERS review → [deploy-and-validate](../deploy-and-validate/SKILL.md) |
-| "I want to document the project" | Docs change | `kingdoms` repo, PR (docs are code: same lifecycle, same checks) |
+| "I want to document the project" | Docs change | `botforge` repo, PR (docs are code: same lifecycle, same checks) |
 | "I want to improve QoL (skills, scripts, tokens, CLI)" | Automation work | [automate-or-learn](../automate-or-learn/SKILL.md) — where the automation belongs, then the same PR lifecycle |
 | "Unroll the roadmap" / "what's next?" | Roadmap unrolling | The [roadmap-unroll](../roadmap-unroll/SKILL.md) skill — it runs `scripts/roadmap_next.py` (current lot, ordered work table) and reports status + next steps |
 
@@ -29,7 +29,7 @@ through the bug workflow; apply judgment, not bureaucracy.
 
 When the human says "unroll the roadmap" / "what's next?", route to the
 [roadmap-unroll](../roadmap-unroll/SKILL.md) skill. It runs
-`python3 scripts/roadmap_next.py` from the kingdoms repo root — which
+`python3 scripts/roadmap_next.py` from the botforge repo root — which
 determines the current lot (first unfinished `Lot N` milestone) and
 prints that lot's issues in work order (dependency wave, then priority
 label, then slack/criticality) with issue URL, PR URL if open, priority,
@@ -57,6 +57,6 @@ lot in pro mode.
   comments** (`/deploy`, `/env`, `/release`) — the session posts
   them itself and polls the answer
   ([deploy-and-validate](../deploy-and-validate/SKILL.md),
-  [github-polling](../github-polling/SKILL.md)). **kingdoms-services
+  [github-polling](../github-polling/SKILL.md)). **botforge-services
   PRs only**: infra PRs have no `/deploy` — their CI boots the real
   stack from the branch, and the agent validates that evidence instead.

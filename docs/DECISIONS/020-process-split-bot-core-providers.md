@@ -11,7 +11,7 @@ are what makes this split mechanical rather than a rewrite.
 
 ## Context
 
-ADR-0019 kept Kingdoms as one runtime until extraction triggers fire
+ADR-0019 kept BotForge as one runtime until extraction triggers fire
 (ADR-0012). The v0.4.0 milestone introduces a first game (AoE2) with external
 data providers (aoe2lobby, LibreMatch). The developer has decided that two
 risks must not share a process with the Discord bot:
@@ -31,7 +31,7 @@ game/mod lands on the final shape instead of migrating mid-scaling.
 
 ## Decision
 
-Kingdoms runs as **three process families**, deployed as separate
+BotForge runs as **three process families**, deployed as separate
 containers:
 
 | Process | Contents | Talks to |
@@ -44,7 +44,7 @@ Rules:
 
 1. **RPC contracts, not imports.** The seams between the three families are
    the existing Protocol interfaces, made network-exposed: JSON-serializable
-   payloads only, the typed exception taxonomy (kingdoms-services#10) mapped
+   payloads only, the typed exception taxonomy (botforge-services#10) mapped
    onto transport errors, async and idempotent-friendly calls. Adding RPC is
    an implementation detail of the seam, not a new abstraction layer.
 2. **Logical modules stay.** `games/aoe2`, `mods/ladder`, `mods/register`, ...
@@ -56,9 +56,9 @@ Rules:
    exclusively; `bot-discord` holds no durable state (hot UI state at most,
    e.g. persistent views, with the usual TTL). Providers hold only their own
    cache.
-4. **Deployment.** One repo (`kingdoms-services`), one image per process
+4. **Deployment.** One repo (`botforge-services`), one image per process
    (or one image, multiple entrypoints — decided at implementation), one
-   compose/GitOps service each (kingdoms-infra). Versioning and release
+   compose/GitOps service each (botforge-infra). Versioning and release
    remain repo-level (conventional changelog); deploying bot without core
    (or vice versa) must be safe thanks to (1).
 5. **The monolith-remnant question** (webapp later, extraction triggers for
@@ -97,7 +97,7 @@ Rules:
 - RPC layer to design, implement and monitor (transport, timeouts, retries,
   version skew between bot and core) — this is real v0.4.0 work.
 - Cross-process debugging needs request ids/logging correlation; the
-  post-deploy battery (kingdoms-infra#78) must cover all processes.
+  post-deploy battery (botforge-infra#78) must cover all processes.
 - One more container to run locally (mitigated by compose profiles).
 
 ## Diagrams
@@ -125,7 +125,7 @@ flowchart LR
 - [ADR-0012 taxonomy & repo strategy](012-taxonomy-repo-strategy.md)
 - [ADR-0011 Protocol interfaces](011-protocol-interfaces.md)
 - [ADR-0010 Redis hosting](010-redis-hosting.md)
-- Milestone: kingdoms-services milestone 3 (v0.4.0)
+- Milestone: botforge-services milestone 3 (v0.4.0)
 
 ---
 
@@ -145,7 +145,7 @@ Rationale:
    matchmaking/queue updates to the bot are server streams. Request/
    response alone would force polling.
 3. **Error taxonomy mapping.** The typed exception hierarchy
-   (kingdoms-services#10) maps onto gRPC status codes + structured
+   (botforge-services#10) maps onto gRPC status codes + structured
    `details`; each seam method documents its error surface, and a
    transport failure never bypasses the taxonomy (rule 3 above).
 4. **Deadline/timeout semantics** are first-class per call, which the

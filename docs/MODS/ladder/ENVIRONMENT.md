@@ -1,6 +1,6 @@
 # Ladder mod — Environment
 
-> Adapted from the JeanJack V2.0 reference (§2, §7.1) to the Kingdoms
+> Adapted from the JeanJack V2.0 reference (§2, §7.1) to the BotForge
 > stack. Exhaustive field-level definitions live in the
 > [reference](../../PLANS/reference/ladder-1v1-jeanjack-v2.md).
 

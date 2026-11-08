@@ -2,7 +2,7 @@
 
 **Status:** Accepted
 **Date:** 2026-09-18
-**Reference:** kingdoms#6
+**Reference:** botforge#6
 
 ## Context
 
@@ -23,7 +23,7 @@ For all:
 
 Implement **YAML-based i18n** with:
 
-- Language files in `kingdoms-services/config/locales/`
+- Language files in `botforge-services/config/locales/`
 - Structure: `locales/en.yaml`, `locales/fr.yaml`
 - Nested keys for organization
 - Fallback to English for missing translations
@@ -53,4 +53,4 @@ Implement **YAML-based i18n** with:
 ## References
 
 - [ARCHITECTURE.md](../ARCHITECTURE.md) — configuration layer
-- kingdoms-services#17 (i18n)
+- botforge-services#17 (i18n)

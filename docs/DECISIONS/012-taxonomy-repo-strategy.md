@@ -6,11 +6,11 @@
 
 **Date:** 2026-09-21
 
-**Reference:** kingdoms#59
+**Reference:** botforge#59
 
 ## Context
 
-Kingdoms today is one Discord bot (`kingdoms-services`). The roadmap adds
+BotForge today is one Discord bot (`botforge-services`). The roadmap adds
 more: a Twitch bot, a webapp, an AoE2 game with external data sources
 (aoe2lobby, LibreMatch), and many mods (clans, team-maker, tournament,
 valnoria, aoepong, ladder, ...). Early planning discussions named these
@@ -31,15 +31,15 @@ code-level constant.
 
 | Nature | Description | Examples | Lives in |
 | ------ | ----------- | -------- | -------- |
-| **Platform frontend** | An entrypoint that talks to humans: implements `IPlatform` (or an equivalent contract), owns no game logic | Discord bot, Twitch bot, webapp API (see [ADR-0015](015-webapp-api-boundary.md)) | `kingdoms-services/src/kingdoms/<platform>/` |
-| **Game** | Knows one game: rules, team formats, match data, ranking strategies | `aoe2` | `kingdoms-services/src/kingdoms/games/<game>/` |
-| **Data provider** | A data source for a game: HTTP/WS client behind a protocol interface, owned by its game. Neither a mod nor a game | aoe2lobby, LibreMatch (for `aoe2`) | `src/kingdoms/games/<game>/providers/` |
-| **Mod** | A self-contained game feature built only on core + games, declared in YAML (see [architecture/mods.md](../architecture/mods.md)) | register, profile, ladder, clans, team-maker, tournament, valnoria, aoepong | `kingdoms-services/src/kingdoms/mods/` + `config/mods/` |
+| **Platform frontend** | An entrypoint that talks to humans: implements `IPlatform` (or an equivalent contract), owns no game logic | Discord bot, Twitch bot, webapp API (see [ADR-0015](015-webapp-api-boundary.md)) | `botforge-services/src/botforge/<platform>/` |
+| **Game** | Knows one game: rules, team formats, match data, ranking strategies | `aoe2` | `botforge-services/src/botforge/games/<game>/` |
+| **Data provider** | A data source for a game: HTTP/WS client behind a protocol interface, owned by its game. Neither a mod nor a game | aoe2lobby, LibreMatch (for `aoe2`) | `src/botforge/games/<game>/providers/` |
+| **Mod** | A self-contained game feature built only on core + games, declared in YAML (see [architecture/mods.md](../architecture/mods.md)) | register, profile, ladder, clans, team-maker, tournament, valnoria, aoepong | `botforge-services/src/botforge/mods/` + `config/mods/` |
 
 ### 2. Repository strategy
 
-The three repositories stay as-is: `kingdoms` (docs), `kingdoms-services`
-(all Python), `kingdoms-infra` (deployment). No `mod-*` or `game-*`
+The three repositories stay as-is: `botforge` (docs), `botforge-services`
+(all Python), `botforge-infra` (deployment). No `mod-*` or `game-*`
 repositories. A mod, game, or data provider leaves the monorepo only when
 at least one of: independent release cadence, external contributors,
 separate runtime/scaling need, or isolated secrets. Each extraction gets
@@ -109,9 +109,9 @@ operate, no advanced routing need identified).
 
 ### 8. Environment activation (infra parametrage)
 
-- `kingdoms-services` config declares what **exists** (all mods, games,
+- `botforge-services` config declares what **exists** (all mods, games,
   providers, with defaults and validation schema).
-- `kingdoms-infra` provides, per environment, an **activation manifest**:
+- `botforge-infra` provides, per environment, an **activation manifest**:
   which mods and games run in test/staging/prod, versioned in the deploy
   manifests (GitOps).
 - The bot resolves the intersection at startup and **fails fast** on an

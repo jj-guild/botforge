@@ -1,7 +1,7 @@
 # Guide — Mod developer (human or AI)
 
 Build a new mod (a game feature: register, ladder, clans, …) on the
-Kingdoms core. If you are an AI session, read [vibe-coder.md](vibe-coder.md)
+BotForge core. If you are an AI session, read [vibe-coder.md](vibe-coder.md)
 first for the session mechanics; this page is the technical map.
 
 ## What a mod is
@@ -32,12 +32,12 @@ the mod system, lifecycle and composition rules.
 
 ## Anatomy (where things live)
 
-| Piece | Location (kingdoms-services) |
+| Piece | Location (botforge-services) |
 |---|---|
-| Domain core | `src/kingdoms/mods/<mod>/` (in svc-core, ADR-0020) |
-| Discord surface (views, modals, intents) | `src/kingdoms/discord/…` surface in bot-discord |
+| Domain core | `src/botforge/mods/<mod>/` (in svc-core, ADR-0020) |
+| Discord surface (views, modals, intents) | `src/botforge/discord/…` surface in bot-discord |
 | Config | `config/mods/<mod>.yaml` (channels, roles, settings template) |
-| Rules & environment docs | `kingdoms` repo: `docs/MODS/<mod>/` (copy [TEMPLATE](../MODS/TEMPLATE/)) |
+| Rules & environment docs | `botforge` repo: `docs/MODS/<mod>/` (copy [TEMPLATE](../MODS/TEMPLATE/)) |
 | Contracts (if the mod adds a cross-process seam) | `contracts/` + `make contracts` ([ADR-0020](../DECISIONS/020-process-split-bot-core-providers.md)) |
 
 ## Step-by-step
@@ -56,8 +56,8 @@ the mod system, lifecycle and composition rules.
 5. **Background tasks**: periodic work lives in the owning process with
    Redis locks; document cadence in ENVIRONMENT.md.
 6. **Tests**: unit (no Discord), MockDiscord/SimCord for the surface,
-   acceptance properties for the rules ([#139 mandate](https://github.com/merlin-pinpin-org/kingdoms-services/issues/139)).
-7. **Docs**: update `docs/MODS/<mod>/` and the kingdoms repo docs in
+   acceptance properties for the rules ([#139 mandate](https://github.com/jj-guild/botforge-services/issues/139)).
+7. **Docs**: update `docs/MODS/<mod>/` and the botforge repo docs in
    the same PR — a mod without documentation is not done.
 
 ## Worked example

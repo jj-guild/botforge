@@ -19,7 +19,7 @@ radius of one leaky seam.
 ## Decision
 
 Five rules, each enforced by an AST-based guard
-(`kingdoms-services: tests/architecture/test_layering.py`) that runs on every
+(`botforge-services: tests/architecture/test_layering.py`) that runs on every
 commit. A violation fails the suite; a fixed violation demands its allowlist
 entry's removal (the allowlists must shrink, never rot).
 
@@ -28,11 +28,11 @@ entry's removal (the allowlists must shrink, never rot).
 `ext-liquipedia`, `ext-aoe2lobby`, `ext-librematch`, `ext-aoe2techtree` import
 only shared utils (`core.ids`, `core.debug`, `core.rate_limit`,
 `core.upstream_identity`, `core.rpc`, `core.models`, `core.wiki_names`,
-`core_process.*`, `kingdoms.aoe2` — the game's shared raw formats) — never
+`core_process.*`, `botforge.aoe2` — the game's shared raw formats) — never
 game code, never discord, never another provider's internals. The Liquipedia
 HTTP client (pacing, backoff, circuit breaker, batch queries) lives INSIDE
 ext-liquipedia; the game's raw formats (slotinfo/options blobs, the lobby
-grace, MapSeed) live in `kingdoms.aoe2`.
+grace, MapSeed) live in `botforge.aoe2`.
 
 ### R2 — A game service knows its providers by name, never by URL
 

@@ -18,10 +18,10 @@ Each env is made of these pieces — the table is the whole story:
 | --- | --- | --- |
 | **A Discord bot application** | A bot account on the Discord developer portal (its token is the bot's password) | You: create it on the [Discord developer portal](https://discord.com/developers/applications), copy the token — never paste it anywhere except the secret your agent points you to |
 | **A Discord test server** | A private Discord server where the bot runs; you invite the bot there and you are its admin | You: create it, invite your bot with the invite link your agent gives you |
-| **An env directory on kingdoms-infra** | `envs/<name>/docker-compose.yml` — the recipe of your env (bot + database + cache), data, not code | Your agent: copies the test template, names the env after your alias (e.g. `envs/drasah/`) |
+| **An env directory on botforge-infra** | `envs/<name>/docker-compose.yml` — the recipe of your env (bot + database + cache), data, not code | Your agent: copies the test template, names the env after your alias (e.g. `envs/drasah/`) |
 | **A GitHub environment** | The GitHub-side settings page named like your env (`Settings → Environments`) — holds the **secrets** (Discord token, admin IDs) and gates who may deploy to it | Your agent prepares it; **you** paste the secrets — the only human step |
 | **A state branch `deploy/<name>`** | The Git branch that records *which version of the bot* your env runs | Your agent creates it, protected by a ruleset |
-| **A ruleset on kingdoms-infra** | The GitHub rule that protects your state branch (the same one `deploy/test` uses — templated per env) | Your agent drafts the change; a maintainer approves it — branch protection is platform-owned |
+| **A ruleset on botforge-infra** | The GitHub rule that protects your state branch (the same one `deploy/test` uses — templated per env) | Your agent drafts the change; a maintainer approves it — branch protection is platform-owned |
 | **A runner** | The small program on the server that executes your env's deployments. Test envs may share one server ("VPS") with separate runners — costs are mutualized, each env stays isolated (separate compose projects, separate networks) | Platform team: installs and labels it (`env-<name>`); nothing for you |
 
 ## What you actually do (the whole human part)
@@ -56,7 +56,7 @@ rollbacks — is your agent's job, gated by the authority matrix
 
 ## See also
 
-- [ENVIRONMENTS.md](https://github.com/merlin-pinpin-org/kingdoms-infra/blob/main/docs/ENVIRONMENTS.md) — the
+- [ENVIRONMENTS.md](https://github.com/jj-guild/botforge-infra/blob/main/docs/ENVIRONMENTS.md) — the
   environment matrix and configuration variables (infra repo)
 - [PROCESS.md](../PROCESS.md) — the deployment processes end to end
 - [CONTRIBUTORS.md](../../CONTRIBUTORS.md) — the roster and authority matrix

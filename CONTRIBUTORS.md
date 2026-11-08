@@ -4,7 +4,7 @@
 > organization: their GitHub teams, their platform roles and their
 > responsibilities. A GitHub workflow keeps the org in sync with it
 > (see the *Sync workflow* section below) — **the doc drives GitHub,
-> never the other way around**. It is owned by `@merlin-pinpin-org/maintainers`
+> never the other way around**. It is owned by `@jj-guild/maintainers`
 > (see CODEOWNERS): no contributor is added or granted a role without a
 > maintainer-reviewed change here.
 
@@ -53,7 +53,7 @@ Every contributor entry declares:
 3. **This file** — a PR adds the contributor's entry (roles, teams,
    ownership). Maintainers review it — this is the authorization record.
 4. **CODEOWNERS** — if the contributor owns a mod, the mod's CODEOWNERS
-   lines (kingdoms and kingdoms-services) are added in the same PR, so
+   lines (botforge and botforge-services) are added in the same PR, so
    their reviews are required on their mod from day one.
 5. **The sync workflow** — once merged, the workflow reconciles GitHub
    with this file: adds missing org memberships/team memberships for
@@ -193,11 +193,11 @@ self-hosted runner groups consistent with the roster.
 
 | Team slug | Parent | Repos & role | Purpose |
 | --------- | ------ | ------------ | ------- |
-| `maintainers` | — | kingdoms: `maintain` · kingdoms-services: `maintain` · kingdoms-infra: `maintain` | Platform maintainers: review every non-delegated path (CODEOWNERS default), own governance docs, resolve drift |
-| `ops` | — | kingdoms: `write` · kingdoms-services: `write` · kingdoms-infra: `maintain` | Infra & environments: deploy approvals, secrets, VPS runner. `shared-infra`: hosts the org's shared runner fleet (test envs of members without their own machine) |
-| `devs` | — | kingdoms: `write` · kingdoms-services: `write` · kingdoms-infra: `write` | Platform developers: review core/platform code, challenge designs. `shared-infra`: may pool member machines as runners for the team's test envs |
-| `game-designers` | — | kingdoms: `write` · kingdoms-services: `write` · kingdoms-infra: `read` | Game designers: own their mods (rules, docs, environments), review their mod PRs |
-| `vibe-coders` | — | kingdoms: `write` · kingdoms-services: `write` · kingdoms-infra: `read` | Anyone running vibe-coding sessions: drive PRs to ready, deploy to test |
+| `maintainers` | — | botforge: `maintain` · botforge-services: `maintain` · botforge-infra: `maintain` | Platform maintainers: review every non-delegated path (CODEOWNERS default), own governance docs, resolve drift |
+| `ops` | — | botforge: `write` · botforge-services: `write` · botforge-infra: `maintain` | Infra & environments: deploy approvals, secrets, VPS runner. `shared-infra`: hosts the org's shared runner fleet (test envs of members without their own machine) |
+| `devs` | — | botforge: `write` · botforge-services: `write` · botforge-infra: `write` | Platform developers: review core/platform code, challenge designs. `shared-infra`: may pool member machines as runners for the team's test envs |
+| `game-designers` | — | botforge: `write` · botforge-services: `write` · botforge-infra: `read` | Game designers: own their mods (rules, docs, environments), review their mod PRs |
+| `vibe-coders` | — | botforge: `write` · botforge-services: `write` · botforge-infra: `read` | Anyone running vibe-coding sessions: drive PRs to ready, deploy to test |
 
 > Adding a team or changing a team's permissions is a **roster PR**:
 edit the table above in the same change as the memberships — the sync
@@ -224,7 +224,7 @@ is resolved from the roster only when an API call needs it.
 | Login | Alias | Since | CLA | GitHub teams | Platform roles | Owns | Agent scope | Discord ID |
 | ----- | ----- | ----- | --- | ------------ | -------------- | ---- | ----------- | ---------- |
 | @merlin-pinpin | Merlin | 2024-02-05 | accepted 2026-09 | maintainers, ops, game-designers, vibe-coders | dev, platform, ops, vibe | The whole platform (core, platform, infra); the `ladder` and `register` mods (default owner until a designer claims them) | Sessions act fully on their behalf except production approvals, CLA and role changes | 867534391436378123 |
-| @Drasahaoe | Drasah | 2025-08-19 | accepted 2026-09 | game-designers, vibe-coders | mod (kingdoms, marriage), vibe | The `kingdoms` and `marriage` mods (CODEOWNERS paths in kingdoms and kingdoms-services); their rules and environments | Sessions build, test, deploy to test and drive to ready; they review their mod's PRs and validate on the test Discord; never asked to merge or run anything | 242421489536729100 |
+| @Drasahaoe | Drasah | 2025-08-19 | accepted 2026-09 | game-designers, vibe-coders | mod (kingdoms, marriage), vibe | The `botforge` and `marriage` mods (CODEOWNERS paths in botforge and botforge-services); their rules and environments | Sessions build, test, deploy to test and drive to ready; they review their mod's PRs and validate on the test Discord; never asked to merge or run anything | 242421489536729100 |
 
 > **Maintainers**: the roster is the CLA record (the `cla` column); the CLA
 > email exchange stays private — never commit an address here. The `since`
@@ -249,7 +249,7 @@ maintainer roster PR, then every check picks it up automatically).
 
 ## Sync workflow
 
-`.github/workflows/scripts/sync_contributors.py` (kingdoms repo) reads this file and
+`.github/workflows/scripts/sync_contributors.py` (botforge repo) reads this file and
 reconciles the org's teams through the GitHub API, using a
 `CONTRIBUTORS_SYNC_TOKEN` org secret (org admin scope):
 

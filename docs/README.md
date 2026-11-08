@@ -1,6 +1,6 @@
-# The kingdoms documentation
+# The botforge documentation
 
-This repository is the **source of truth** of the Kingdoms platform
+This repository is the **source of truth** of the BotForge platform
 (a Discord bot platform built by AI agent sessions — humans design and
 validate, agents and CI do everything technical).
 
@@ -18,7 +18,7 @@ to the right page, for humans and agents alike.
 - [GUIDES/](GUIDES/README.md) — per-role entry points (game designer, mod dev, provider dev, vibe coder, rulesets)
 - [MODS/](MODS/README.md) — mods documentation · [DEVELOPER.md](DEVELOPER.md) — this repo's layout
 - [../CONTRIBUTORS.md](../CONTRIBUTORS.md) — the contributor roster and authority matrix (maintainer-owned)
-- [generated/ROADMAP.md](https://github.com/merlin-pinpin-org/kingdoms/blob/sync/generated-artifacts/generated/ROADMAP.md) / [DEPENDENCIES.md](https://github.com/merlin-pinpin-org/kingdoms/blob/sync/generated-artifacts/generated/DEPENDENCIES.md) — **generated**, never edited by hand
+- [generated/ROADMAP.md](https://github.com/jj-guild/botforge/blob/sync/generated-artifacts/generated/ROADMAP.md) / [DEPENDENCIES.md](https://github.com/jj-guild/botforge/blob/sync/generated-artifacts/generated/DEPENDENCIES.md) — **generated**, never edited by hand
 
 ## The generated files
 

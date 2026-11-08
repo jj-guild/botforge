@@ -110,7 +110,7 @@ Research captured (official Discord docs, July 2026):
 - Native SKUs would require **Discord App Verification** (public privacy
   policy, public terms of service, complete app identity) — useful anyway to
   scale past 100 servers. Readiness work is tracked in
-  merlin-pinpin-org/kingdoms-services#154.
+  jj-guild/botforge-services#154.
 - **Economics**: Discord keeps a **15% platform fee** on the first $1M
   cumulative gross sales (10% after), on top of payment-processing and
   transaction fees; the first payout only happens after **$100** collective

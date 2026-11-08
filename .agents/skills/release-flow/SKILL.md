@@ -1,6 +1,6 @@
 ---
 name: release-flow
-description: Cut a release of the Kingdoms bot (tag vX.Y.Z, GitHub release, deploy to prod) when the game designer has validated the features in Discord and asks for it. Use when the human says to tag, release, or ship to production.
+description: Cut a release of the BotForge bot (tag vX.Y.Z, GitHub release, deploy to prod) when the game designer has validated the features in Discord and asks for it. Use when the human says to tag, release, or ship to production.
 ---
 
 # Release flow
@@ -41,21 +41,21 @@ use the Git path.
 ## Procedure
 
 1. **Draft the release notes** (`make release-notes TAG=vX.Y.Z` on
-   kingdoms-services — `scripts/generate_changelog.py` — assembles the
+   botforge-services — `scripts/generate_changelog.py` — assembles the
    change log since the last tag).
-2. **Tag and push** from the kingdoms-services clone:
+2. **Tag and push** from the botforge-services clone:
    ```bash
    make release VERSION=vX.Y.Z
    ```
    The Makefile target runs the pre-flight checks (clean tree, on main,
    up to date, notes present) before anything is pushed.
 3. **The workflows do the rest**: build and push
-   `ghcr.io/merlin-pinpin-org/kingdoms-services:vX.Y.Z` (plus `sha-<sha>`
+   `ghcr.io/jj-guild/botforge-services:vX.Y.Z` (plus `sha-<sha>`
    and `main` tags), create the GitHub release, pin the released image on
    `deploy/test` — the pin push triggers the test deploy.
 4. **Promote to prod (Git path — the official way for sessions)**: the
    human validates the release in Discord on test, then the session
-   updates `envs/prod/state/kingdoms-bot.yml` on the `deploy/prod` state
+   updates `envs/prod/state/botforge-bot.yml` on the `deploy/prod` state
    branch (merge `origin/main` in first, mirroring the Pin state
    workflow: image, version_label, deploy_url, deploy_ref,
    deploy_tree_url, deploy_ts, deployed_by, deployed_at), commits with
@@ -63,10 +63,10 @@ use the Git path.
    the prod `Deploy environment` run, which **waits for the required
    reviewers' approval** — link the run to the human, who clicks
    *Approve and deploy*.
-5. **Watch the prod deploy** with `make watch-deploy` (kingdoms-services)
+5. **Watch the prod deploy** with `make watch-deploy` (botforge-services)
    — polling the status, never a fixed sleep
    ([github-polling](../github-polling/SKILL.md)) — or the
-   kingdoms-infra `make doctor` if anything stays pending (see
+   botforge-infra `make doctor` if anything stays pending (see
    the [diagnose-deploy](../diagnose-deploy/SKILL.md) skill).
 6. **Post-release**: the game designer validates the release in Discord;
    `/status` shows the release link. Keep the roadmap and dependency

@@ -1,13 +1,13 @@
 # Discord permissions & message delivery guide
 
-This guide documents how Kingdoms handles **permissions** and **message
+This guide documents how BotForge handles **permissions** and **message
 delivery** on Discord: the DM vs channel distinction, role-based runtime
 authorization of component actions, per-destination rendering rules, channel
 access categories, drift alerting, and the on-demand role/channel sync.
 
 These rules were decided with the game designer; they are **binding for every
-mod**. Implementation is tracked in kingdoms-services#55, kingdoms-services#56,
-kingdoms-services#57 and kingdoms-services#58. The decision record is
+mod**. Implementation is tracked in botforge-services#55, botforge-services#56,
+botforge-services#57 and botforge-services#58. The decision record is
 [ADR-0016](../DECISIONS/016-discord-permissions-and-delivery.md); this page is
 the operating reference.
 
@@ -68,18 +68,18 @@ over time, persistent views survive restarts, and any interaction attempt
 reaches the bot regardless of what the message displayed. Therefore **every**
 interactive component action (button, select, modal) is authorized at
 interaction time by the core `PermissionService`
-(kingdoms-services#55):
+(botforge-services#55):
 
 ```mermaid
 flowchart TD
     I["Component interaction received"] --> P["Parse custom_id into mod, component, payload"]
-    P --> B{"Bot admin? (kingdoms-services#35)"}
+    P --> B{"Bot admin? (botforge-services#35)"}
     B -->|Yes| OK["Allow"]
     B -->|No| D{"In DM?"}
     D -->|"Yes"| DM{"Component dm_allowed or no roles required?"}
     DM -->|No| DENY
     DM -->|Yes| OK
-    D -->|No| R["Resolve user roles via role_mappings (kingdoms-services#26)"]
+    D -->|No| R["Resolve user roles via role_mappings (botforge-services#26)"]
     R --> Q{"User holds a required role key?"}
     Q -->|No| DENY
     Q -->|Yes| OK
@@ -91,10 +91,10 @@ Rules:
 
 - Components reference **logical role keys** (`required_roles`), never
   hardcoded Discord role IDs; keys resolve through the `role_mappings`
-  persisted by `RoleService` (kingdoms-services#26).
+  persisted by `RoleService` (botforge-services#26).
 - **DMs have no guild roles**: a component usable from a DM must declare
   `dm_allowed=True` or require no roles; otherwise the interaction is denied.
-- **Bot admins bypass** mod-level checks (kingdoms-services#35); guild admins
+- **Bot admins bypass** mod-level checks (botforge-services#35); guild admins
   do not, unless a component explicitly grants them the role key.
 - A denial answers with an **ephemeral i18n message** and is logged with an
   audit record routed to the `LOGS` category (ADR-0003). A denied action
@@ -104,7 +104,7 @@ Rules:
 
 ## 3. Channel access categories
 
-Every channel category (ADR-0003, kingdoms-services#26) declares its
+Every channel category (ADR-0003, botforge-services#26) declares its
 **audience**: which roles must/should have access. The declaration — not the
 Discord permission overwrites — is the source of truth:
 
@@ -122,7 +122,7 @@ Core category policies:
 
 | Category | View | Post | Notes |
 | -------- | ---- | ---- | ----- |
-| `ADMIN` | admin roles (kingdoms-services#35) | admin roles | Bot admin notifications, drift alerts |
+| `ADMIN` | admin roles (botforge-services#35) | admin roles | Bot admin notifications, drift alerts |
 | `REPORTS` | admin roles | everyone | Users may report; only admins read |
 | `LOGS` | bot only | bot only | Audit records, denials |
 | `ANNOUNCEMENTS` | everyone | bot only | Broadcasts |
@@ -138,7 +138,7 @@ not create or claim via `/setup`.
 
 The declared policy and the actual guild state can drift: a human edits
 channel permissions, a role is deleted, a channel is moved. The
-`ChannelAuditService` (kingdoms-services#57) compares declaration against
+`ChannelAuditService` (botforge-services#57) compares declaration against
 reality and reports findings; **drift is reported, never silently repaired**:
 
 - Triggers: bot startup, after each sync (section 5), a configurable
@@ -155,12 +155,12 @@ time for access.
 
 ## 5. On-demand role & channel sync
 
-The sync (kingdoms-services#58) reconciles the guild with the declarations —
+The sync (botforge-services#58) reconciles the guild with the declarations —
 **explicitly, admin-triggered, idempotent, non-destructive**:
 
 ```mermaid
 flowchart TD
-    A["Admin runs /setup sync (kingdoms-services#21)"] --> V{"Guild admin or bot admin? (PermissionService)"}
+    A["Admin runs /setup sync (botforge-services#21)"] --> V{"Guild admin or bot admin? (PermissionService)"}
     V -->|No| D["Ephemeral denial"]
     V -->|Yes| S["SyncService.sync_guild"]
     S --> C1["Create missing channels (with access policy overwrites)"]
@@ -206,5 +206,5 @@ Rules:
 - [discord.md](discord.md) — Discord.py components guide (UI systems, views,
   persistent views, custom_id conventions)
 - [ADR-0003](../DECISIONS/003-channel-categories.md) — channel categories
-- kingdoms-services#55, kingdoms-services#56, kingdoms-services#57,
-  kingdoms-services#58 — implementation issues
+- botforge-services#55, botforge-services#56, botforge-services#57,
+  botforge-services#58 — implementation issues

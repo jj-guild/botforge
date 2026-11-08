@@ -2,11 +2,11 @@
 
 **Status:** Accepted
 **Date:** 2026-09-18
-**Reference:** kingdoms#2, kingdoms#6
+**Reference:** botforge#2, botforge#6
 
 ## Context
 
-Kingdoms has many multi-step user interactions (registration, ladder setup,
+BotForge has many multi-step user interactions (registration, ladder setup,
 match reporting, moderation). Without a workflow engine:
 
 - Each workflow would have duplicated code
@@ -69,4 +69,4 @@ stateDiagram-v2
 ## References
 
 - [WORKFLOWS.md](../WORKFLOWS.md) — workflow state lifecycle
-- kingdoms-services#6 (WorkflowEngine), kingdoms-services#9 (StateService)
+- botforge-services#6 (WorkflowEngine), botforge-services#9 (StateService)

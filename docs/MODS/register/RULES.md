@@ -14,7 +14,7 @@ automated and verified by the bot.
 
 1. The player must select at least one game from the allowed list
    (`allowed_games` in the mod configuration).
-2. Only games declared in `kingdoms-services/config/games/` are offered in
+2. Only games declared in `botforge-services/config/games/` are offered in
    the selector.
 3. The selection is a required step: the workflow cannot complete without it.
 
@@ -44,5 +44,5 @@ automated and verified by the bot.
 ## Moderation and penalties
 
 Registration itself has no penalties; moderation is handled by the admin mod
-(see kingdoms-services#21). See the template rules format in
+(see botforge-services#21). See the template rules format in
 [../TEMPLATE/RULES.md](../TEMPLATE/RULES.md) for the standard penalty grid.

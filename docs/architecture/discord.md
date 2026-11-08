@@ -1,11 +1,11 @@
 # Discord.py components guide
 
 This guide documents the discord.py UI component concepts used throughout
-Kingdoms: **embeds**, **Components V2** (`LayoutView`), Buttons, Selects,
+BotForge: **embeds**, **Components V2** (`LayoutView`), Buttons, Selects,
 Modals, **Persistent Views**, and **Dynamic Items**, with concrete usage
 patterns and pitfalls.
 
-Kingdoms uses **both** systems as complements (ADR-0009):
+BotForge uses **both** systems as complements (ADR-0009):
 
 - **Embeds**: sober, lightweight, read-mostly messages (a result, a
   confirmation, a status update). First choice for simple output.
@@ -24,7 +24,7 @@ The goal is that all mods use consistent patterns, so interactions behave the
 same everywhere and the game designer can iterate on interactions without
 coding.
 
-Implementation lives in `kingdoms-services` (see kingdoms-services#13); this
+Implementation lives in `botforge-services` (see botforge-services#13); this
 page is the reference for the patterns the implementation must follow.
 
 ## 1. Views (basic)
@@ -220,7 +220,7 @@ class RegistrationPanelLayout(discord.ui.LayoutView):
         super().__init__(timeout=None)  # MUST be None for persistence
         container = discord.ui.Container(accent_colour=discord.Colour.blurple())
         section = discord.ui.Section(
-            discord.ui.TextDisplay("**Welcome to Kingdoms!**\nPress Register to create your kingdom."),
+            discord.ui.TextDisplay("**Welcome to BotForge!**\nPress Register to create your kingdom."),
             accessory=discord.ui.Button(
                 label="Register",
                 style=discord.ButtonStyle.green,
@@ -298,7 +298,7 @@ Registration at startup:
 bot.add_dynamic_items(LadderPageButton)
 ```
 
-Why this matters for Kingdoms: the leaderboard channel can have dozens of page
+Why this matters for BotForge: the leaderboard channel can have dozens of page
 buttons; a single `DynamicItem` class handles them all, including after
 restarts.
 
@@ -457,4 +457,4 @@ flowchart TD
   delivery guide (DM vs channel, runtime role checks, channel access)
 - [../WORKFLOWS.md](../WORKFLOWS.md) — how UI components feed the workflow
   engine
-- kingdoms-services#13 — UI components implementation
+- botforge-services#13 — UI components implementation

@@ -12,7 +12,7 @@ This page is your boot checklist; the repo is the source of truth.
 3. `git status`, current branch, recent commits — never assume a clean
    state.
 4. Find the work: the issue at hand (milestone
-   [v0.4.0](https://github.com/merlin-pinpin-org/kingdoms-services/milestone/3)),
+   [v0.4.0](https://github.com/jj-guild/botforge-services/milestone/3)),
    its dependencies, and the generated roadmap for context.
 
 ## Working rules (from the decisions taken with the developer)
@@ -45,14 +45,14 @@ This page is your boot checklist; the repo is the source of truth.
   required). Scope each PR like a review lot: one coherent unit a
   human can review in one sitting. Big issues are split into sub-PRs
   (e.g. ladder core
-  [#134](https://github.com/merlin-pinpin-org/kingdoms-services/issues/134):
+  [#134](https://github.com/jj-guild/botforge-services/issues/134):
   data model → matchmaking → state machine/rating → invites).
 - **Tests land with every change** — the blanket mandate
-  ([#139](https://github.com/merlin-pinpin-org/kingdoms-services/issues/139))
+  ([#139](https://github.com/jj-guild/botforge-services/issues/139))
   covers every v0.4.0 issue: acceptance properties in CI, coverage not
   lowered on touched paths.
 - **Docs are part of the PR**: `make docs` freshness, mod docs in the
-  kingdoms repo updated in the same PR when rules change.
+  botforge repo updated in the same PR when rules change.
 - Before pushing: `make lint`, `make typecheck`, `make test` — all
   green, always. CI failures you caused get fixed before anything new.
 - Never click Merge yourself. Ready = checks green + deployed to test +

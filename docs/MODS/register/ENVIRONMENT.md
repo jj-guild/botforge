@@ -5,7 +5,7 @@
 - Bot permissions: send messages, send DMs, manage roles (to assign game
   roles), view channels
 - Channels declared by the mod (provisioned automatically by the core via
-  `ModRegistry`, kingdoms-services#26):
+  `ModRegistry`, botforge-services#26):
   - `register:register_admin` — registration notifications and approvals
   - `register:register_info` — welcome panel and instructions
 - Roles declared by the mod (logical keys, resolved by `RoleService`):

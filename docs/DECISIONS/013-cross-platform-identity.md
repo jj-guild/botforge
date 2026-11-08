@@ -6,7 +6,7 @@
 
 **Date:** 2026-09-21
 
-**Reference:** kingdoms#60
+**Reference:** botforge#60
 
 ## Context
 

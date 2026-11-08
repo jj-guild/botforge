@@ -4,7 +4,7 @@
 > stack cible (MongoDB + Redis) et les principes de séparation
 > plateforme / mod / jeu. **Document autonome, archivé tel quel** — c'est
 > la source de vérité fonctionnelle pour la migration "en mieux".
-> L'adaptation aux contrats réels de Kingdoms (ADR-0011 seams, ADR-0020
+> L'adaptation aux contrats réels de BotForge (ADR-0011 seams, ADR-0020
 > process split) se négocie dans [../v0.4.0-aoe2-ladder.md](../v0.4.0-aoe2-ladder.md),
 > jamais en éditant cette référence.
 

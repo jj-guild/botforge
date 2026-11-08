@@ -17,9 +17,9 @@ belongs** and **when a session must persist a command it improvised**.
 | Kind of operation | Artifact | Where |
 | ----------------- | -------- | ----- |
 | Anything a session runs more than once | Makefile target | `Makefile` of the repo it belongs to (`make lint`, `make session-check`, `make watch-deploy`, `make release`) |
-| Reusable implementation, multi-step logic, fail-closed checks | Python or shell script | `scripts/` (or `.github/workflows/scripts/`) of the repo it belongs to (`kingdoms`: `.github/workflows/scripts/sync_roadmap.py`; `kingdoms-services`: `scripts/cut_release.sh`, `.github/workflows/scripts/watch_deploy.sh`) |
+| Reusable implementation, multi-step logic, fail-closed checks | Python or shell script | `scripts/` (or `.github/workflows/scripts/`) of the repo it belongs to (`botforge`: `.github/workflows/scripts/sync_roadmap.py`; `botforge-services`: `scripts/cut_release.sh`, `.github/workflows/scripts/watch_deploy.sh`) |
 | Must run with no session open, or needs permissions the session lacks (releases, deploy pins, scheduled sync), or cannot run in the sandbox | GitHub Actions workflow | `.github/workflows/` of the repo it belongs to |
-| How to use the above, plus pitfalls learned | Skill | `.agents/skills/<name>/SKILL.md` in the `kingdoms` repo (Agent Skills open standard) |
+| How to use the above, plus pitfalls learned | Skill | `.agents/skills/<name>/SKILL.md` in the `botforge` repo (Agent Skills open standard) |
 
 Rules of thumb:
 
@@ -100,6 +100,6 @@ monitoring became scripts with pre-flight checks).
    as pre-flight checks or comments in the skill page.
 4. Wire it: mention the new target/workflow in the repo's `AGENTS.md` or
    `docs/DEVELOPER.md` if future sessions must discover it, and keep the
-   `kingdoms` docs in sync (a code change without its doc update is
+   `botforge` docs in sync (a code change without its doc update is
    incomplete).
 5. Do not ask a human to run it — ever.

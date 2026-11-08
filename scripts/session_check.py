@@ -2,10 +2,10 @@
 """Session checklist, run mechanically (docs/CONVENTIONS.md).
 
 Fail-closed check of everything a session must leave consistent across the
-three Kingdoms repositories:
+three BotForge repositories:
 
 - docs validation: scripts/validate_docs.py --check (mods docs, docstrings,
-  Mermaid syntax) against the kingdoms-services clone;
+  Mermaid syntax) against the botforge-services clone;
 - roadmap drift: scripts/sync_roadmap.py --check (issue states vs the
   generated ROADMAP.md — the sync-generated workflow publishes it on the
   sync/generated-artifacts branch; a local mismatch only means the
@@ -27,7 +27,7 @@ import subprocess
 import sys
 from pathlib import Path
 
-REPOS = ("kingdoms", "kingdoms-infra", "kingdoms-services")
+REPOS = ("botforge", "botforge-infra", "botforge-services")
 
 
 def repo_root() -> Path:
@@ -75,12 +75,12 @@ def main() -> int:
     parser.add_argument(
         "--source",
         required=True,
-        help="kingdoms-services source root (src/kingdoms)",
+        help="botforge-services source root (src/botforge)",
     )
     parser.add_argument(
         "--config",
         required=True,
-        help="kingdoms-services config root (config)",
+        help="botforge-services config root (config)",
     )
     parser.add_argument(
         "--scripts-dir",
@@ -113,7 +113,7 @@ def main() -> int:
         )
     )
 
-    deps_out = Path("/tmp") / "kingdoms-dependencies-check.md"
+    deps_out = Path("/tmp") / "botforge-dependencies-check.md"
     deps_result = subprocess.run(
         [
             "python3",

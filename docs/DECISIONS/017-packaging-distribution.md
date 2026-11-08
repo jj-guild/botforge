@@ -6,7 +6,7 @@
 
 **Date:** 2026-09-21
 
-**Reference:** kingdoms#65
+**Reference:** botforge#65
 
 ## Context
 
@@ -19,7 +19,7 @@ microservices and external consumers.
 Publishing to a public index is almost irreversible: uploaded versions
 stay downloadable forever, which turns every release into a public
 compatibility commitment. Meanwhile the codebase today has exactly one
-consumer (`kingdoms-services` itself), and the vibe-coding workflow builds
+consumer (`botforge-services` itself), and the vibe-coding workflow builds
 feature branches that can never rely on a published index (PRs must not
 publish). The dependency boundaries of
 [ADR-0012](012-taxonomy-repo-strategy.md) are currently checked by an
@@ -32,10 +32,10 @@ consumers, not by dates.
 
 ### Stage 1 (now): internal uv workspace packages
 
-- `kingdoms-services` becomes a **uv workspace**: each component is an
+- `botforge-services` becomes a **uv workspace**: each component is an
   installable package with its own `pyproject.toml` and declared
-  dependencies — `kingdoms-core`, `kingdoms-discord`, per-mod packages,
-  `kingdoms-games-aoe2`, and later `kingdoms-sdk` (the mod-author surface:
+  dependencies — `botforge-core`, `botforge-discord`, per-mod packages,
+  `botforge-games-aoe2`, and later `botforge-sdk` (the mod-author surface:
   `ModContext`, protocols, templates).
 - Packages are consumed by **path/workspace references**, never published.
 - The Docker image is still built from the local source (multi-stage,
@@ -48,7 +48,7 @@ consumers, not by dates.
 ### Stage 2 (trigger: first external consumer): private package index
 
 - Triggered when a component outside this workspace consumes the packages
-  (the `kingdoms-webapp` repository, an extracted service, or a
+  (the `botforge-webapp` repository, an extracted service, or a
   third-party mod author).
 - Publish to a **private index** (GitHub Packages or an equivalent private
   PyPI index), with credentials in GitHub secrets. Never to public PyPI.
@@ -56,7 +56,7 @@ consumers, not by dates.
   version number (uv-managed), so there is no cross-package version matrix
   to resolve.
 - Docker images then install pinned packages
-  (`pip install kingdoms-core==x.y.z --index-url ...`); feature branches
+  (`pip install botforge-core==x.y.z --index-url ...`); feature branches
   keep building from source.
 
 ### Stage 3 (trigger: explicit developer decision): public PyPI
@@ -65,7 +65,7 @@ consumers, not by dates.
   decision by the developer**, not a technical simplification: it makes
   the platform reusable by anyone, including competitors, and commits to
   public semantic versioning and issue handling.
-- If taken, `kingdoms-sdk` (and possibly `kingdoms-core`) are the public
+- If taken, `botforge-sdk` (and possibly `botforge-core`) are the public
   surface; mods and games stay private until individually decided.
 - **Data providers as community assets** (noted with the game designer):
   well-built data providers (`aoe2lobby`, `librematch`) would have real
@@ -83,7 +83,7 @@ consumers, not by dates.
    requested developer experience, but there is no external consumer yet,
    feature branches cannot use it, and it creates an immediate, permanent
    public compatibility and license exposure. Rejected as premature.
-2. **Keep one flat `kingdoms-services` package**: no packaging work, but
+2. **Keep one flat `botforge-services` package**: no packaging work, but
    the ADR-0012 matrix stays import-convention-checked only, and every
    future extraction starts with a risky restructure. Rejected: Stage 1
    is cheap and makes the boundaries physical.
@@ -110,7 +110,7 @@ consumers, not by dates.
 
 ### Negative
 
-- Stage 1 is a restructuring of `kingdoms-services` (workspace layout,
+- Stage 1 is a restructuring of `botforge-services` (workspace layout,
   per-package `pyproject.toml`, CI updates); it must be scheduled as its
   own issue and keep the tests green throughout.
 - Two build modes coexist after Stage 2 (source builds for feature
@@ -132,4 +132,4 @@ flowchart LR
   matrix, extraction criteria (this ADR is the package-form sibling)
 - [ADR-0015](015-webapp-api-boundary.md) — the first likely Stage 2
   consumer
-- kingdoms-services packaging and Docker workflow (multi-stage build)
+- botforge-services packaging and Docker workflow (multi-stage build)

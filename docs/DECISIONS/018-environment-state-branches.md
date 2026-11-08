@@ -2,7 +2,7 @@
 
 **Status:** Accepted
 **Date:** 2026-09-23
-**Reference:** kingdoms#80, kingdoms-infra#40
+**Reference:** botforge#80, botforge-infra#40
 
 ## Context
 
@@ -11,10 +11,10 @@ deploys run on the self-hosted VPS runners, and audit comes from Git history.
 Two gaps surfaced while validating the `/status` deploy-link feature:
 
 1. **Floating image tag.** `deploy/test/docker-compose.yml` referenced
-   `ghcr.io/.../kingdoms-services:main` with `pull_policy: missing`: a
+   `ghcr.io/.../botforge-services:main` with `pull_policy: missing`: a
    config-change deploy can restart the bot on a stale local image while the
    freshly merged image is still building. The deploy "succeeds" against
-   outdated code (evidence: kingdoms-infra run 35804044373).
+   outdated code (evidence: botforge-infra run 35804044373).
 2. **No deployment state in Git.** Nothing in the repository records which
    image runs on which environment, since when, deployed by whom. The only
    trace is the transient Actions run log.
@@ -31,7 +31,7 @@ state of that environment as a single state file per deployed service.**
 
 - The state file (`deploy/state/<env>/<service>.yml`) pins the exact image
   reference (never a floating tag), the version label and artifact URL
-  shown by `/status` (`KINGDOMS_DEPLOY_LABEL` + `KINGDOMS_DEPLOY_URL`), who
+  shown by `/status` (`BOTFORGE_DEPLOY_LABEL` + `BOTFORGE_DEPLOY_URL`), who
   requested the deploy, and when. PR deploys are tagged
   `pr-<id>-<timestamp>-<sha7>`; main config-change deploys pin the latest
   `sha-<sha>` image; prod deploys pin the released `vX.Y.Z` image.
@@ -40,14 +40,14 @@ state of that environment as a single state file per deployed service.**
   never comes from a workflow input, so it cannot be spoofed or drifted.
 - **Writers:** only the pipelines commit to state branches — never a human
   and never the deploy workflow itself (which would re-trigger itself):
-  - `deploy/test`: the `kingdoms-deployer` GitHub App, from the
+  - `deploy/test`: the `botforge-deployer` GitHub App, from the
     `/deploy [env]` PR comment (PR image + PR URL + commenter) or from a
     merged main-branch config change (pinned latest `sha-<sha>` image).
-  - `deploy/prod`: the `Promote release` workflow of `kingdoms-services`
+  - `deploy/prod`: the `Promote release` workflow of `botforge-services`
     (human-triggered `workflow_dispatch` with the released tag, after the
     release was validated on the test environment — the tag push pins the
     released image on `deploy/test` first); the pin push is allowed by the
-    kingdoms-deployer App bypass on the state-branch ruleset, and the human
+    botforge-deployer App bypass on the state-branch ruleset, and the human
     gates are the **workflow trigger** and the **`prod` environment
     approval** in the deploy run — human clicks, consistent with the
     governance model.
@@ -71,7 +71,7 @@ state of that environment as a single state file per deployed service.**
 - State branches are cut from `main` once and evolve independently: pipeline
   changes merged on `main` (deploy workflows, manifests, scripts) must be
   fast-forward propagated to every state branch, or the environment keeps
-  deploying with the stale pipeline code (see kingdoms-infra
+  deploying with the stale pipeline code (see botforge-infra
   docs/ENVIRONMENTS.md § "Keeping the state branches current").
 - No floating image tags remain in any manifest.
 - `/deploy [env]` keeps its user experience (PR comment) but now writes state

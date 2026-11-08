@@ -1,6 +1,6 @@
-# kingdoms — developer guide
+# botforge — developer guide
 
-`kingdoms` is the **source of truth** of the Kingdoms Discord bot platform:
+`botforge` is the **source of truth** of the BotForge Discord bot platform:
 architecture, operating workflow, ADRs, mods documentation, roadmap and
 dependency graph. It contains no runtime code — only docs and the sync /
 validation scripts that maintain them.
@@ -29,12 +29,12 @@ covers what is specific to working *in this repo*.
 ## Checks
 
 Anyone can run the local checks with public clones only (this repo and
-`kingdoms-services` side by side, no credentials):
+`botforge-services` side by side, no credentials):
 
 ```bash
 python3 .github/workflows/scripts/validate_docs.py --check \
-  --source <kingdoms-services>/src/kingdoms \
-  --config <kingdoms-services>/config
+  --source <botforge-services>/src/botforge \
+  --config <botforge-services>/config
 ```
 
 The full session checklist (docs validation + roadmap drift +
@@ -43,8 +43,8 @@ artefacts regenerate with `make sync-artifacts` (commit the result to the
 open PR branch).
 
 It validates: mod docs completeness, Python docstrings in the
-kingdoms-services source, Mermaid block syntax. Fail-closed: it refuses to
-run without the kingdoms-services source/config. The `Check Docs` required
+botforge-services source, Mermaid block syntax. Fail-closed: it refuses to
+run without the botforge-services source/config. The `Check Docs` required
 check re-runs it on every PR — it must pass before opening a PR.
 
 ## Writing rules
@@ -52,8 +52,8 @@ check re-runs it on every PR — it must pass before opening a PR.
 - Mermaid diagrams must use **GitHub-compatible syntax**: quote node
   labels containing special characters like `->` or `{}`; never put colons
   inside unquoted labels.
-- Keep `docs/` in sync with any change made in `kingdoms-services` or
-  `kingdoms-infra`; the docs describing a change are updated in the same
+- Keep `docs/` in sync with any change made in `botforge-services` or
+  `botforge-infra`; the docs describing a change are updated in the same
   session, not later.
 
 ## ADR process
@@ -73,7 +73,7 @@ Any major architecture change gets an ADR in `docs/DECISIONS/`:
 A new mod's documentation lives in `docs/MODS/<mod-name>/` and follows the
 template in `templates/mod-template/` (`README.md`, `RULES.md`,
 `ENVIRONMENT.md`). `validate_docs.py` fails when a mod declared in
-`kingdoms-services/config/mods/` is missing its doc directory or required
+`botforge-services/config/mods/` is missing its doc directory or required
 files.
 
 ## Generated artifacts
@@ -94,14 +94,14 @@ files.
 ## Testing strategy (summary)
 
 Full strategy: [docs/architecture/testing.md](architecture/testing.md).
-Two complementary Discord test doubles live in `kingdoms-services` — pick
+Two complementary Discord test doubles live in `botforge-services` — pick
 the right depth:
 
-- **MockDiscord** (mock objects, `kingdoms-services` `tests/mocks/`) for
+- **MockDiscord** (mock objects, `botforge-services` `tests/mocks/`) for
   adapter and UI-builder unit tests; permissive by design, never validates
   the discord.py glue.
 - **SimCord** (behavioral simulator, dev-dependency `simcord[pytest]` in
-  `kingdoms-services`) for journeys through the real discord.py dispatch:
+  `botforge-services`) for journeys through the real discord.py dispatch:
   slash commands, buttons, selects, modals, permissions, timeouts,
   Components V2. Drive the bot as a user; never call a command callback
   directly; no token, no network, no sleeps.

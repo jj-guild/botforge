@@ -2,7 +2,7 @@
 
 **Status:** Accepted
 **Date:** 2026-09-18
-**Reference:** kingdoms#2, kingdoms#6
+**Reference:** botforge#2, botforge#6
 
 ## Context
 
@@ -40,7 +40,7 @@ import platform-specific code.
 - Easy to add new platforms (implement `IPlatform`)
 - Consistent API across all platforms
 - Core logic remains platform-agnostic
-- Easier testing (can mock `IPlatform`, see kingdoms-services#2 MockDiscord)
+- Easier testing (can mock `IPlatform`, see botforge-services#2 MockDiscord)
 - Better separation of concerns
 
 ### Negative
@@ -96,4 +96,4 @@ classDiagram
 ## References
 
 - [ARCHITECTURE.md](../ARCHITECTURE.md) — core interfaces
-- kingdoms-services#3 (IPlatform), kingdoms-services#11 (DiscordPlatform)
+- botforge-services#3 (IPlatform), botforge-services#11 (DiscordPlatform)

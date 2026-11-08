@@ -12,7 +12,7 @@ The file is regenerated from scratch on every run; the only thing carried
 over from the previous revision is the manual statuses (`in-progress` /
 `blocked` / `backlog`), parsed from the old file's issue lines.
 
-The three Kingdoms repositories are public; everything is read through
+The three BotForge repositories are public; everything is read through
 `gh api` (no custom secret). Usage:
 
     python3 .github/workflows/scripts/sync_roadmap.py [--check] [--roadmap PATH]
@@ -36,8 +36,8 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 
 import sync_dependencies as sd  # noqa: E402
 
-OWNER = "merlin-pinpin-org"
-REPOS = ("kingdoms", "kingdoms-services", "kingdoms-infra")
+OWNER = "jj-guild"
+REPOS = ("botforge", "botforge-services", "botforge-infra")
 MANUAL_STATUSES = ("in-progress", "blocked", "backlog")
 STATUSES = ("todo", "in-progress", "in-review", "done", "blocked", "dropped")
 PRIO_RANK = {"P0": 0, "P1": 1, "P2": 2, "P3": 3}
@@ -271,7 +271,7 @@ def build_roadmap(
         )
 
     lines: list[str] = [
-        "# Kingdoms Roadmap",
+        "# BotForge Roadmap",
         "",
         "> Current state and next steps of the plan, regenerated from the GitHub",
         "> issues — the past (done issues, change history) lives on GitHub and in",

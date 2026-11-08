@@ -44,7 +44,7 @@ report it, do not work around it.
   README/RULES/ENVIRONMENT, written for a non-developer.
 - The big picture: [GAME-DESIGN.md](../GAME-DESIGN.md) (vision,
   phases, modules) — you own this document.
-- Progress: [ROADMAP.md](https://github.com/merlin-pinpin-org/kingdoms/blob/sync/generated-artifacts/generated/ROADMAP.md).
+- Progress: [ROADMAP.md](https://github.com/jj-guild/botforge/blob/sync/generated-artifacts/generated/ROADMAP.md).
 
 ## Limits on purpose
 

@@ -5,7 +5,7 @@ a productized surface that lets game designers — and eventually community
 members — specify, review and validate mods co-constructed with AI agent
 sessions, without ever touching GitHub or a terminal.
 
-- Tracked by [kingdoms#136](https://github.com/merlin-pinpin-org/kingdoms/issues/136) (Epic K).
+- Tracked by [botforge#136](https://github.com/jj-guild/botforge/issues/136) (Epic K).
 - Builds on the existing internal workflow
   ([VIBEWORKFLOW.md](../VIBEWORKFLOW.md)) — it **productizes** it; it does not
   replace the underlying pipeline (issues → PRs → CI → deploy → validate →
@@ -148,6 +148,6 @@ Capabilities that do **not** exist today and must be built or decided first:
 
 ## 9. History
 
-- 2026-09-30: epic created as [kingdoms#136](https://github.com/merlin-pinpin-org/kingdoms/issues/136)
+- 2026-09-30: epic created as [botforge#136](https://github.com/jj-guild/botforge/issues/136)
   (Epic K) after the co-construction platform discussion; plan document
   added, pricing direction explicitly parked.
