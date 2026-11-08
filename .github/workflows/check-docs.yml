@@ -12,10 +12,23 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - name: Resolve the botforge-services ref matching this branch
+        run: |
+          # Branch-adaptive source ref: if botforge-services carries a branch
+          # with the same name, document that one; otherwise fall back to main.
+          CANDIDATE_REF="${GITHUB_HEAD_REF:-main}"
+          if git ls-remote --exit-code --heads \
+            "https://github.com/jj-guild/botforge-services.git" \
+            "${CANDIDATE_REF}" >/dev/null 2>&1; then
+            echo "SERVICES_REF=${CANDIDATE_REF}" >> "$GITHUB_ENV"
+          else
+            echo "SERVICES_REF=main" >> "$GITHUB_ENV"
+          fi
       - name: Checkout botforge-services (read-only)
         uses: actions/checkout@v4
         with:
           repository: jj-guild/botforge-services
+          ref: ${{ env.SERVICES_REF }}
           path: botforge-services
       - uses: actions/setup-python@v5
         with:

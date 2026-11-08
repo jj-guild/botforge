@@ -224,7 +224,7 @@ is resolved from the roster only when an API call needs it.
 | Login | Alias | Since | CLA | GitHub teams | Platform roles | Owns | Agent scope | Discord ID |
 | ----- | ----- | ----- | --- | ------------ | -------------- | ---- | ----------- | ---------- |
 | @merlin-pinpin | Merlin | 2024-02-05 | accepted 2026-09 | maintainers, ops, game-designers, vibe-coders | dev, platform, ops, vibe | The whole platform (core, platform, infra); the `ladder` and `register` mods (default owner until a designer claims them) | Sessions act fully on their behalf except production approvals, CLA and role changes | 867534391436378123 |
-| @Drasahaoe | Drasah | 2025-08-19 | accepted 2026-09 | game-designers, vibe-coders | mod (kingdoms, marriage), vibe | The `botforge` and `marriage` mods (CODEOWNERS paths in botforge and botforge-services); their rules and environments | Sessions build, test, deploy to test and drive to ready; they review their mod's PRs and validate on the test Discord; never asked to merge or run anything | 242421489536729100 |
+| @Drasahaoe | Drasah | 2025-08-19 | accepted 2026-09 | game-designers, vibe-coders | mod (kingdoms, marriage), vibe | The `kingdoms` and `marriage` mods (CODEOWNERS paths in botforge and botforge-services); their rules and environments | Sessions build, test, deploy to test and drive to ready; they review their mod's PRs and validate on the test Discord; never asked to merge or run anything | 242421489536729100 |
 
 > **Maintainers**: the roster is the CLA record (the `cla` column); the CLA
 > email exchange stays private — never commit an address here. The `since`

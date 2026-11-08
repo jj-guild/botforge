@@ -10,7 +10,7 @@
 ## Mod docs & rules: owned by the mod's designer — mod-only changes never
 # require a maintainer review; each mod is delegated by one explicit line
 # (added in the mod's own bootstrap PR).
-/docs/MODS/botforge/     @Drasahaoe
+/docs/MODS/kingdoms/     @Drasahaoe
 /docs/MODS/marriage/    @Drasahaoe
 # Default mod ownership: unclaimed mods belong to Merlin (the platform
 # developer) until a designer claims them — the roster 'owns' column and
