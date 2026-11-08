@@ -159,43 +159,42 @@ uniques, tech tree, textes d'aide — tout ce qui évolue à chaque maj).
 Attribution : voir `data/core/aoe2techtree/ATTRIBUTION.md` (MIT +
 notice Microsoft Game Content Usage Rules, affichée en tête de post).
 
-## Enrichissement maps Liquipedia (#247)
+## Liquipedia map enrichment (#247)
 
-Les pages map de Liquipedia (`https://liquipedia.net/ageofempires/`)
-ont une infobox structurée (`{{Infobox map}}` : type de terrain
-Land/Hybrid/Water, murs, nomade, nombre de TC, joueurs, créateur,
-période, image). Le job de sync
-`python -m kingdoms.core.games.aoe2.liquipedia_cli <season_yaml>`
-la récupère via l'API MediaWiki officielle (pas de scraping HTML,
-User-Agent identifiant + contact, 1 req/2 s et `action=parse`
-1 req/30 s) et stocke, par map du catalogue : une ligne `summary`
-calculée, l'`image_url` directe (pas de hotlink), et l'infobox
-complète dans `liquipedia_infobox` (clés minuscules, brute —
-exploitable par des filtres/panneaux futurs). Le sync est
-idempotent et reprenable (empreinte `liquipedia_page_sha` par map,
-commit par map). Le contact requis par les conditions d'usage de
-l'API est la variable d'environnement GitHub **non-secrète**
-`LIQUIPEDIA_CONTACT` (déclarée sur chaque GitHub environment, lue
-par deploy-env.yml puis le compose de l'env). Attribution : voir
-`data/core/liquipedia/ATTRIBUTION.md` (CC-BY-SA 3.0 texte ; images
-© Microsoft, même régime que le dataset aoe2techtree).
+The AoE2 map catalog is enriched from Liquipedia
+(`https://liquipedia.net/ageofempires/`) — verified against the current
+implementation (`kingdoms-services`, `src/kingdoms/mapsdata/liquipedia.py`,
+`core/games/aoe2/content_refresh.py`, `core/services/faction_content.py`):
 
-La fiche de chaque map porte aussi `game_versions` (les onglets
-`tabs static` de la page — les versions du jeu pour lesquelles la
-map existe : AoE2, AoM, AoE3, AoE4..., avec leur page wiki) et des
-**tags de requête** normalisés dans `tags` : `terrain:land|hybrid|water`,
-`water`, `walled`, `nomad`, `tc:<n>`. Les tags sont indexés dans
-Mongo (index multikey sur `tags`, index couvert `(entity_id, locale)` —
- créés par le sync via `ensure_indexes`) et requêtables via
-`FactionContentService.query_by_tags` (ex. toutes les maps hybrides
-nomades : `query_by_tags(["terrain:hybrid", "nomad"], entity_prefix="map:aoe2:")`).
-Les listes de maps par guilde (scope guilde + globales, la majeure
-partie étant des maps publiques partagées) passent par
-`FactionContentService.list_map_content` : la liste résolue est
-cachée en Redis par guilde+locale (TTL 1 h), invalidée par le
-tracker d'entités à chaque `store` — les maps publiques ne sont
-lues qu'une fois par guilde, pas une fois par map.
+- **Source**: the official MediaWiki API (no HTML scraping), with an
+  identifying User-Agent carrying the provider contact; pacing is
+  enforced process-wide (>= 2 s between requests, >= 30 s between
+  `action=parse` calls) behind a shared circuit breaker.
+- **Contact**: the environment variable `PROVIDER_CONTACT` — the single
+  generic provider-contact variable (the former `LIQUIPEDIA_CONTACT` is
+  gone), declared per GitHub environment, read by deploy-env.yml then the
+  env's compose.
+- **Trigger**: **on demand** — the « Sync aoe2 maps » admin button
+  (kingdoms-services #298), never at boot. The CLI variant is
+  `python -m kingdoms.core.games.aoe2.content_refresh_cli` (idempotent).
+- **Stored per map** (the content collection, `provider: "liquipedia"`):
+  `name`, `summary`, `source_url`, `image_url` (the direct file URL),
+  `icon_url`, `walls`, `nomad`, `tc`, `game_versions`, `versions`, and
+  the normalized query `tags`. Maps already complete (image + walls) are
+  skipped — the refresh is idempotent.
+- **Query tags** (`query_tags`): `terrain:<v>`, `type:<v>`, `water`,
+  `nomad`, `walled`, `tc:<n>` — backed by a multikey Mongo index on
+  `tags` plus the covered `(entity_id, locale)` pair, both created
+  idempotently by `ensure_indexes` on every sync run.
+- **Queries**: `FactionContentService.query_by_tags` (e.g. every hybrid
+  nomad map: `query_by_tags(["terrain:hybrid", "nomad"],
+  entity_prefix="map:aoe2:")`); per-guild listings go through
+  `list_map_content`, Redis-cached per guild+locale (1 h TTL) and
+  invalidated on every content store.
 
+The designers' classification (`open`, `semi-open`, `closed`…) is
+deliberately **not** part of this import — it is user-entered and
+user-editable (kingdoms-services #348).
 ## Contrat des listes : 25 éléments et le two-pattern select/par-id
 
 Discord limite un sélect à **25 options** — la plateforme le respecte
