@@ -57,6 +57,14 @@ outcome, including:
 - fetching logs of a run that is still writing them;
 - automerge: poll the PR state (`gh pr view <n> --json state,
   mergeStateStatus`) instead of assuming the merge landed.
+- **post-merge branch cleanup** (owner action, never automatic): once a
+  feature branch's code is fully on `main` — the PR merged, or a cowboy
+  push landed — verify it with `git cherry origin/main <branch>` (every
+  line must be `-`) or an empty `git diff origin/main <branch>`, then the
+  branch owner may delete the branch (`git push origin --delete
+  <branch>`). **Never** delete an integration branch `vibe/<alias>/main`,
+  not even after its content reached `main` (CONVENTIONS.md, *Branch
+  lifecycle*).
 
 **Never** answer the human with a result inferred from elapsed time
 ("8 minutes passed, it must be done") — only a terminal status read
