@@ -81,7 +81,7 @@ The authoritative live state is the GitHub API
   `required_status_checks`; `Deploy PROD` additionally requires a pull
   request and `required_deployments` (the `prod` environment approval) —
   **approving a prod deployment is merging that PR** (ADR-0018).
-- Bypass actors: `maintainers`, `ops` teams and the `botforge-deployer`
+- Bypass actors: `maintainers`, `ops` teams and the `jj-guild-deployer`
   App (the state-branch writer). The **production gate is the GitHub
   environment** (`environment: prod` in deploy-env.yml — required
   reviewers, secrets, `env-prod` runner), not the workflow and not the
@@ -122,7 +122,7 @@ Trade-off, documented choice:
   would apply to test too, or the prod PR rule needs to stay a separate
   ruleset targeting `deploy/prod` explicitly.
 - **Per-env rulesets**: rules can differ per env (the current state —
-  `deploy/test` accepts a direct push from the botforge-deployer App,
+  `deploy/test` accepts a direct push from the jj-guild-deployer App,
   `deploy/prod` requires an approved PR + `required_deployments`);
   at N environments that is N rulesets to create and keep aligned.
 
@@ -136,7 +136,7 @@ matching the same ref — the strictest wins).
 
 Documented expectations for every future deploy ruleset: same rules as
 `Deploy TEST` for test-like envs; PR rule + `required_deployments` for
-prod-like ones; bypass actors `maintainers`, `ops`, `botforge-deployer`;
+prod-like ones; bypass actors `maintainers`, `ops`, `jj-guild-deployer`;
 the gate always lives in the GitHub environment (required reviewers),
 never in the workflow.
 

@@ -87,7 +87,7 @@ someone wants to check behavior in the real bot.
 
 | | Game designer | Developer | Ops |
 |--|--|--|--|
-| Does | Asks the agent (session) to deploy; plays with the bot in Discord | Same, plus the `/deploy` PR comment for a specific PR | Guarantees the runner is online, the `test` environment secrets exist; creates the botforge-deployer GitHub App and its ruleset once (see botforge-infra docs/DEPLOY-TEST-APP.md) |
+| Does | Asks the agent (session) to deploy; plays with the bot in Discord | Same, plus the `/deploy` PR comment for a specific PR | Guarantees the runner is online, the `test` environment secrets exist; creates the jj-guild-deployer GitHub App and its ruleset once (see botforge-infra docs/DEPLOY-TEST-APP.md) |
 
 **Two entry points:**
 
@@ -95,7 +95,7 @@ someone wants to check behavior in the real bot.
   this on test" — the agent posts the **`/deploy` comment** on the
   feature PR (the comment is the trigger; the agent does not need workflow
   permissions), the workflow builds the PR image and pins it in the
-  `deploy/test` **state branch** through the **botforge-deployer
+  `deploy/test` **state branch** through the **jj-guild-deployer
   GitHub App** (ephemeral token; Contents: write for the state commit),
   and the push to `deploy/test` triggers the botforge-infra Deploy test
   workflow, which reads the pinned image from Git (ADR-0018). The agent
@@ -140,7 +140,7 @@ deployments instead of guessing.
    the **released image**
    `ghcr.io/jj-guild/botforge-services:vX.Y.Z` (or `vX.Y.Z-rc<n>`
    for a pre-release) and then pin it on `deploy/test` (dispatch to the
-   infra `Pin state` workflow, written by the botforge-deployer App) — the
+   infra `Pin state` workflow, written by the jj-guild-deployer App) — the
    release is **validated on the test environment** before any production
    deploy. Pre-releases headline as `Pre-release` in `/status`; a final
    release is celebrated (🎉 Version). A `-rc` tag is **never promotable

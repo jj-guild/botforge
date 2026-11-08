@@ -163,10 +163,10 @@ click time, greyed by context.
 
 ```
 📁 mods/kingdoms
-   ├── # general        ……… [menu: botforge-home]
+   ├── # general        ……… [menu: kingdoms-home]
    ├── # discussions    ……… (open, public)
    ├── # map            ……… (readonly, sync)
-   ├── # admin          ……… [menu: botforge-admin]
+   ├── # admin          ……… [menu: kingdoms-admin]
    └── # decisions      ……… (open, admin)
 ```
 

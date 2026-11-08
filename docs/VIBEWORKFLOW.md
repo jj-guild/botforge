@@ -124,7 +124,7 @@ Step by step:
    release — tag and release permissions are enforced by GitHub.
 6. PR deployments are **on demand** (`/deploy` PR comment posted by
    the session); the PR image (commit-SHA tagged) is pinned in the
-   environment **state branch** `deploy/test` by the botforge-deployer
+   environment **state branch** `deploy/test` by the jj-guild-deployer
    GitHub App (ephemeral Actions: write token), and the push to
    `deploy/test` triggers the deployment — the deploy reads the pinned
    image from Git, never from a workflow input (ADR-0018). Production
@@ -289,11 +289,11 @@ An agent session (which starts with no memory of previous conversations):
   - **personal (`<alias>`)**: deployed **on demand** — the `/deploy` PR
     comment default (the requestor's env, from the roster alias; the PR
     image, commit-SHA tagged, is pinned in the `deploy/<alias>` state
-    branch by the botforge-deployer GitHub App).
+    branch by the jj-guild-deployer GitHub App).
   - **test**: deployed **on demand** — by the explicit `/deploy test` PR
     comment (the shared validation env; the PR image, commit-SHA
     tagged, is pinned in the `deploy/test`
-    state branch by the botforge-deployer GitHub App — setup guide:
+    state branch by the jj-guild-deployer GitHub App — setup guide:
     botforge-infra docs/DEPLOY-TEST-APP.md); the push to `deploy/test`
     deploys the pinned image (ADR-0018). Test-config changes on `main`
     also redeploy (the pipeline pins the latest `sha-<sha>` image).

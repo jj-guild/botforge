@@ -28,7 +28,7 @@ Environment policy: `test` deploys **on demand** — by the
 authorized user), with the PR-built image tagged by its commit SHA;
 test-config changes on `main` also redeploy. The cross-repo dispatch
 (the comment lives on `botforge-services`, the deploy workflow on
-`botforge-infra`) uses the **botforge-deployer GitHub App**: installed
+`botforge-infra`) uses the **jj-guild-deployer GitHub App**: installed
 on `botforge-infra` only, single `Actions: write` permission,
 ephemeral tokens minted per run — chosen over a permanent PAT (no
 long-lived credential, centrally revocable, unable to touch the

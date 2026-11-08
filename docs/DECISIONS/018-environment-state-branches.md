@@ -40,14 +40,14 @@ state of that environment as a single state file per deployed service.**
   never comes from a workflow input, so it cannot be spoofed or drifted.
 - **Writers:** only the pipelines commit to state branches — never a human
   and never the deploy workflow itself (which would re-trigger itself):
-  - `deploy/test`: the `botforge-deployer` GitHub App, from the
+  - `deploy/test`: the `jj-guild-deployer` GitHub App, from the
     `/deploy [env]` PR comment (PR image + PR URL + commenter) or from a
     merged main-branch config change (pinned latest `sha-<sha>` image).
   - `deploy/prod`: the `Promote release` workflow of `botforge-services`
     (human-triggered `workflow_dispatch` with the released tag, after the
     release was validated on the test environment — the tag push pins the
     released image on `deploy/test` first); the pin push is allowed by the
-    botforge-deployer App bypass on the state-branch ruleset, and the human
+    jj-guild-deployer App bypass on the state-branch ruleset, and the human
     gates are the **workflow trigger** and the **`prod` environment
     approval** in the deploy run — human clicks, consistent with the
     governance model.
