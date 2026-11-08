@@ -328,7 +328,7 @@ the `CatalogTranslator` (`kingdoms.discord.commands_i18n`) — the yaml
 `commands.<name>_name` / `commands.<name>_description` keys are the
 only source; never a hardcoded localization dict.
 
-The locale resolution rules (native Discord, nothing stored):
+The locale resolution rules (Discord-native signals, always stored):
 
 - **ephemeral / interaction surfaces** — the **clicker's client
   language first** (`interaction.locale`), then the server's language
@@ -345,9 +345,13 @@ The locale resolution rules (native Discord, nothing stored):
 - **command entries** — the Discord client locale, through the
   translator, not the guild's.
 
-The platform stores the language (the admin picker for the guild,
-the DM picker for the user) and **the stored choice wins** over every
-Discord signal — Discord's own surfaces have hard limits:
+The platform **always stores** the language: the detected native value
+becomes the default — seeded at guild join/boot from `guild.preferred_locale`
+and at each interaction from `interaction.locale`
+(`LogService.ensure_guild_locale` / `ensure_user_locale`, English when
+undetectable or unsupported) — and an explicit picker choice (the admin
+picker for the guild, the DM picker for the user) **wins** over the stored
+default. Discord's own surfaces have hard limits:
 
 - a **Community server** carries a real language setting
   (`preferred_locale`, Server Settings → Language) — the guild
@@ -361,8 +365,8 @@ Discord signal — Discord's own surfaces have hard limits:
   observes it per user (DMs render in the last-seen language) and
   per guild (the majority fallback above).
 
-A guild that never picked falls back to Discord's signal, then the
-members' observed majority; a user who never picked falls back to
+A guild with nothing stored falls back to Discord's signal, then the
+members' observed majority; a user with nothing stored falls back to
 their last observed client language. The pickers live in menu:admin
 (set-language action) and the DM panel's language opener.
 
