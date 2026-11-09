@@ -20,7 +20,7 @@ agent.
    (roster teams → repo grants → what your agent may do). You never
    give the agent more rights than you have.
 3. **A machine for your personal test environment (optional but
-   recommended)** — a hosting, a Raspberry Pi, or a self-hosted GitHub
+   recommended)** — a hosted server, a Raspberry Pi, or a self-hosted GitHub
    Actions runner you own. It runs **your own test environment**
    (bot + MongoDB + Redis, one `docker compose up`) so you can test
    your mods on your own test Discord server before anyone else sees
