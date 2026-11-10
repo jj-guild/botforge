@@ -81,6 +81,16 @@ outcome — never a guess. Answering the human with "I posted it" or
 "it should work" while the workflow is still running is an agent bug:
 the human's answer is the workflow's answer, read off the PR.
 
+**The answer is a table (developer-mandated).** Every command comment
+gets one tracking comment on the PR: a single table that carries the whole
+story — the command, the target env, who asked (roster alias + login) and
+with which rights, the gate verdict (allowed or denied, with the exact
+matrix rule), the start/end of the run, and the resulting commit/image/
+pipeline — plus one row appended per step in a Steps log, so the comment
+reads as an audit trail: who, when, which env, what status. The same shape
+applies to the other PR comments the workflows post (ops command results,
+/help listings). Denials land in the same table — a ⛔ denied row, no run.
+
 ## Humans never code
 
 This platform is a pure vibe-coding test: the agent does 100% of the

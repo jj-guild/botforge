@@ -52,7 +52,7 @@ and intended — just answer in plain language.
   production (real players) only receives published versions.
 - When a test deployment is in progress, the PR carries a **tracking
   comment** showing its progress: 🟡 building → 🔵 deploying →
-  🟢 deployed (or ❌ failed). If you see ❌, just report it to the
+  🟢 deployed (or ❌ failed, ⛔ denied). If you see ❌, just report it to the
   agent — diagnosing is its job, not yours.
 
 ## Reading the bot's /status
