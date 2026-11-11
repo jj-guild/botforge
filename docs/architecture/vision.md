@@ -42,7 +42,7 @@ The full owner list (botforge-infra#132), mapped by the committee
 | Fluxer | **evaluate** | POC botforge-infra#133: port one surface, then decide porting target / second-class surface / no-go |
 | MongoDB / Redis | **self-host** (today) | managed offer revisited at the hosting decision |
 | Forgejo (+ Woodpecker) | **self-host** | dev stack anchor; Woodpecker placed with it |
-| Nextcloud | **self-host, deferred** | ops burden sized first |
+| Nextcloud | **self-host** (wave 1 — owner direction, domain owned) | rides on VPN + reverse proxy; vaulted secrets until OpenBao |
 | ArgoCD | **self-host, conditional** | only if Kubernetes is chosen (Kapsule trial) |
 | OpenBao | **self-host, deferred** | secrets story is a committee deep-dive |
 | ELK (or equivalent) | **buy-vs-self-host, deferred** | sizing input of capacity.md; a lighter managed stack is allowed |
@@ -76,21 +76,26 @@ improvised topology (the very thing botforge-infra#132 denounces).
 - **Wave 1 — self-hosted foundations**: 1. **Forgejo** (the dev-stack
   anchor — Woodpecker and the private registry depend on it); 2. **VPN**
   (the access layer, installed *before* any self-hosted service is
-  exposed); 3. **Woodpecker** (once Forgejo is in). **In parallel, the
+  exposed); 3. **reverse proxy** (Caddy — ACME/Let's Encrypt automatic
+  issue and renewal on the owned domain; fronts every exposed stack
+  service); 4. **Nextcloud** (first user-facing stack service — moved
+  up from wave 2 by owner direction, domain already owned; rides on
+  the VPN + reverse proxy, secrets in ansible-vault until OpenBao,
+  covered by the backup story from day one); 5. **Woodpecker** (once
+  Forgejo is in). **In parallel, the
   Kapsule trial** — run early (it is free) as an *input to the hosting
   decision*, not a deployment: it feeds ADR-022's criterion 7
   (Kubernetes appetite) with real ops-burden data.
-- **Wave 2 — security triptych**: 4. **OpenBao** (secrets before the
+- **Wave 2 — security triptych**: 6. **OpenBao** (secrets before the
   services that consume them — the most urgent committee deep-dive
-  after Forgejo); 5. **Nextcloud** (first user-facing stack service;
-  rides on the VPN + OpenBao).
-- **Wave 3 — observability**: 6. **ELK or a lighter equivalent**
+  after Forgejo; Nextcloud's vaulted secrets migrate to it).
+- **Wave 3 — observability**: 7. **ELK or a lighter equivalent**
   (evaluate Loki/Grafana vs ELK at the capacity session — lighter to
   self-host; sized from [capacity.md](capacity.md) before build).
 - **Wave 4 — surfaces (demand-driven, parallel to the stack)**:
-  7. **Twitch bot** (second `IPlatform`, the core is already agnostic —
-  ADR-0001); 8. **streamer bot** (depends on Twitch); 9. **PyQt app**;
-  10. **Matrix bot**.
+  8. **Twitch bot** (second `IPlatform`, the core is already agnostic —
+  ADR-0001); 9. **streamer bot** (depends on Twitch); 10. **PyQt app**;
+  11. **Matrix bot**.
 - **ArgoCD — conditional, pre-positioned**: only if the Kapsule trial
   concludes Kubernetes. If it wins, ArgoCD enters as early as wave 2-3
   (avoiding a double migration of the deploy chain); if it loses, it
