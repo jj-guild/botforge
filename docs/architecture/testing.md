@@ -159,6 +159,17 @@ real bot factory once botforge-services#12 lands).
    that depends on discord.py dispatch, checks, permissions or the
    interaction lifecycle; no `MagicMock` as a substitute for Discord
    permissions or cache state; no `bot.run()` in tests.
+7. **A flow tested with a fake service is not tested — the seam must have
+   its own test** (botforge-services#322): a fake accepts any signature
+   and never refuses, so a flow journey over a fake service proves the
+   flow, not the wiring. Every caller-to-remote seam (the gRPC clients,
+   the remotes and proxies) is held by two tests of its own: a
+   **signature contract** (what the client issues matches what the
+   servicer implements — see
+   `tests/architecture/test_rpc_seam_contracts.py` in `botforge-services`)
+   and one **end-to-end seam test** (the real client → the real servicer
+   over loopback gRPC, only the backing callables faked — see
+   `tests/integration/test_rpc_seam_journeys.py`).
 
 ## See also
 
