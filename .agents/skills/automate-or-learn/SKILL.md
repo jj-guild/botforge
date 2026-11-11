@@ -22,7 +22,7 @@ deadline. The known entry points:
 
 - PR-checks waiting → `github-polling/scripts/pr_checks_wait.sh`
 - Deploy status (pin + run + jobs) → `diagnose-deploy/scripts/deploy_status.sh`
-- Deploy watching end-to-end → `kingdoms-services` `.github/workflows/scripts/watch_deploy.sh`
+- Deploy watching end-to-end → `botforge-services` `.github/workflows/scripts/watch_deploy.sh`
 
 
 | Kind of operation | Artifact | Where |

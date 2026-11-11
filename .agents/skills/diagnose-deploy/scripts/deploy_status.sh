@@ -14,7 +14,7 @@ set -euo pipefail
 
 env_name="${1:?usage: deploy_status.sh <env> [--json]}"
 fmt="${2:-}"
-infra_repo="merlin-pinpin-org/kingdoms-infra"
+infra_repo="jj-guild/botforge-infra"
 
 pin="$(gh api "repos/${infra_repo}/commits?sha=deploy/${env_name}&per_page=1" \
     --jq '.[0] | .sha[0:7] + " — " + (.commit.message | split("\n")[0])' 2>/dev/null)" || { echo "gh error (pin)" >&2; exit 2; }

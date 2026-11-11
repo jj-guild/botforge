@@ -19,7 +19,7 @@ polls a PR's checks until every check is terminal (default 15 s interval,
 30 min cap), prints one summary line per cycle, and exits 0 when green:
 
 ```bash
-.agents/skills/github-polling/scripts/pr_checks_wait.sh merlin-pinpin-org/<repo> <pr> [interval-s] [max-minutes]
+.agents/skills/github-polling/scripts/pr_checks_wait.sh jj-guild/<repo> <pr> [interval-s] [max-minutes]
 ```
 
 Never re-type the poll loop — run the script. For runs (not PR checks),
