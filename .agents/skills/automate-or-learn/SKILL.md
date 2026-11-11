@@ -14,6 +14,17 @@ belongs** and **when a session must persist a command it improvised**.
 
 ## Where each automation belongs
 
+**Check BEFORE typing, not after.** Before composing any multi-step shell
+chain (a `gh`/`git`/`jq` pipeline, a poll loop, a log extraction), the
+session first looks for the committed script that already does it and RUNS
+it. Typing a command the platform already carries is a bug, whatever the
+deadline. The known entry points:
+
+- PR-checks waiting → `github-polling/scripts/pr_checks_wait.sh`
+- Deploy status (pin + run + jobs) → `diagnose-deploy/scripts/deploy_status.sh`
+- Deploy watching end-to-end → `botforge-services` `.github/workflows/scripts/watch_deploy.sh`
+
+
 | Kind of operation | Artifact | Where |
 | ----------------- | -------- | ----- |
 | Anything a session runs more than once | Makefile target | `Makefile` of the repo it belongs to (`make lint`, `make session-check`, `make watch-deploy`, `make release`) |

@@ -14,6 +14,17 @@ slow ones. The wait is a **poll loop on the real status**, not a timer.
 
 ## Procedure
 
+**The committed poller** — `.agents/skills/github-polling/scripts/pr_checks_wait.sh`
+polls a PR's checks until every check is terminal (default 15 s interval,
+30 min cap), prints one summary line per cycle, and exits 0 when green:
+
+```bash
+.agents/skills/github-polling/scripts/pr_checks_wait.sh jj-guild/<repo> <pr> [interval-s] [max-minutes]
+```
+
+Never re-type the poll loop — run the script. For runs (not PR checks),
+`gh run watch <id>` or the loop below.
+
 1. **Identify what to poll** — the run id(s) or check state that
    represents the outcome:
    ```bash

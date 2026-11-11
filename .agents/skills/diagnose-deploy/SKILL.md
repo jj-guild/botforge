@@ -5,6 +5,12 @@ description: Diagnose a stuck or pending deployment on botforge-infra (test or p
 
 # Diagnose a stuck deploy
 
+**The committed status check** — `.agents/skills/diagnose-deploy/scripts/deploy_status.sh
+<env>` prints the latest pin on `deploy/<env>`, the latest deploy run
+(id/status/conclusion) and its per-job verdicts in one call; exit 0 when the
+run succeeded. A session never re-types the `gh api`/`gh run list`/
+`gh run view` sequence — it runs the script.
+
 A deployment that never finishes is almost never the runner's fault. Run
 the diagnosis tooling **before** suspecting the hosting: in the 2026-09-24 prod
 incident, the runner was healthy and idle the whole time while every deploy
