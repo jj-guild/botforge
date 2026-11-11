@@ -563,6 +563,25 @@ understand the choices and their reasons without asking anyone.
   `botforge-infra`; `## Summary`, `## Details` in `botforge`). A
   "Validate issue" workflow labels non-compliant issues `invalid` —
   recreate them properly rather than editing around the flag.
+- Every open issue carries exactly one `scope/*` label — the **ownership
+  dimension** of the triage, deciding who manages and validates the work:
+  - `scope/core` — the platform (core services, Discord surfaces, infra,
+    providers, packaging, docs, CI): **managed and validated by a
+    maintainer**;
+  - `scope/mod` — one mod's perimeter (features, bugs, data, Discord
+    content): **managed and validated by the mod's owner**;
+  - `scope/game` — one game's perimeter (connectors, game data):
+    **managed and validated by the game's owner**.
+
+  The label is the delegation contract for agents: a designer's agent
+  working inside a mod or game **opens a `scope/core` issue to request a
+  platform change** (seam, capability, fix) instead of touching core
+  code — the maintainer decides and validates; a maintainer's agent
+  **does not land changes in a `scope/mod` or `scope/game` perimeter
+  unless the owner asked** — it reports an issue and lets the owner's
+  flow carry it. When a PR crosses scopes (a core seam consumed by a
+  mod), the `scope/core` part is maintainer-validated and the mod part
+  owner-validated — split the PR when the mix is not clean.
 - Every open issue in `botforge-services` and `botforge-infra` carries
   exactly one `size/*` label (XS/S/M/L/XL), one `priority/P0-P3` label
   (critical-path slack, maintained by
