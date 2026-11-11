@@ -63,6 +63,44 @@ dropped only by an explicit ADR, never by silence.
   person plus agents.
 - **Drop** requires an ADR superseding the surface's row here.
 
+## Rollout sequence — which tool enters when
+
+Order = dependencies first, risk decaying. The committee owns this
+sequence: one wave = one deep-dive session. **The gate rule: a tool
+enters a wave only if its dependency is in production and its sizing
+figure is in [capacity.md](capacity.md)** — that is the guard against
+improvised topology (the very thing botforge-infra#132 denounces).
+
+- **Wave 0 — settled, do not revisit**: MongoDB, Redis, GitOps state
+  branches, Ansible/IaC (standing rule).
+- **Wave 1 — self-hosted foundations**: 1. **Forgejo** (the dev-stack
+  anchor — Woodpecker and the private registry depend on it); 2. **VPN**
+  (the access layer, installed *before* any self-hosted service is
+  exposed); 3. **Woodpecker** (once Forgejo is in). **In parallel, the
+  Kapsule trial** — run early (it is free) as an *input to the hosting
+  decision*, not a deployment: it feeds ADR-022's criterion 7
+  (Kubernetes appetite) with real ops-burden data.
+- **Wave 2 — security triptych**: 4. **OpenBao** (secrets before the
+  services that consume them — the most urgent committee deep-dive
+  after Forgejo); 5. **Nextcloud** (first user-facing stack service;
+  rides on the VPN + OpenBao).
+- **Wave 3 — observability**: 6. **ELK or a lighter equivalent**
+  (evaluate Loki/Grafana vs ELK at the capacity session — lighter to
+  self-host; sized from [capacity.md](capacity.md) before build).
+- **Wave 4 — surfaces (demand-driven, parallel to the stack)**:
+  7. **Twitch bot** (second `IPlatform`, the core is already agnostic —
+  ADR-0001); 8. **streamer bot** (depends on Twitch); 9. **PyQt app**;
+  10. **Matrix bot**.
+- **ArgoCD — conditional, pre-positioned**: only if the Kapsule trial
+  concludes Kubernetes. If it wins, ArgoCD enters as early as wave 2-3
+  (avoiding a double migration of the deploy chain); if it loses, it
+  stays catalogued conditional and is never paid for. ArgoCD is a
+  *consequence* of choosing Kubernetes, not a default — deciding it
+  up front would decide the hosting question by the back door,
+  bypassing ADR-022.
+- **Fluxer — out of sequence**: the POC (botforge-infra#133) decides
+  (porting target / second-class surface / no-go), not the roadmap.
+
 ## Open questions owned by this vision
 
 1. **Hosting**: VPS (incl. Kapsule trial) vs bare metal + hypervisor —
