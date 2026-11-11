@@ -5,6 +5,12 @@ multi-platform Discord bot platform. It is the reference for how the three
 repositories fit together, how the generic core is organized, and how data
 flows through the system.
 
+The **long-term infrastructure vision** (target topology, surfaces,
+capacity peaks, hosting options) is held by the architecture committee in
+[architecture/vision.md](architecture/vision.md),
+[architecture/topology.md](architecture/topology.md) and
+[architecture/capacity.md](architecture/capacity.md).
+
 The five architectural pillars:
 
 1. **Multi-platform**: abstraction via `IPlatform` (Discord now, Twitch later)
