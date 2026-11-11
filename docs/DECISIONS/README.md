@@ -75,3 +75,7 @@ change that reverses an ADR must produce both a new ADR and a changelog entry.
 | [016](016-discord-permissions-and-delivery.md) | Discord permissions & message delivery (DM vs channel, runtime role checks, channel access policies) |
 | [017](017-packaging-distribution.md) | Packaging and distribution (workspace, private index, PyPI) |
 | [018](018-environment-state-branches.md) | Per-environment state branches (GitOps deploy state) |
+| [019](019-modular-monolith-extraction-contracts.md) | Modular monolith — extraction contracts |
+| [020](020-process-split-bot-core-providers.md) | Process split: bot core / providers |
+| [021](021-architecture-five-rules.md) | The five architecture rules — enforced, not remembered |
+| [022](022-hosting-evaluation-path.md) | Hosting evaluation path — VPS (incl. Kapsule trial) vs bare metal + hypervisor |
