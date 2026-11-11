@@ -159,6 +159,72 @@ uniques, tech tree, textes d'aide — tout ce qui évolue à chaque maj).
 Attribution : voir `data/core/aoe2techtree/ATTRIBUTION.md` (MIT +
 notice Microsoft Game Content Usage Rules, affichée en tête de post).
 
+## Liquipedia map enrichment (#247)
+
+The AoE2 map catalog is enriched from Liquipedia
+(`https://liquipedia.net/ageofempires/`) — verified against the current
+implementation (`kingdoms-services`, `src/kingdoms/mapsdata/liquipedia.py`,
+`core/games/aoe2/content_refresh.py`, `core/services/faction_content.py`):
+
+- **Source**: the official MediaWiki API (no HTML scraping), with an
+  identifying User-Agent carrying the provider contact; pacing is
+  enforced process-wide (>= 2 s between requests, >= 30 s between
+  `action=parse` calls) behind a shared circuit breaker.
+- **Contact**: the environment variable `PROVIDER_CONTACT` — the single
+  generic provider-contact variable (the former `LIQUIPEDIA_CONTACT` is
+  gone), declared per GitHub environment, read by deploy-env.yml then the
+  env's compose.
+- **Trigger**: **on demand** — the « Sync aoe2 maps » admin button
+  (kingdoms-services #298), never at boot. The CLI variant is
+  `python -m kingdoms.core.games.aoe2.content_refresh_cli` (idempotent).
+- **Stored per map** (the content collection, `provider: "liquipedia"`):
+  `name`, `summary`, `source_url`, `image_url` (the direct file URL),
+  `icon_url`, `walls`, `nomad`, `tc`, `game_versions`, `versions`, and
+  the normalized query `tags`. Maps already complete (image + walls) are
+  skipped — the refresh is idempotent.
+- **Query tags** (`query_tags`): `terrain:<v>`, `type:<v>`, `water`,
+  `nomad`, `walled`, `tc:<n>` — backed by a multikey Mongo index on
+  `tags` plus the covered `(entity_id, locale)` pair, both created
+  idempotently by `ensure_indexes` on every sync run.
+- **Queries**: `FactionContentService.query_by_tags` (e.g. every hybrid
+  nomad map: `query_by_tags(["terrain:hybrid", "nomad"],
+  entity_prefix="map:aoe2:")`); per-guild listings go through
+  `list_map_content`, Redis-cached per guild+locale (1 h TTL) and
+  invalidated on every content store.
+
+The designers' classification (`open`, `semi-open`, `closed`…) is
+deliberately **not** part of this import — it is user-entered and
+user-editable (kingdoms-services #348).
+## Contrat des listes : 25 éléments et le two-pattern select/par-id
+
+Discord limite un sélect à **25 options** — la plateforme le respecte
+par conception, avec **deux patterns distincts, jamais de pagination**
+(une pagination de sélect masque silencieusement les options au-delà
+de la page et ses boutons de page concurrencent le sync) :
+
+1. **Sélect natif** quand la liste tient dans la limite : les jeux et
+   les mods actifs (<= 25 par convention plateforme), les map pools
+   non supprimés d'une guilde (<= 25), les membres d'un map pool
+   (<= 25, `MAX_POOL_MAPS`).
+2. **Par-id** au-delà : un bouton ouvre une modale où l'on colle l'id
+   (`map:public:arena`, `pool:<guild_id>:<slug>`) ; pour les maps,
+   l'**import en masse** (une map par ligne : id, nom anglais avec
+   underscores ou URL Liquipedia, refus si un échec) couvre l'init
+   d'un pool complet.
+
+Quand un sélect n'est pas disponible (catalogue de maps > 25), la
+réponse **explique les alternatives** : bouton « Ajouter une map
+(id) », ou le bouton « Ajouter à un map pool » **du post de chaque
+map** (toujours visible, il opère par id).
+
+Ids des entrées (convention scope-first, l'id porte la visibilité,
+pas le jeu) : maps `map:public:<slug>` / `map:<guild_id>:<slug>`,
+pools `pool:public:<slug>` / `pool:<guild_id>:<slug>`. Les templates
+des composants persistants matchent ces ids avec `.+` — **jamais**
+`[^:]+` (les ids contiennent des deux-points, le clic mourrait en
+silence : c'est la cause racine historique des « boutons qui ne
+répondent pas »).
+
 ## Mappings de providers (ids propres)
 
 Chaque provider a ses ids propres (civ ids, map names) qui peuvent être
