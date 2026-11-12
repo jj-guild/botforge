@@ -49,6 +49,9 @@ CAPABILITY_RULES: dict[str, dict] = {
                   "usage": "/reset-env [env] — wipe the env's data volumes and reseed from the workflow datasets. Self env only, unless ops. Never prod."},
     "sync-teams": {"roles": ["platform"], "help": "run the roster sync",
                    "usage": "/sync-teams — re-sync GitHub teams/permissions from CONTRIBUTORS.md (the doc is the source of truth)."},
+    "console-ops": {"roles": ["ops", "dev", "mod", "vibe"], "own_env_roles": ["vibe", "mod", "dev", "ops"], "shared_env_roles": ["dev", "ops"], "deny_envs_prod": True,
+                    "help": "run the console actions on an env's test guilds (GitHub-side /console)",
+                    "usage": "/console <env> <clean-managed|nuke|reset-data|install> <guild_id|all> — same actions and gates as the Discord /console, headless. nuke needs --confirm NUKE. Never prod."},
 }
 
 
@@ -106,6 +109,8 @@ def check(person: Person | None, capability: str, env: str = "", pr_author: Pers
     if "own_env_roles" in rule:
         # Ownership tiers (authority matrix): personal env (env == roster
         # alias) at vibe+, shared envs (test) at dev+, ops+ anywhere.
+        if rule.get("deny_envs_prod") and env == "prod":
+            return False, f"'{capability}' is never allowed on prod (per the authority matrix)"
         if env == "prod":
             if not roles & {"ops", "platform"}:
                 return False, f"'{capability}' on prod requires ops (the authority matrix)"
