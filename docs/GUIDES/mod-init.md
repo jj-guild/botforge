@@ -1,181 +1,179 @@
-# Mod init — créer un mod proprement (`botforge mod init`)
+# Mod init — starting a mod properly (`botforge mod init`)
 
-Ce guide est **la référence** pour initier un mod : le layout cible, la
-commande qui scaffold tout, et deux mods d'exemple réels (ladder,
-kingdoms). Il sert aux humains **et** aux agents — une session qui crée
-un mod commence ici, n'improvise rien, et économise ses tokens sur ce
-qui compte (le design, pas le bootstrap).
+This guide is **the reference** for starting a mod: the target layout, the
+command that scaffolds everything, and two real example mods (ladder,
+kingdoms). It serves humans **and** agents — a session creating a mod
+starts here, improvises nothing, and saves its tokens for what matters
+(the design, not the bootstrap).
 
-Audience : game designers (via une session agent), développeurs, agents.
+Audience: game designers (via an agent session), developers, agents.
 
-## 1. Un mod = un répertoire autonome
+## 1. A mod = one self-contained directory
 
-Depuis botforge#179, chaque mod vit dans **un seul répertoire
-self-contained** dans `botforge-services` — l'extraction future vers un
-repo externe (botforge-services#211 : un mod = un module UV + un
-conteneur Docker + sa doc) sera un pur `git mv` :
+Since botforge#179, every mod lives in **one self-contained directory**
+in `botforge-services` — the future extraction to an external repo
+(botforge-services#211: a mod = one UV module + one Docker container +
+its docs) will be a pure `git mv`:
 
 ```
 modules/mods/<mod>/
-  mod.yaml            déclaration (schéma ModRegistry, validée au boot)
-  src/<mod>/          package python, importé comme botforge.mods.<mod>
-  locales/en.yaml     catalogues de locale du mod (fusionnés au chargement)
+  mod.yaml            declaration (ModRegistry schema, validated at boot)
+  src/<mod>/         python package, imported as botforge.mods.<mod>
+  locales/en.yaml    the mod's locale catalogs (merged at load time)
   locales/fr.yaml
-  tests/              tests du mod (lancés par make test)
-  README.md           pointeur vers la doc canonique (repo botforge)
+  tests/             the mod's tests (run by make test)
+  README.md          pointer to the canonical docs (botforge repo)
 ```
 
-La documentation canonique du mod (règles, environnement) reste dans le
-repo `botforge` : `docs/MODS/<mod>/` (README, RULES, ENVIRONMENT) —
-jamais dans `botforge-services`. **Deux repos, deux vérités** : le code
-et sa déclaration dans `botforge-services`, le design dans `botforge`.
+The mod's canonical documentation (rules, environment) stays in the
+`botforge` repo: `docs/MODS/<mod>/` (README, RULES, ENVIRONMENT) —
+never in `botforge-services`. **Two repos, two truths**: the code and
+its declaration in `botforge-services`, the design in `botforge`.
 
-L'ancien layout (`src/botforge/mods/<mod>` + `config/mods/<mod>.yaml`) —
-reste supporté et **prioritaire en cas de collision** le temps de la
-migration : une branche qui déménage son mod garde la main.
+The legacy layout (`src/botforge/mods/<mod>` +
+`config/mods/<mod>.yaml`) remains supported and **wins on collision**
+for the duration of the migration: a branch moving its mod keeps
+precedence.
 
-## 2. La commande
+## 2. The command
 
 ```bash
 uv run botforge mod init <name> [--seasonal | --permanent] [--private --owner <discord-id>]...
 uv run botforge mod list
 ```
 
-`init` génère le répertoire complet ci-dessus : déclaration valide,
-package avec les trois hooks de cycle de vie (`register`, `setup_hook`,
-`close`), locales en/fr, test d'acceptation, README pointeur. Rien
-n'est écrasé — un mod existant est refusé.
+`init` generates the full directory above: a valid declaration, a
+package with the three lifecycle hooks (`register`, `setup_hook`,
+`close`), en/fr locales, an acceptance test, a pointer README. Nothing
+is overwritten — an existing mod is refused.
 
-`list` affiche chaque mod déclaré et son layout (legacy ou modulaire).
+`list` prints every declared mod and its layout (legacy or modular).
 
-## 3. Le contrat du mod (rappel)
+## 3. The mod contract (recap)
 
-- `mod.yaml` respecte le schéma validé au boot — voir
-  [architecture/mods.md](../architecture/mods.md) : `id`, `enabled`,
-  `seasonal` **obligatoire** (type du mod : saisonnier → panneau de
-  cycle de vie + salons admin par saison ; permanent → panneau de
-  config au niveau guilde), `settings`, `channel_groups`, `channels`
-  (adressés `mod:key`), `roles`, `workflows`, `commands`,
-  `dependencies`, `required_games`.
-- **Les salons sont des données, jamais du code** :
-  - `channel_groups` — les catégories Discord du mod, l'ordre de
-    déclaration = l'ordre d'affichage ; `admin_only` (seuls les rôles
-    admin du mod + les bot-admins le voient) et `read_only` (personne
-    n'écrit) s'appliquent au groupe **et** à chaque salon
-    (l'héritage par défaut) ;
-  - `channels` — `group` (référence validée au boot), `kind`
-    (`text`/`forum`/`announce` — une announce est admin-écrite,
-    lisible par tous, read-only par défaut) ;
-  - `access.view`/`access.post` — les **clés de rôles** déclarés par
-    le mod (`view: [lord, king]`), résolues en noms au chargement ;
-    un rôle marqué `admin: true` est l'audience des salons
-    `admin_only`. Pas d'auto-heal : le bouton **Synchroniser** de la
-    section est le seul chemin de re-création.
-- **Le cycle de vie** : un mod suspendu (`ModLifecycleService`, par
-  guilde) reste **gérable par les admins** mais **inutilisable par les
-  joueurs** — `require_usable` est le point de contrôle de chaque flux
-  joueur. La suspension est un flag, jamais un wipe.
-- **Les inscriptions** (`settings.enrollment`) : critères déclaratifs —
-  `min_elo`/`max_elo` (scalaire ou `{value: …, leaderboard: rm_1v1}`),
+- `mod.yaml` follows the schema validated at boot — see
+  [architecture/mods.md](../architecture/mods.md): `id`, `enabled`,
+  `seasonal` **required** (the mod's type: seasonal → a lifecycle
+  panel + per-season admin channels; permanent → a guild-level config
+  panel), `settings`, `channel_groups`, `channels` (addressed
+  `mod:key`), `roles`, `workflows`, `commands`, `dependencies`,
+  `required_games`.
+- **Channels are data, never code**:
+  - `channel_groups` — the mod's Discord categories, declaration order
+    = display order; `admin_only` (only the mod's admin roles +
+    bot-admins see it) and `read_only` (nobody writes) apply to the
+    group **and** to each channel (the default inheritance);
+  - `channels` — `group` (reference validated at boot), `kind`
+    (`text`/`forum`/`announce` — an announce channel is
+    admin-written, readable by all, read-only by default);
+  - `access.view`/`access.post` — the **role keys** declared by the mod
+    (`view: [lord, king]`), resolved to names at load time; a role
+    marked `admin: true` is the audience of `admin_only` channels. No
+    auto-heal: the **Synchroniser** button of the section is the only
+    re-creation path.
+- **The lifecycle**: a suspended mod (`ModLifecycleService`, per
+  guild) stays **manageable by admins** but **unusable by players** —
+  `require_usable` is the gate of every player flow. Suspension is a
+  flag, never a wipe.
+- **Enrollment** (`settings.enrollment`): declarative criteria —
+  `min_elo`/`max_elo` (scalar or `{value: …, leaderboard: rm_1v1}`),
   `min_matches` (`{count: 10, days: 30, leaderboard: …}`),
-  `requires_profile`/`requires_profiles` (un compte lié sur chaque jeu
-  déclaré), `manual` (validation admin ; sinon auto-accept quand tous
-  les critères passent). La **fenêtre** : `opens_at`/`closes_at`
-  (timestamps ISO) ou `opens_before_start: 7d` (les inscriptions
-  ouvrent avant le début de la saison).
-- **Le map pool** : attaché à une saison (`map_pool_id` de la saison,
-  rotation = une nouvelle saison avec un autre pool) ou au mod via
-  `settings.map_pool` — un pool `used` est gelé, jamais réédité.
-- Le code du mod ne parle **qu'aux seams du core** (hooks, UI SDK
-  `botforge.discord.ui`, services core) — jamais à discord.py
-  directement, jamais d'IDs de salon/rôle/guilde en dur.
-- Le flag game-bound : un mod peut être lié à un seul jeu par design
-  (kingdoms → AoE2) mais ne possède **jamais** les données du jeu — le
-  catalogue appartient au core `GameDataService`, les saisons au
-  registre core.
+  `requires_profile`/`requires_profiles` (a linked account on every
+  declared game), `manual` (admin validation; otherwise auto-accept
+  when all criteria pass). The **window**: `opens_at`/`closes_at` (ISO
+  timestamps) or `opens_before_start: 7d` (enrollments open before the
+  season's start).
+- **The map pool**: attached to a season (the season's `map_pool_id`,
+  rotation = a new season with another pool) or to the mod via
+  `settings.map_pool` — a `used` pool is frozen, never edited again.
+- The mod's code talks **only to the core seams** (hooks, the UI SDK
+  `botforge.discord.ui`, core services) — never to discord.py
+  directly, never a hardcoded channel/role/guild id.
+- The game-bound flag: a mod may be bound to a single game by design
+  (kingdoms → AoE2) but **never owns** the game's data — the catalog
+  belongs to the core `GameDataService`, the seasons to the core
+  registry.
 
-## 3b. Mods publics et privés
+## 3b. Public and private mods
 
-Un mod est **public par défaut**. Déclaré `private: true` dans le
-`mod.yaml`, il devient **privé** :
+A mod is **public by default**. Declared `private: true` in the
+`mod.yaml`, it becomes **private**:
 
-- `owner_discord_ids` (ids Discord des propriétaires) est
-  **obligatoire** — un mod privé sans propriétaire fait échouer le boot
-  (fail loudly) ;
-- le provisioning saute les guildes où **aucun** propriétaire ni
-  bot-admin n'est membre ;
-- les surfaces (menu home, dispatch des vues de mod) le cachent à
-  quiconque n'est pas propriétaire ou bot-admin.
+- `owner_discord_ids` (the owners' Discord ids) is **required** — a
+  private mod without an owner fails the boot (fail loudly);
+- provisioning skips the guilds where **no** owner or bot-admin is a
+  member;
+- the surfaces (home menu, mod view dispatch) hide it from anyone who
+  is not an owner or a bot-admin.
 
-Le scaffold le fait en une commande : `botforge mod init <name>
---private --owner <id> [--owner <id>...]`. Usage typique : un mod en
-cours de construction qui ne doit pas apparaître sur les guildes de
-production avant d'être prêt.
+The scaffold does it in one command: `botforge mod init <name>
+--private --owner <id> [--owner <id>...]`. Typical use: a mod under
+construction that must not appear on production guilds before it is
+ready.
 
-## 4. Les mods d'exemple
+## 4. The example mods
 
-Les deux pins de **déménagement** (le layout cible des mods réels,
-`enabled: false` tant que leur code vit sur les branches
-d'intégration) :
+The two **move-in** pins (the target layout of real mods,
+`enabled: false` while their code lives on the integration branches):
 
 | | [ladder](../MODS/ladder/) | [kingdoms](../MODS/kingdoms/) |
 |---|---|---|
-| Type | saisonnier, game-agnostic | saisonnier, **game-bound (AoE2)** |
-| Rôles | 3 (staff mod + player/season_staff par saison) | déclarés au déménagement |
-| Déclaration | `modules/mods/ladder/mod.yaml` | `modules/mods/kingdoms/mod.yaml` (réelle, salons-first, depuis `vibe/drasah/main`) |
-| Code | branche `vibe/merlin/main` (PR botforge-services#245) | branche `vibe/drasah/main` (PR botforge-services#244) |
+| Type | seasonal, game-agnostic | seasonal, **game-bound (AoE2)** |
+| Roles | 3 (mod staff + player/season_staff per season) | declared at move-in |
+| Declaration | `modules/mods/ladder/mod.yaml` | `modules/mods/kingdoms/mod.yaml` (real, salons-first, from `vibe/drasah/main`) |
+| Code | branch `vibe/merlin/main` (PR botforge-services#245) | branch `vibe/drasah/main` (PR botforge-services#244) |
 
-Les deux répertoires `modules/mods/` pin **le layout cible et la
-déclaration réelle**, avec `enabled: false` tant que le code vit encore
-sur la branche d'intégration : le flag passe à `true` dans la même PR
-que le déménagement mécanique du code (un PR par mod, CI verte à chaque
-étape). C'est le pattern à suivre pour tout mod existant.
+The two `modules/mods/` directories pin **the target layout and the
+real declaration**, with `enabled: false` while the code still lives
+on the integration branch: the flag flips to `true` in the same PR as
+the mechanical code move (one PR per mod, CI green at each step). That
+is the pattern to follow for any existing mod.
 
-## 5. Le chemin complet d'un nouveau mod
+## 5. The full path of a new mod
 
-1. `uv run botforge mod init <name> --seasonal` (ou `--permanent`)
-2. Remplir `mod.yaml` (channels, roles, workflows, commands)
-3. Implémenter dans `src/<name>/` contre les seams du core
-4. Remplir `locales/en.yaml` + `fr.yaml`
-5. Documenter dans le repo `botforge` : `docs/MODS/<name>/` depuis
-   [TEMPLATE](../MODS/TEMPLATE/), ligne dans le
-   [catalogue](../MODS/CATALOGUE.md) (maturité 1–2)
+1. `uv run botforge mod init <name> --seasonal` (or `--permanent`)
+2. Fill `mod.yaml` (channels, roles, workflows, commands)
+3. Implement in `src/<name>/` against the core seams
+4. Fill `locales/en.yaml` + `fr.yaml`
+5. Document in the `botforge` repo: `docs/MODS/<name>/` from
+   [TEMPLATE](../MODS/TEMPLATE/), a line in the
+   [catalogue](../MODS/CATALOGUE.md) (maturity 1–2)
 6. `make lint typecheck test`
-7. Brancher le design sur la pipeline vibe (issue, PR, deploy, tag) —
-   voir [VIBEWORKFLOW.md](../VIBEWORKFLOW.md)
+7. Wire the design onto the vibe pipeline (issue, PR, deploy, tag) —
+   see [VIBEWORKFLOW.md](../VIBEWORKFLOW.md)
 
-## 6. Les systèmes génériques prêts à brancher
+## 6. The ready-to-wire generic systems
 
-Le core fournit la machinerie complète — un mod déclaratif ne code que
-ses spécificités :
+The core provides the full machinery — a declarative mod codes only
+its specifics:
 
-| Système | Service core | Ce que le mod déclare |
+| System | Core service | What the mod declares |
 |---|---|---|
-| Parcours d'inscription | `EnrollmentService` | `settings.enrollment` (critères de la bibliothèque + `manual`) |
-| Saisons (une active max, rotations de pools, rôles saisonniers, inscriptions) | `build_mod_season_stack` | `seasonal: true` + les rôles `per_season` |
-| Inscription simple (register/unregister + sync rôles) | `MembershipService` | ses hooks métier |
-| Dashboards admin (candidats/inscrits/acceptés) | `AdminModSection` + `EnrollmentService.dashboard()` | ses sections |
-| Entités de l'univers (forums, posts) | `EntityForumSpec` | ses entités |
+| Enrollment journey | `EnrollmentService` | `settings.enrollment` (criteria from the library + `manual`) |
+| Seasons (one active max, pool rotations, seasonal roles, enrollments) | `build_mod_season_stack` | `seasonal: true` + the `per_season` roles |
+| Simple membership (register/unregister + role sync) | `MembershipService` | its business hooks |
+| Admin dashboards (candidates/enrolled/accepted) | `AdminModSection` + `EnrollmentService.dashboard()` | its sections |
+| Universe entities (forums, posts) | `EntityForumSpec` | its entities |
 
-Le parcours d'inscription : apply → critères automatiques →
-auto-accept / refus motivé / file d'attente → dashboard admin
-(pending ⏳ / accepted ✅ / refused ❌) → accept/refus admin avec raisons
-→ `MembershipService.register` (rôles de saison syncés). Les critères
-automatisables : `min_elo`, `min_matches` (X parties / Y jours / jeu Z),
-`requires_profile`, plus `manual` pour forcer la validation humaine.
+The enrollment journey: apply → automatic criteria → auto-accept /
+motivated refusal / waiting queue → admin dashboard (pending ⏳ /
+accepted ✅ / refused ❌) → admin accept/refuse with reasons →
+`MembershipService.register` (season roles synced). The automatable
+criteria: `min_elo`, `min_matches` (X matches / Y days / game Z),
+`requires_profile`, plus `manual` to force human validation.
 
-Le questionnaire guidé complet (pour les novices comme pour les agents)
-vit dans la skill
-[mod-intake](../../.agents/skills/mod-intake/SKILL.md) — une session qui
-crée un mod commence par elle.
+The full guided questionnaire (for novices and agents alike) lives in
+the
+[mod-intake](../../.agents/skills/mod-intake/SKILL.md) skill — a
+session creating a mod starts there.
 
-## Voir aussi
+## See also
 
-- [architecture/mods.md](../architecture/mods.md) — le design du
-  système (registry, cycle de vie, seams, contrat)
-- [MODS/README.md](../MODS/README.md) — le système côté documentation
-- [MODS/CATALOGUE.md](../MODS/CATALOGUE.md) — tous les mods, maturité
-- [GUIDES/mod-developer.md](mod-developer.md) — le guide développeur
-  (plus profond : SDK, tests, core-evolution)
-- [la skill mod-intake](../../.agents/skills/mod-intake/SKILL.md) — le
-  questionnaire guidé (le point d'entrée d'une session)
+- [architecture/mods.md](../architecture/mods.md) — the system's
+  design (registry, lifecycle, seams, contract)
+- [MODS/README.md](../MODS/README.md) — the system on the docs side
+- [MODS/CATALOGUE.md](../MODS/CATALOGUE.md) — every mod, maturity
+- [GUIDES/mod-developer.md](mod-developer.md) — the developer guide
+  (deeper: SDK, tests, core-evolution)
+- [the mod-intake skill](../../.agents/skills/mod-intake/SKILL.md) —
+  the guided questionnaire (a session's entry point)
