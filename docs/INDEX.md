@@ -28,6 +28,7 @@ page routes you to the answer. Read this page, not the whole docs tree.
 | Who reviews my PR? | [GUIDES/rulesets.md](GUIDES/rulesets.md) (rulesets) + CODEOWNERS in the target repo |
 | I am a game designer / mod dev / provider dev / vibe coder | [GUIDES/](GUIDES/README.md) — the per-role guides |
 | I want to join the platform — what do I need? | [GUIDES/join-the-platform.md](GUIDES/join-the-platform.md) — GitHub + Mistral accounts, connector, runner, CLA |
+| I want to start a new mod — where do I begin? | [GUIDES/mod-init.md](GUIDES/mod-init.md) — the scaffold command, the target layout, the mod contract, real examples; the [mod-intake](../.agents/skills/mod-intake/SKILL.md) skill is the agent entry point |
 | What is the roadmap? What depends on what? | [generated/ROADMAP.md](https://github.com/jj-guild/botforge/blob/sync/generated-artifacts/generated/ROADMAP.md) + [DEPENDENCIES.md](https://github.com/jj-guild/botforge/blob/sync/generated-artifacts/generated/DEPENDENCIES.md) — both **generated**, never edited |
 
 ## The three laws (if you read nothing else)
