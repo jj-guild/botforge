@@ -9,7 +9,11 @@ without coding.
 
 A mod is a self-contained feature that:
 
-- declares its configuration in YAML (`botforge-services/config/mods/<mod>.yaml`)
+- declares its configuration in YAML — modular layout
+  `botforge-services/modules/mods/<mod>/mod.yaml` (one self-contained
+  directory per mod, botforge#179) or legacy
+  `botforge-services/config/mods/<mod>.yaml` (supported, priority on
+  collision during the migration)
 - implements its logic against the generic core (`IPlatform`,
   `WorkflowEngine`, `ChannelService`) — never against a specific platform
 - documents its rules and environment here, in `docs/MODS/<mod-name>/`
@@ -90,6 +94,12 @@ flowchart TD
 The repo provides the generic mod tooling: the `config/mods/_example.yaml`
 declaration template and the `ModRegistry` (botforge-services#26). Each mod
 lands with its own issue, implementation and documentation set.
+
+## Starting a new mod
+
+Never improvise a mod's bootstrap: run `botforge mod init <name>` — see
+the reference guide [GUIDES/mod-init.md](../GUIDES/mod-init.md)
+(layout, command, ladder & kingdoms as real examples).
 
 ## Mod catalogue
 

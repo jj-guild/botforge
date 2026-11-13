@@ -6,6 +6,7 @@ links to the authoritative documents instead of duplicating them.
 | Audience | Guide | You want to… |
 |---|---|---|
 | Mod developer (human or AI) | [mod-developer.md](mod-developer.md) | Build a new mod on the BotForge core |
+| Anyone starting a mod | [mod-init.md](mod-init.md) | Scaffold a new mod: layout, `botforge mod init`, ladder & kingdoms examples |
 | Game provider developer | [game-provider.md](game-provider.md) | Integrate a new game and its external data providers |
 | Vibe coder (AI agent session) | [vibe-coder.md](vibe-coder.md) | Run a work session: issues → branch → PR → CI |
 | Game designer | [game-designer.md](game-designer.md) | Design a feature and get it built without coding |

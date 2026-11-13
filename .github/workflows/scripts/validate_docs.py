@@ -63,6 +63,13 @@ def check_mods_docs(docs_root: Path, config_root: Path | None) -> list[str]:
             for p in (config_root / "mods").glob("*.y*ml")
             if not p.stem.startswith("_")
         }
+    # Modular layout (botforge#179): modules/mods/<mod>/mod.yaml under the
+    # repo root (config_root's parent).
+    modular_dir = config_root.parent / "modules" / "mods" if config_root else None
+    if modular_dir and modular_dir.is_dir():
+        declared |= {
+            d.name for d in modular_dir.iterdir() if (d / "mod.yaml").is_file()
+        }
 
     for mod in sorted(documented | declared):
         mod_dir = mods_dir / mod
