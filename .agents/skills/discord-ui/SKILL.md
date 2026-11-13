@@ -531,6 +531,35 @@ The rules the registry enforces (the tests reject the drifts):
 - the platform caps: 20 maps/pool, 20 active pools/guild, 20 games,
   20 mods.
 
+
+## The mod surface contract (the SDK does it all — #321)
+
+A mod dev declares **only the yaml** (`conf/mod.yaml`: `emoji`,
+`channels` with keys/descriptions, `roles`, `commands`, `workflows`).
+The SDK (core, not the mod) then provides, with zero mod code:
+
+- **the home and admin views** (`menu:mod:<name>` / `menu:mod:<name>:admin`,
+  auto-declared at boot by `declare_mod_views`) — standard blocks (type,
+  commands, workflows) plus the declared emoji in the title;
+- **the notice** on both views — one compact line per category, the
+  old-style display everywhere (owner direction 2026-11-13):
+  `📺 Salons : <#id>, <#id>` and `👥 Rôles : <@&id>, <@&id>` (bare
+  mentions, comma-joined; a missing item renders `**label** (à créer)`).
+  A mod view reads its OWN yaml; the list views (games/mods home/admin)
+  scan the INSTALLED items — never a hardcoded folder;
+- **the pins** — the home menu pins in the mod's declared `general`
+  channel, the admin menu in its declared `admin` channel
+  (`register_mod_pins`, the static-pin cycle: created when missing,
+  refreshed in place, healed on channel delete);
+- **the lifecycle** — install and repair re-land the pins
+  (`ensure_mod_pins`), uninstall removes them whatever the channel
+  choice (`remove_mod_pins`: unpin, delete, registry forget, spec
+  drop — the pin never survives its mod).
+
+Never hand-wire a mod's views, notice or pins: declare the yaml, the
+SDK renders. A mod-specific surface only enters through the mod's own
+views yaml (a `panel`), never by editing core files.
+
 Adding or reorganizing views: read docs/DEVELOPMENT/VIEWS.md first,
 then declare, wire (`wire_view`), translate both locales, and keep
 the doc and `views_declared.py` in the same PR — the doc is the
