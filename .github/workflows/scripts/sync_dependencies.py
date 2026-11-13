@@ -18,7 +18,9 @@ of entering the waves.
 
 Issue sizes come from the `size/XS|S|M|L|XL` labels (points: XS=1, S=3,
 M=5, L=8, XL=13). If an issue has no size label, the script fails loudly
-rather than guessing.
+rather than guessing. Issues carrying an off-roadmap label
+(`arch-discussion`, `poc` — see OFF_ROADMAP_LABELS) are excluded from the
+graph entirely: they are parallel tracks, not planned work.
 
 Usage:
     GITHUB_TOKEN=... python3 scripts/sync_dependencies.py [--dry-run]
@@ -38,6 +40,15 @@ REPOS = ("botforge", "botforge-services", "botforge-infra")
 OWNER = "jj-guild"
 SIZE_POINTS = {"XS": 1, "S": 3, "M": 5, "L": 8, "XL": 13}
 PRIO_RANK = {"P0": 0, "P1": 1, "P2": 2, "P3": 3}
+
+# Off-roadmap labels (generic rule): an issue carrying one of these labels is
+# a parallel track — committee discussion, proof of concept, experimental
+# chantier — deliberately kept OUT of the generated roadmap and dependency
+# graph. The PO's roadmap stays product-only; these tracks live (and are
+# tracked) in their own issues. Dependencies pointing at an off-roadmap issue
+# still resolve (the issue stays in the id space), it just never appears in
+# the plan. Any future POC gets the `poc` label and is excluded the same way.
+OFF_ROADMAP_LABELS = ("arch-discussion", "poc")
 PHASE_LABEL = re.compile(r"^phase-(\d+)$")
 PRIORITY_LABEL = re.compile(r"^priority/(P[0-3])$")
 DEP_LINE = re.compile(
@@ -111,6 +122,7 @@ def load_issues() -> list[dict]:
                         "milestone_number": (it.get("milestone") or {}).get("number"),
                         "body": it.get("body") or "",
                         "labels": labels,
+                        "off_roadmap": any(l in OFF_ROADMAP_LABELS for l in labels),
                         "size": size,
                         "phase": phase,
                         "prio_label": prio_label,
@@ -152,6 +164,10 @@ def fail_on_missing(issues: list[dict]) -> tuple[list[dict], list[tuple[str, str
     blocked_ids: set[str] = set()
     ids = {i["id"] for i in issues}
     for i in issues:
+        if i.get("off_roadmap"):
+            # Deliberate exclusion (OFF_ROADMAP_LABELS) — a parallel track, not
+            # triage debt: no warning, the issue is simply not planned.
+            continue
         untriaged = False
         if i["size"] is None:
             print(f"warning: {i['id']}: no size/* label — excluded from the graph (triage it)")

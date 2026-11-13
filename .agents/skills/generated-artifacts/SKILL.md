@@ -55,6 +55,16 @@ anymore; the sync branch is workflow-owned.
 
 ## Reference — how the statuses and labels are derived
 
+**Off-roadmap labels** (`OFF_ROADMAP_LABELS` in `sync_dependencies.py`:
+`arch-discussion`, `poc`): an issue carrying one of them is a parallel
+track — committee discussion, proof of concept, experimental chantier —
+and is **excluded entirely** from both generated files: it never appears
+in a lot, in the "Out of scope / no lot" section, or in the dependency
+graph. Dependencies pointing at it still resolve (it stays in the id
+space), it is simply never planned. Tag any POC you create with `poc` at
+creation; committee-scope issues get `arch-discussion`. Removing the
+label re-adds the issue at the next sync.
+
 Roadmap status inference (each issue referenced in the roadmap maps to):
 
 | GitHub state | Roadmap status |

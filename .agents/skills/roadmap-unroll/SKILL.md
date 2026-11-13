@@ -35,6 +35,20 @@ of truth.
 4. Add a one-line status: current lot, done / in-review / todo counts, and
    the open PRs on the lot.
 
+## Off-roadmap labels — what never appears
+
+Issues carrying an **off-roadmap label** (`arch-discussion`, `poc` —
+see `OFF_ROADMAP_LABELS` in `.github/workflows/scripts/sync_dependencies.py`)
+are **excluded from the generated roadmap and the dependency graph**,
+entirely: not in a lot, not in the "Out of scope / no lot" section. They
+are parallel tracks — architecture-committee discussions, proofs of
+concept, experimental chantiers — tracked in their own issues, invisible
+to the PO's plan. **Any POC you create gets the `poc` label at creation**;
+committee-scope work gets `arch-discussion`. A dependency pointing at an
+off-roadmap issue still resolves (it counts as an id, just never planned).
+When a POC graduates into roadmap work, remove the label and the issue
+reappears in the next sync.
+
 ## When the human says "continue" / "go"
 
 Take the **top todo issue of the current lot's table** (skip the ones

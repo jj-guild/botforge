@@ -4,7 +4,10 @@
 The roadmap is the future, not the past: the generated page shows the
 current lot, the open issues that block closing it (in work order), the
 upcoming lots with their description, and the out-of-scope / no-lot
-issues. Done issues and the change history live on GitHub and in the git
+issues. Issues carrying an off-roadmap label (see
+`sync_dependencies.OFF_ROADMAP_LABELS` — `arch-discussion`, `poc`) are
+excluded entirely: committee discussions and POCs are not the PO's
+roadmap. Done issues and the change history live on GitHub and in the git
 log of the `sync/generated-artifacts` branch — they are deliberately not
 listed here.
 
@@ -229,6 +232,11 @@ def build_roadmap(
 ) -> str:
     wave = analysis["wave"]
     slack = analysis["slack"]
+
+    # Off-roadmap labels (sd.OFF_ROADMAP_LABELS): committee discussions and
+    # POCs never appear in the roadmap — not in a lot, not in "out of scope".
+    open_issues = [i for i in open_issues if not i.get("off_roadmap")]
+    eligible = [i for i in eligible if not i.get("off_roadmap")]
 
     if not milestones:
         milestones = {}
