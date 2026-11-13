@@ -43,9 +43,13 @@ view = (
 ## Main entries are visual buttons (the clickable-images pattern)
 
 The MAIN entries of a home/admin menu (the games, the mods — anything
-the user navigates INTO) render as **visual buttons**: emoji + label.
-Discord buttons carry an emoji, not an arbitrary image — the emoji IS
-the entry's visual identity ("clickable images" in Discord's terms).
+the user navigates INTO) render as **clickable images**: a SECTION —
+the image rides the Thumbnail accessory, the title carries the
+markdown LINK to the item's channel (the click target). A
+components-v2 TextDisplay CANNOT embed a markdown image (the nested
+`[![]()]` renders raw — never use it); the Section+Thumbnail+linked-
+title is the valid form. The items without declared art fall back to
+a visual button (emoji + label).
 
 - **The emoji is DATA, never code**: the item's declaration carries it
   (`game.yaml` / `mod.yaml` → `emoji: "⚔️"`); the menu builder reads it
