@@ -13,6 +13,15 @@ classes directly: the SDK is the single place where the Discord layout
 rules are enforced, at build time, with a clear `UILayoutError` —
 before anything is sent.
 
+**The SDK's purity rule (developer-mandated): the discord SDK never
+queries a service and never reads data — it receives and builds.**
+A module under `src/botforge/discord/ui/` that imports a service or
+fetches an entity is a bug; the consumer (the bot layer) resolves
+everything and hands it in: buttons, ids, state, rows, strings. The
+single allowed read is the shared i18n catalog (the chrome labels),
+through the one loader. The SDK is a LIB used by core and the Discord
+bot — never the other way around.
+
 ## The bricks
 
 Two builders cover the ADR-0009 dual system:
@@ -249,6 +258,107 @@ admin panel, settings channel or guild-level pickers (locale, timezone):
   `settings:` — data admin-overridable through the core surface, not a
   new UI.
 
+## The pseudo-embed card contract (shared entity cards, #321)
+
+Every catalog card — maps, map pools, civs/factions, and every mod
+resource card to come (kingdoms territories, ladder objects) — follows
+ONE shared template: `botforge.discord.ui.entity_cards`
+(`EntityCardSpec` + `build_entity_card`, with the `map_card` /
+`pool_card` / `civ_card` wrappers). The layout, the pseudo-embed
+shape Discord users read at a glance:
+
+```
+[emoji] Title                    <- header Section (+ thumbnail when applicable)
+`resource-id`                    <- subtitle, backticks, ALWAYS the first line
+──────────────                   <- separator
+Content (props, description, member sections)
+──────────────                   <- separator
+Credits/Source (Liquipedia, techtree) when applicable
+[Buttons]                        <- action row when the surface acts
+`view-id`                        <- footer, backticks, ALWAYS the last line
+```
+
+Two anchors, two places, never confused: the **resource id** names
+the entity (the subtitle, under the header); the **view id** names
+the view the card carries (the `-#` footer, under the final action
+row — the panel it opens, derived `panel:<id>` when unset). A card
+whose footer repeats its resource id is a bug.
+
+Rules:
+
+- **the resource id sits at the same place on every card** — the
+  subtitle's first line, in backticks — whatever the entity's state
+  (draft/published/archived);
+- the template's chrome labels (variants heading, creator/source
+  prefixes, truncation notes) resolve through the shared catalog
+  (`entity_cards` section, en+fr) on the spec's `locale` — the
+  caller owns the data, the template owns the chrome;
+- a `Container` is a TOP-LEVEL V2 component only — an icon-less
+  header is the bare TextDisplay, never a nested Container
+  (Discord rejects it with 50035).
+
+**A mod never hand-rolls an ad hoc card — the SDK does 90% of the
+work.** A new entity's card is one `EntityCardBuilder` chain: the
+template owns the layout, the text budget, the two ids and the
+chrome labels; the caller owns the data and the buttons::
+
+    view = (
+        EntityCardBuilder("kingdoms:territory:t1", "Anjou", locale=locale)
+        .subtitle("Comté · féodal")
+        .props("Ressource : blé")
+        .description(summary)
+        .thumbnail(art_url)
+        .source(wiki_url, label="Liquipedia")
+        .buttons(open_button)
+        .build()
+    )
+
+The card's DATA zones ride the Jinja card templating
+(`botforge.discord.ui.card_templating`): each card template declares
+its **balises** (the injection points, with their zone and their
+contract), the values render as Jinja with the model object
+(`obj`) and the helpers in scope — `link.message/post/channel`,
+`mention.user/channel/role`, `date.at(epoch)` (relative by default,
+customizable style). A balise left unfilled renders the missing-data
+notice naming every missing key; a balise set to `None` is skipped
+silently. The current posts (maps, pools, civs) ride
+`templated_entity_card` — one path for every post.
+
+## The entity admin menu (the default lifecycle, disable/override)
+
+Every resource post's \u2699\ufe0f Admin button answers with the ephemeral
+admin bar built on the SDK seam (`ui/entity_admin.py`): the consumer
+hands the BUTTONS in (guards, custom ids, callbacks stay in the bot
+layer), the SDK composes the rows and the `panel:<entity_id>:admin`
+footer — ALWAYS the last line. The default lifecycle — edit,
+publish, archive, delete — ships per-state visibility (hidden, never
+greyed); every action is **disableable** (a key in `disabled` never
+renders), **overridable** (the caller's button for a key wins) and
+**extendable** (the entity's own rows ride `compose_rows` — the
+pool's manage-maps/rename row is the reference). A new entity kind
+is one `EntityAdminSpec` — never a hand-rolled bar.
+
+The mutualization mandate, for every session and every mod developer:
+
+1. **use the existing template first** — a mod's resource card is an
+   `EntityCardBuilder` chain (or the `map_card`/`pool_card`/`civ_card`
+   wrappers when the shape matches); the builder's setters (props,
+   description, members, links, versions, credits, media) cover the
+   catalog shapes;
+2. **compose before you extend** — a group no spec field expresses
+   rides the `.extra(group)` seam: built from the spec at render
+   time, inside the template's separators, budget and footer — a new
+   shape composes the template instead of forking it;
+3. **extend the template when a field recurs** — one new field on
+   `EntityCardSpec`, rendered by the template, benefits every card
+   family at once; never copy the builder into the mod;
+4. **propose a new archetype when the SHAPE itself differs** — a
+   recurring composition that no spec field or seam can express goes
+   into the shared template (or `screens.py`) as a new reusable
+   builder, reviewed like core code; the agent session must suggest
+   the existing templates and the mutualization path BEFORE any ad
+   hoc layout, and say so in the PR.
+
 ## Screen archetypes (`screens.py`)
 
 Prefer a ready-made shape over raw composition:
@@ -420,6 +530,51 @@ The rules the registry enforces (the tests reject the drifts):
 - every view carries its id as its `-#` footer;
 - the platform caps: 20 maps/pool, 20 active pools/guild, 20 games,
   20 mods.
+
+
+## The mod surface contract (the SDK does it all — #321)
+
+A mod dev declares **only the yaml** (`conf/mod.yaml`: `emoji`,
+`channels` with keys/descriptions, optional `roles` overrides,
+`commands`, `workflows`). The SDK (core, not the mod) then provides,
+with zero mod code:
+
+- **the standard role trio** on every mod — `candidate` (the signup
+  needs validation), `member` (the registered/validated), `admin` (the
+  mod's operators), display names prefixed with the mod's key
+  (`Kingdom Member`), provisioned at install/repair with a persisted
+  mapping (the stored id resolves, the name is renamable). A mod
+  overrides one by declaring its own entry with the same key;
+
+- **the home and admin views** (`menu:mod:<name>` / `menu:mod:<name>:admin`,
+  auto-declared at boot by `declare_mod_views`) — standard blocks (type,
+  commands, workflows) plus the declared emoji in the title;
+- **the notice** on both views — one heading per category, one bullet
+  per item (owner direction 2026-11-13):
+  `📺 Salons :` then `• <#id>` lines, `👥 Rôles :` then `• <@&id>`
+  lines (mentions; a missing item renders `**label** (à créer)`).
+  A mod view reads its OWN yaml; the list views (games/mods home/admin)
+  scan the INSTALLED items — never a hardcoded folder;
+- **the pins** — the home menu pins in the mod's declared `general`
+  channel, the admin menu in its declared `admin` channel
+  (`register_mod_pins`, the static-pin cycle: created when missing,
+  refreshed in place, healed on channel delete);
+- **the lifecycle** — install and repair re-land the pins
+  (`ensure_mod_pins`), uninstall removes them whatever the channel
+  choice (`remove_mod_pins`: unpin, delete, registry forget, spec
+  drop — the pin never survives its mod).
+
+Never hand-wire a mod's views, notice or pins: declare the yaml, the
+SDK renders. A mod-specific surface only enters through the mod's own
+views yaml (a `panel`), never by editing core files.
+
+**The resolution rule (owner, 2026-11-13): a role or channel is NEVER
+resolved by name at render time.** The stored id is the only resolver:
+the roles come from the mod's role-mapping ledger, the channels from
+the provisioning's stored ids — a miss renders the honest
+`**label** (à créer)`. Name matching belongs to the provisioning alone
+(install/repair: adopt an existing item or create it, then persist the
+id).
 
 Adding or reorganizing views: read docs/DEVELOPMENT/VIEWS.md first,
 then declare, wire (`wire_view`), translate both locales, and keep
