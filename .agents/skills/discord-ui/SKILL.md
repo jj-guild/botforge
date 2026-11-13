@@ -541,10 +541,10 @@ The SDK (core, not the mod) then provides, with zero mod code:
 - **the home and admin views** (`menu:mod:<name>` / `menu:mod:<name>:admin`,
   auto-declared at boot by `declare_mod_views`) — standard blocks (type,
   commands, workflows) plus the declared emoji in the title;
-- **the notice** on both views — one compact line per category, the
-  old-style display everywhere (owner direction 2026-11-13):
-  `📺 Salons : <#id>, <#id>` and `👥 Rôles : <@&id>, <@&id>` (bare
-  mentions, comma-joined; a missing item renders `**label** (à créer)`).
+- **the notice** on both views — one heading per category, one bullet
+  per item (owner direction 2026-11-13):
+  `📺 Salons :` then `• <#id>` lines, `👥 Rôles :` then `• <@&id>`
+  lines (mentions; a missing item renders `**label** (à créer)`).
   A mod view reads its OWN yaml; the list views (games/mods home/admin)
   scan the INSTALLED items — never a hardcoded folder;
 - **the pins** — the home menu pins in the mod's declared `general`
