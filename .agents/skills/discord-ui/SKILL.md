@@ -13,6 +13,15 @@ classes directly: the SDK is the single place where the Discord layout
 rules are enforced, at build time, with a clear `UILayoutError` —
 before anything is sent.
 
+**The SDK's purity rule (developer-mandated): the discord SDK never
+queries a service and never reads data — it receives and builds.**
+A module under `src/botforge/discord/ui/` that imports a service or
+fetches an entity is a bug; the consumer (the bot layer) resolves
+everything and hands it in: buttons, ids, state, rows, strings. The
+single allowed read is the shared i18n catalog (the chrome labels),
+through the one loader. The SDK is a LIB used by core and the Discord
+bot — never the other way around.
+
 ## The bricks
 
 Two builders cover the ADR-0009 dual system:
@@ -314,6 +323,20 @@ customizable style). A balise left unfilled renders the missing-data
 notice naming every missing key; a balise set to `None` is skipped
 silently. The current posts (maps, pools, civs) ride
 `templated_entity_card` — one path for every post.
+
+## The entity admin menu (the default lifecycle, disable/override)
+
+Every resource post's \u2699\ufe0f Admin button answers with the ephemeral
+admin bar built on the SDK seam (`ui/entity_admin.py`): the consumer
+hands the BUTTONS in (guards, custom ids, callbacks stay in the bot
+layer), the SDK composes the rows and the `panel:<entity_id>:admin`
+footer — ALWAYS the last line. The default lifecycle — edit,
+publish, archive, delete — ships per-state visibility (hidden, never
+greyed); every action is **disableable** (a key in `disabled` never
+renders), **overridable** (the caller's button for a key wins) and
+**extendable** (the entity's own rows ride `compose_rows` — the
+pool's manage-maps/rename row is the reference). A new entity kind
+is one `EntityAdminSpec` — never a hand-rolled bar.
 
 The mutualization mandate, for every session and every mod developer:
 
