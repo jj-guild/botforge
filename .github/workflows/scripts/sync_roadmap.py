@@ -235,6 +235,9 @@ def build_roadmap(
 
     # Off-roadmap labels (sd.OFF_ROADMAP_LABELS): committee discussions and
     # POCs never appear in the roadmap — not in a lot, not in "out of scope".
+    # They are listed in their own pre-roadmap section instead (visibility
+    # without scheduling).
+    pre_roadmap = [i for i in open_issues if i.get("off_roadmap")]
     open_issues = [i for i in open_issues if not i.get("off_roadmap")]
     eligible = [i for i in eligible if not i.get("off_roadmap")]
 
@@ -252,13 +255,7 @@ def build_roadmap(
     open_count: dict[tuple[str, int], int] = defaultdict(int)
     by_ms: dict[tuple[str, int], list[dict]] = defaultdict(list)
     no_lot: list[dict] = []
-    pre_roadmap: list[dict] = []
     for i in open_issues:
-        if "arch-discussion" in (i.get("labels") or []):
-            # Pre-roadmap: the architecture committee owns the decision;
-            # never scheduled by the lot progression, never picked by a session.
-            pre_roadmap.append(i)
-            continue
         if i.get("milestone_number") is not None:
             key = (i["repo"], i["milestone_number"])
             open_count[key] += 1
