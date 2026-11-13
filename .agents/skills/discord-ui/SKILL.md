@@ -535,8 +535,16 @@ The rules the registry enforces (the tests reject the drifts):
 ## The mod surface contract (the SDK does it all — #321)
 
 A mod dev declares **only the yaml** (`conf/mod.yaml`: `emoji`,
-`channels` with keys/descriptions, `roles`, `commands`, `workflows`).
-The SDK (core, not the mod) then provides, with zero mod code:
+`channels` with keys/descriptions, optional `roles` overrides,
+`commands`, `workflows`). The SDK (core, not the mod) then provides,
+with zero mod code:
+
+- **the standard role trio** on every mod — `candidate` (the signup
+  needs validation), `member` (the registered/validated), `admin` (the
+  mod's operators), display names prefixed with the mod's key
+  (`Kingdom Member`), provisioned at install/repair with a persisted
+  mapping (the stored id resolves, the name is renamable). A mod
+  overrides one by declaring its own entry with the same key;
 
 - **the home and admin views** (`menu:mod:<name>` / `menu:mod:<name>:admin`,
   auto-declared at boot by `declare_mod_views`) — standard blocks (type,
