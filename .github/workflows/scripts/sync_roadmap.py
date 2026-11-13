@@ -252,14 +252,19 @@ def build_roadmap(
     open_count: dict[tuple[str, int], int] = defaultdict(int)
     by_ms: dict[tuple[str, int], list[dict]] = defaultdict(list)
     no_lot: list[dict] = []
+    pre_roadmap: list[dict] = []
     for i in open_issues:
+        if "arch-discussion" in (i.get("labels") or []):
+            # Pre-roadmap: the architecture committee owns the decision;
+            # never scheduled by the lot progression, never picked by a session.
+            pre_roadmap.append(i)
+            continue
         if i.get("milestone_number") is not None:
             key = (i["repo"], i["milestone_number"])
             open_count[key] += 1
             by_ms[key].append(i)
         else:
             no_lot.append(i)
-
     lots = []
     for (repo, num), ms in milestones.items():
         if ms.get("state") != "open":
@@ -332,7 +337,23 @@ def build_roadmap(
         lines.append("- (none)")
     lines.append("")
 
-    lines += ["## Out of scope / no lot", "", "Open issues without a lot:", ""]
+    lines += [
+        "## Pre-roadmap (arch-discussion)",
+        "",
+        "Committee territory: the architecture discussion is in flight; the",
+        "outcome is shaped into lot-sized issues once decided. No session",
+        "picks these up, and they never enter the work order.",
+        "",
+    ]
+    if pre_roadmap:
+        for i in sorted(
+            pre_roadmap, key=lambda x: (x["repo"], x["number"])
+        ):
+            lines.append(issue_line(i, status_of(i, pulls[0], current_status), pulls))
+    else:
+        lines.append("- (none)")
+    lines.append("")
+
     if no_lot:
         for i in sorted(
             no_lot, key=lambda x: (PRIO_RANK.get(x.get("prio_label"), 9), x["repo"], x["number"])
