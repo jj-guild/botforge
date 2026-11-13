@@ -40,6 +40,26 @@ view = (
 )
 ```
 
+## Main entries are visual buttons (the clickable-images pattern)
+
+The MAIN entries of a home/admin menu (the games, the mods — anything
+the user navigates INTO) render as **visual buttons**: emoji + label.
+Discord buttons carry an emoji, not an arbitrary image — the emoji IS
+the entry's visual identity ("clickable images" in Discord's terms).
+
+- **The emoji is DATA, never code**: the item's declaration carries it
+  (`game.yaml` / `mod.yaml` → `emoji: "⚔️"`); the menu builder reads it
+  at render time. A hardcoded emoji in a view builder is a violation.
+- **Secondary actions stay TEXT buttons** (Admin, Réparer, sync — the
+  operator's tools never compete with the navigation for the eye).
+- **Only the INSTALLED items get their button**: an item without its
+  button is simply not installed — nothing grayed, no planned
+  placeholders (owner direction 2026-11-13).
+- The auto-injection (`_auto_entries` in views_routing) is the single
+  implementation: the mods' and games' home/admin menus list their
+  entries from the registry + the live install state — a new game or
+  mod appears without touching a single menu.
+
 ## Navigation is buttons, not links (the V2 text rule)
 
 In Components V2 text blocks — and **worst in sub-texts / footers
