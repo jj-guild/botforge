@@ -15,7 +15,10 @@ compose environments (`prod`, `test`, `merlin`, `drasah`), deployed by
 GitOps state branches through a self-hosted runner, data on bind
 mounts under `/opt/botforge/data/<env>/`. No Kubernetes manifest
 exists; **Scaleway Kapsule (managed Kubernetes) is a free-trial option
-to test K8s**, not the current topology.
+to test K8s**, not the current topology. Symmetrically, the bare-metal
+side gets a **trial of its own**: a bare-metal instance + hypervisor,
+        hosting the IaC chantier's dedicated VM as a guest
+        (jj-guild/botforge-infra#141) — not the current topology either.
 
 The surface keeps expanding (webapp, website front, PyQt app,
 Twitch/Matrix bots, self-hosted dev/ops stack — Forgejo, Nextcloud,
@@ -40,8 +43,15 @@ The hosting decision follows this path:
       `docs/architecture/capacity.md`);
    6. artifact topology — the registry choice
       (botforge-services#329);
-   7. Kubernetes appetite — a Kapsule POC informs, never replaces, the
-      criteria above.
+   7. **Platform-appetite trials — both run, each informs, neither
+      replaces, the criteria above**:
+      - **Kubernetes appetite** — a Kapsule POC (free trial);
+      - **Hypervisor appetite** — a **bare-metal instance + hypervisor
+        trial** (owner decision, 2026-11-12): a bare-metal instance is
+        provisioned, a hypervisor (e.g. Proxmox) is installed on it, and
+        the IaC chantier's dedicated VM runs as its guest
+        (jj-guild/botforge-infra#141) — giving real VM-level isolation
+        and ops-burden data for the bare-metal side of the decision.
 2. **Inputs land as their issues close** (#338, #329, #315, #281) —
    the evaluation advances with them.
 3. **No fixed deadline**: the path is reviewed at every committee
@@ -60,7 +70,9 @@ The hosting decision follows this path:
   reviews the path each session instead.
 - **Trial K8s first, decide hosting after** — partially adopted: the
   Kapsule free trial is the cheapest way to test Kubernetes appetite,
-  but it is one input among seven, not a prerequisite.
+  but it is one input among seven, not a prerequisite. The same logic
+  now applies to the hypervisor side: the bare-metal instance trial
+  tests hypervisor appetite without pre-deciding anything.
 
 ## Consequences
 
@@ -70,7 +82,9 @@ The hosting decision follows this path:
   hosting question.
 - The evaluation is evidence-driven and its inputs are named, tracked
   issues.
-- The Kapsule trial gives real K8s ops-burden data for free.
+- The Kapsule trial gives real K8s ops-burden data for free; the
+  bare-metal + hypervisor trial gives the symmetric data for the other
+  option — the decision will be made with evidence on both sides.
 
 ### Negative
 
