@@ -560,6 +560,14 @@ Never hand-wire a mod's views, notice or pins: declare the yaml, the
 SDK renders. A mod-specific surface only enters through the mod's own
 views yaml (a `panel`), never by editing core files.
 
+**The resolution rule (owner, 2026-11-13): a role or channel is NEVER
+resolved by name at render time.** The stored id is the only resolver:
+the roles come from the mod's role-mapping ledger, the channels from
+the provisioning's stored ids — a miss renders the honest
+`**label** (à créer)`. Name matching belongs to the provisioning alone
+(install/repair: adopt an existing item or create it, then persist the
+id).
+
 Adding or reorganizing views: read docs/DEVELOPMENT/VIEWS.md first,
 then declare, wire (`wire_view`), translate both locales, and keep
 the doc and `views_declared.py` in the same PR — the doc is the
