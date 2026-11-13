@@ -20,6 +20,7 @@ page routes you to the answer. Read this page, not the whole docs tree.
 | How do I deploy something to test? | [PROCESS.md](PROCESS.md) §Test deployment + the `deploy-and-validate` [skill](../.agents/skills/deploy-and-validate/SKILL.md) |
 | How do I debug a failed deployment / read the test logs? | `/logs [env] [--service S] [--since 30m]` PR comment (see [WORKFLOWS.md](WORKFLOWS.md)) + the `diagnose-deploy` [skill](../.agents/skills/diagnose-deploy/SKILL.md) |
 | How do I release / cut a version? | [PROCESS.md](PROCESS.md) §Release + the `release-flow` [skill](../.agents/skills/release-flow/SKILL.md) |
+| I want to flag an arch discussion / POC (pre-roadmap, committee territory) | Label it `arch-discussion` (or `poc`) — excluded from the lots, listed in the roadmap's "Pre-roadmap" section; see [CONVENTIONS.md](CONVENTIONS.md) *Off-roadmap labels* |
 | How do I shape a game-designer idea into an issue? | the `shape-game-designer-idea` [skill](../.agents/skills/shape-game-designer-idea/SKILL.md) |
 | What is the architecture? Why was X decided? | [ARCHITECTURE.md](ARCHITECTURE.md) + [DECISIONS/](DECISIONS/README.md) (ADRs) |
 | What is the long-term infra vision / hosting plan? When does the architecture committee meet? | [architecture/committee.md](architecture/committee.md) — the committee home, its kickoff inventory & surface map, plus [vision.md](architecture/vision.md), [topology.md](architecture/topology.md), [capacity.md](architecture/capacity.md) |
