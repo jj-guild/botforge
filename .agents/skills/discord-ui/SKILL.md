@@ -269,12 +269,17 @@ Credits/Source (Liquipedia, techtree) when applicable
 `view-id`                        <- footer, backticks, ALWAYS the last line
 ```
 
+Two anchors, two places, never confused: the **resource id** names
+the entity (the subtitle, under the header); the **view id** names
+the view the card carries (the `-#` footer, under the final action
+row — the panel it opens, derived `panel:<id>` when unset). A card
+whose footer repeats its resource id is a bug.
+
 Rules:
 
 - **the resource id sits at the same place on every card** — the
   subtitle's first line, in backticks — whatever the entity's state
-  (draft/published/archived); the view id rides the `-#` footer,
-  ALWAYS the last block, after the buttons;
+  (draft/published/archived);
 - the template's chrome labels (variants heading, creator/source
   prefixes, truncation notes) resolve through the shared catalog
   (`entity_cards` section, en+fr) on the spec's `locale` — the
@@ -283,22 +288,42 @@ Rules:
   header is the bare TextDisplay, never a nested Container
   (Discord rejects it with 50035).
 
-**A mod never hand-rolls an ad hoc card.** The mutualization
-mandate, for every session and every mod developer:
+**A mod never hand-rolls an ad hoc card — the SDK does 90% of the
+work.** A new entity's card is one `EntityCardBuilder` chain: the
+template owns the layout, the text budget, the two ids and the
+chrome labels; the caller owns the data and the buttons::
 
-1. **use the existing template first** — a mod's resource card is
-   `build_entity_card(EntityCardSpec(...))` with its own buttons;
-   the spec's fields (props, description, member sections, links,
-   versions, credits) cover the catalog shapes;
-2. **extend the template when a field is missing** — one new field
-   on `EntityCardSpec`, rendered by the template, benefits every
-   card family at once; never copy the builder into the mod;
-3. **propose a new archetype when the SHAPE itself differs** — a
-   recurring composition that no spec field can express goes into
-   the shared template (or `screens.py`) as a new reusable builder,
-   reviewed like core code; the agent session must suggest the
-   existing templates and the mutualization path BEFORE any ad hoc
-   layout, and say so in the PR.
+    view = (
+        EntityCardBuilder("kingdoms:territory:t1", "Anjou", locale=locale)
+        .subtitle("Comté · féodal")
+        .props("Ressource : blé")
+        .description(summary)
+        .thumbnail(art_url)
+        .source(wiki_url, label="Liquipedia")
+        .buttons(open_button)
+        .build()
+    )
+
+The mutualization mandate, for every session and every mod developer:
+
+1. **use the existing template first** — a mod's resource card is an
+   `EntityCardBuilder` chain (or the `map_card`/`pool_card`/`civ_card`
+   wrappers when the shape matches); the builder's setters (props,
+   description, members, links, versions, credits, media) cover the
+   catalog shapes;
+2. **compose before you extend** — a group no spec field expresses
+   rides the `.extra(group)` seam: built from the spec at render
+   time, inside the template's separators, budget and footer — a new
+   shape composes the template instead of forking it;
+3. **extend the template when a field recurs** — one new field on
+   `EntityCardSpec`, rendered by the template, benefits every card
+   family at once; never copy the builder into the mod;
+4. **propose a new archetype when the SHAPE itself differs** — a
+   recurring composition that no spec field or seam can express goes
+   into the shared template (or `screens.py`) as a new reusable
+   builder, reviewed like core code; the agent session must suggest
+   the existing templates and the mutualization path BEFORE any ad
+   hoc layout, and say so in the PR.
 
 ## Screen archetypes (`screens.py`)
 
