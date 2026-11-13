@@ -249,6 +249,57 @@ admin panel, settings channel or guild-level pickers (locale, timezone):
   `settings:` — data admin-overridable through the core surface, not a
   new UI.
 
+## The pseudo-embed card contract (shared entity cards, #321)
+
+Every catalog card — maps, map pools, civs/factions, and every mod
+resource card to come (kingdoms territories, ladder objects) — follows
+ONE shared template: `botforge.discord.ui.entity_cards`
+(`EntityCardSpec` + `build_entity_card`, with the `map_card` /
+`pool_card` / `civ_card` wrappers). The layout, the pseudo-embed
+shape Discord users read at a glance:
+
+```
+[emoji] Title                    <- header Section (+ thumbnail when applicable)
+`resource-id`                    <- subtitle, backticks, ALWAYS the first line
+──────────────                   <- separator
+Content (props, description, member sections)
+──────────────                   <- separator
+Credits/Source (Liquipedia, techtree) when applicable
+[Buttons]                        <- action row when the surface acts
+`view-id`                        <- footer, backticks, ALWAYS the last line
+```
+
+Rules:
+
+- **the resource id sits at the same place on every card** — the
+  subtitle's first line, in backticks — whatever the entity's state
+  (draft/published/archived); the view id rides the `-#` footer,
+  ALWAYS the last block, after the buttons;
+- the template's chrome labels (variants heading, creator/source
+  prefixes, truncation notes) resolve through the shared catalog
+  (`entity_cards` section, en+fr) on the spec's `locale` — the
+  caller owns the data, the template owns the chrome;
+- a `Container` is a TOP-LEVEL V2 component only — an icon-less
+  header is the bare TextDisplay, never a nested Container
+  (Discord rejects it with 50035).
+
+**A mod never hand-rolls an ad hoc card.** The mutualization
+mandate, for every session and every mod developer:
+
+1. **use the existing template first** — a mod's resource card is
+   `build_entity_card(EntityCardSpec(...))` with its own buttons;
+   the spec's fields (props, description, member sections, links,
+   versions, credits) cover the catalog shapes;
+2. **extend the template when a field is missing** — one new field
+   on `EntityCardSpec`, rendered by the template, benefits every
+   card family at once; never copy the builder into the mod;
+3. **propose a new archetype when the SHAPE itself differs** — a
+   recurring composition that no spec field can express goes into
+   the shared template (or `screens.py`) as a new reusable builder,
+   reviewed like core code; the agent session must suggest the
+   existing templates and the mutualization path BEFORE any ad hoc
+   layout, and say so in the PR.
+
 ## Screen archetypes (`screens.py`)
 
 Prefer a ready-made shape over raw composition:
