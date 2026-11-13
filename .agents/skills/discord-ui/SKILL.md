@@ -304,6 +304,17 @@ chrome labels; the caller owns the data and the buttons::
         .build()
     )
 
+The card's DATA zones ride the Jinja card templating
+(`botforge.discord.ui.card_templating`): each card template declares
+its **balises** (the injection points, with their zone and their
+contract), the values render as Jinja with the model object
+(`obj`) and the helpers in scope — `link.message/post/channel`,
+`mention.user/channel/role`, `date.at(epoch)` (relative by default,
+customizable style). A balise left unfilled renders the missing-data
+notice naming every missing key; a balise set to `None` is skipped
+silently. The current posts (maps, pools, civs) ride
+`templated_entity_card` — one path for every post.
+
 The mutualization mandate, for every session and every mod developer:
 
 1. **use the existing template first** — a mod's resource card is an
