@@ -60,8 +60,10 @@ anymore; the sync branch is workflow-owned.
 track — committee discussion, proof of concept, experimental chantier —
 and is **excluded entirely** from both generated files: it never appears
 in a lot, in the "Out of scope / no lot" section, or in the dependency
-graph. Dependencies pointing at it still resolve (it stays in the id
-space), it is simply never planned. Tag any POC you create with `poc` at
+graph — their only roadmap presence is the **"Pre-roadmap
+(arch-discussion)"** section, which lists them for visibility (committee
+territory, never scheduled). Dependencies pointing at it still resolve
+(it stays in the id space), it is simply never planned. Tag any POC you create with `poc` at
 creation; committee-scope issues get `arch-discussion`. Removing the
 label re-adds the issue at the next sync.
 

@@ -563,6 +563,13 @@ understand the choices and their reasons without asking anyone.
   `botforge-infra`; `## Summary`, `## Details` in `botforge`). A
   "Validate issue" workflow labels non-compliant issues `invalid` —
   recreate them properly rather than editing around the flag.
+- **Off-roadmap labels** (`arch-discussion`, `poc` — see
+  `OFF_ROADMAP_LABELS` in `.github/workflows/scripts/sync_dependencies.py`):
+  an issue carrying one is **pre-roadmap** — committee discussions, proofs
+  of concept, experimental chantiers. It is excluded from the lots and the
+  dependency graph; its only roadmap presence is the "Pre-roadmap
+  (arch-discussion)" section (visibility without scheduling). No session
+  picks it up; removing the label re-enters it at the next sync.
 - Every open issue carries exactly one `scope/*` label — the **ownership
   dimension** of the triage, deciding who manages and validates the work:
   - `scope/core` — the platform (core services, Discord surfaces, infra,
