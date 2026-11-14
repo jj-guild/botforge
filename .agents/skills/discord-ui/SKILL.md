@@ -359,6 +359,19 @@ The mutualization mandate, for every session and every mod developer:
    the existing templates and the mutualization path BEFORE any ad
    hoc layout, and say so in the PR.
 
+## The archetype set (`ui/archetypes.py`, `ui/wizard.py`) — botforge-services#380
+
+The first client's shapes, generalized from good bases — build on these, do not invent local variants:
+
+- **List panel** (`archetypes.list_panel`): a header, one block per entry, the id footer — the catalog/forum shape. The 4000-char text budget is clamped per block (the cut is marked, never silent).
+- **Candidates table** (`archetypes.candidates_table`): a markdown table — the dashboard shape. A wide table cuts at the last full row, the tail marked.
+- **Detail card**: the uniform card contract (`entity_cards.EntityCardSpec`, #321) — the archetype IS the seam; never hand-roll a card.
+- **Admin panel**: the admin bar (`entity_admin.build_admin_bar`) + the panel content — the operator's tools, the padlock header.
+- **Wizard / modal picker** (`ui.wizard`): the engine owns the flow (WizardState carried through the ephemeral chain, `send_step`'s response/followup split, `ask_select` max 25 options with the empty fallback, `ask_confirm`, `parse_int`); the mod owns the steps.
+- **Navigation footer** (`add_view_footer`): every declared view's signature.
+
+Budget traps (unit-tested at the seam): the 4000-char clamp; a select inside a MODAL rides `required=False` + `min_values=0` (the wizard's selects live in views, where the trap does not apply); the 10003 vanished channel is healed by the pin machinery, never crashed on.
+
 ## Screen archetypes (`screens.py`)
 
 Prefer a ready-made shape over raw composition:
