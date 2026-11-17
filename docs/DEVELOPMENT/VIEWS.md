@@ -43,6 +43,12 @@ Buttons:
 - → [`menu:mods:admin`](#menumodsadmin) — `ui.homes.btn_mods`
 - `ui.homes.btn_sync` ⚙️ sync
 
+### `menu:console`
+
+_menu_ — pinned in `bot/admin`.
+
+_(no buttons — content comes from its wired handler)_
+
 ### `panel:status`
 
 _panel_.
@@ -55,7 +61,6 @@ _menu_ — pinned in `games/general`.
 
 Buttons:
 
-- → [`menu:games:aoe2`](#menugamesaoe2) — `ui.games.homes.aoe2`
 - → [`menu:games:admin`](#menugamesadmin) — `ui.homes.btn_admin` 🔒
 
 ### `menu:games:admin`
@@ -64,7 +69,6 @@ _menu_ — pinned in `games/admin`.
 
 Buttons:
 
-- → [`menu:game:aoe2:admin`](#menugameaoe2admin) — `ui.games.homes.aoe2`
 - `ui.homes.btn_sync` ⚙️ sync
 
 ### `menu:games:aoe2`
@@ -73,6 +77,7 @@ _menu_ — pinned in `games/aoe2/general`.
 
 Buttons:
 
+- → [`panel:profile`](#panelprofile) — `ui.homes.btn_profile`
 - → [`panel:game:aoe2:live`](#panelgameaoe2live) — `ui.homes.btn_live`
 - → [`panel:game:aoe2:players`](#panelgameaoe2players) — `ui.homes.btn_users`
 - → [`menu:game:aoe2:admin`](#menugameaoe2admin) — `ui.homes.btn_admin` 🔒
@@ -84,7 +89,6 @@ _menu_ — pinned in `games/aoe2/admin`.
 Buttons:
 
 - `ui.homes.btn_add_map` — action `import-map`
-- `ui.games.bulk_import_map` — action `bulk-import-map`
 - `ui.homes.btn_create_pool` — action `create-pool`
 - `ui.homes.btn_sync` ⚙️ sync
 
@@ -106,9 +110,6 @@ _menu_ — pinned in `mods/general`.
 
 Buttons:
 
-- → [`menu:mod:ladder`](#menumodladder) — `ui.mods.homes.ladder` *(disabled)*
-- → [`menu:mod:tournament`](#menumodtournament) — `ui.mods.homes.tournament` *(disabled)*
-- → [`menu:mod:kingdom`](#menumodkingdom) — `ui.mods.homes.kingdom` *(disabled)*
 - → [`menu:mods:admin`](#menumodsadmin) — `ui.homes.btn_admin` 🔒
 
 ### `menu:mods:admin`
@@ -117,46 +118,7 @@ _menu_ — pinned in `mods/admin`.
 
 Buttons:
 
-- → [`menu:mod:ladder:admin`](#menumodladderadmin) — `ui.mods.homes.ladder` *(disabled)*
-- → [`menu:mod:tournament:admin`](#menumodtournamentadmin) — `ui.mods.homes.tournament` *(disabled)*
-- → [`menu:mod:kingdom:admin`](#menumodkingdomadmin) — `ui.mods.homes.kingdom` *(disabled)*
 - `ui.homes.btn_sync` ⚙️ sync
-
-### `menu:mod:ladder`
-
-_menu_.
-
-_(no buttons — content comes from its wired handler)_
-
-### `menu:mod:tournament`
-
-_menu_.
-
-_(no buttons — content comes from its wired handler)_
-
-### `menu:mod:kingdom`
-
-_menu_.
-
-_(no buttons — content comes from its wired handler)_
-
-### `menu:mod:ladder:admin`
-
-_menu_.
-
-_(no buttons — content comes from its wired handler)_
-
-### `menu:mod:tournament:admin`
-
-_menu_.
-
-_(no buttons — content comes from its wired handler)_
-
-### `menu:mod:kingdom:admin`
-
-_menu_.
-
-_(no buttons — content comes from its wired handler)_
 
 ## The universal home rule
 
@@ -196,13 +158,13 @@ Category: `ui.panels.categories.games`.
 
 - `general` — ui.panels.channels.general · text · readonly
 - `admin` — ui.panels.channels.admin · text · admin
+- `catalog` — ui.panels.channels.catalog · forum · readonly
 
 ### `games/aoe2`
 
 Category: `ui.panels.categories.games_aoe2`.
 
 - `general` — ui.panels.channels.general · text · readonly
-- `live` — ui.panels.channels.live · text · readonly
 - `civs` — ui.panels.channels.civs · forum · readonly
 - `maps` — ui.panels.channels.maps · forum · readonly
 - `map-pools` — ui.panels.channels.map_pools · forum · readonly
@@ -214,6 +176,7 @@ Category: `ui.panels.categories.mods`.
 
 - `general` — ui.panels.channels.general · text · readonly
 - `admin` — ui.panels.channels.admin · text · admin
+- `catalog` — ui.panels.channels.catalog · forum · readonly
 
 ## Adding or moving a view
 
