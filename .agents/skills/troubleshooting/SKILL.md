@@ -27,7 +27,24 @@ guard test is a story, not a memory.
 
 ## Scope: platform code (botforge-services)
 
-No entry yet — the first fixed incident lands here.
+### 2026-11-17 — CI red at random: the Liquipedia battery 429s
+- Symptom: the `External services (real provider batteries)` CI job
+  fails intermittently on `liquipedia :: maps-query-shape` with
+  `429 Too Many Requests` — any PR's CI goes red for an external
+  reason (botforge-services#397).
+- Root cause: the throttle is IP-level (GitHub hosted runners share
+  IPs), not title-count-level — the one-page battery still got 429'd
+  (~11% of the post-fix runs), and the observed 429s carry **no
+  `Retry-After` header**, so the retry path slept a blind 30 s floor
+  and retried into the same wall. Read the failed run logs before
+  designing the fix: the absent header was the deciding fact.
+- Fix: no retry when `Retry-After` is absent/unparseable — the circuit
+  opens on the first 429, zero further traffic, fail fast; the
+  battery's verdict stays an honest FAIL with a message naming the
+  external rate limit (botforge-services#406).
+- Guard: `test_429_without_retry_after_opens_the_circuit_without_retrying`
+  (one call only), `test_battery_fails_with_clear_rate_limit_detail_on_429`
+  and `..._on_open_circuit` (honest FAIL + rate-limit detail).
 
 ## Scope: deploy & infra (botforge-infra, hosting, runners)
 
