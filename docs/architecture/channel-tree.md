@@ -105,6 +105,21 @@ Grouping folders (games, mods, games/<game>) carry only `general` and
    `view:ladder:news`. Never a slash in a view id: they must stay
    quotable.
 
+11. **A private/gated category never locks the bot out of managing it**:
+    the bot's overwrite on a gated category carries `manage_channels`
+    (create/purge the rooms inside), and a dynamically provisioned
+    channel always gets an explicit `@me` allow (view/send/manage)
+    — otherwise a `view_channel=False` folder makes the bot's own
+    surfaces degrade to 403 (pins, syncs, console). Enforced by
+    provisioning + the dynamic-channel seam, with tests.
+
+12. **Install/uninstall of a mod gates the platform folders**: while
+    at least one mod is installed on a guild, every platform scope's
+    category (root/bot/games/mods) is staff-only; the mod's own
+    categories are created with their declared permissions. When the
+    last mod is uninstalled, the platform categories return to their
+    normal (public) rights.
+
 10. **Every menu is a `PanelSpec`** (SDK `botforge.discord.ui`):
     `name` (registry `view:<guild-id>:<slug>`), `pinned_on`
     (channel + PinMode LATEST_ONLY|ALL|None), `autoheal`,

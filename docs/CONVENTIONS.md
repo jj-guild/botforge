@@ -14,8 +14,14 @@ All code, comments, documentation, commit messages, PR titles and PR
 descriptions are written in **English**. So are issue titles and bodies,
 PR review comments, release notes, and sample/example or seed data —
 **everything a session produces on GitHub is English**. The only
-exception: translation/locale files. The chat with the human follows
-the human's language and never changes what the session produces.
+exceptions: translation/locale files, and — exceptionally — the
+*content of issues that are specific to a given mod* may be written in
+another language (a mod's own design/rules issues). Branches, commits,
+PRs, code and docs stay English regardless: a non-English commit on a
+branch is a bug, and the PR that carries it must be squash-merged with
+an English message so `main` never carries one. The chat with the
+human follows the human's language and never changes what the session
+produces.
 
 ## Git identity of agent sessions (developer-mandated)
 

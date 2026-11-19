@@ -431,6 +431,14 @@ this with `ComponentValidationError`). The rule:
 
 ## Localization (one catalog, every surface)
 
+**Mod surfaces are data-i18n only**: a mod's user-facing strings live
+exclusively in its own `conf/locales/<locale>.yaml` (read through the
+mod's `mod_catalog()` accessor, one yaml section per surface, English
+filling the gaps) — never in a hardcoded dict in a python module. Every
+new mod section ships with a fr/en key-parity test (same keys in both
+locale files), so a missing translation is a build failure, not a raw
+i18n key shown to a player.
+
 Every user-facing string renders through the shared `MessageCatalog`
 (`config/locales/<locale>.yaml`, one top-level section per surface).
 Slash command names/description go through `locale_str` markers plus
@@ -567,6 +575,21 @@ with zero mod code:
 Never hand-wire a mod's views, notice or pins: declare the yaml, the
 SDK renders. A mod-specific surface only enters through the mod's own
 views yaml (a `panel`), never by editing core files.
+
+**A mod's cogs never construct `discord.ui.View` / `Modal` / `Embed`
+directly** — every surface is built through this SDK (`build_view`,
+`Container`, `LayoutView` helpers) and declared in the mod's
+`conf/views.yaml` with its id footer. An architecture test (layering
+R-rules) rejects a raw `discord.ui` constructor outside the SDK; the
+dated allowlist only ever shrinks.
+
+**A mod's admin console** is one declared surface
+(`surface:mod:<name>:console`) wired with `wire_view` behind a
+click-time admin guard. The SDK injects a Console button on
+`menu:mod:<name>:admin` automatically when that surface is declared —
+danger (red) style for destructive admin actions, never a dedicated
+admin salon with a pinned panel.
+
 
 **The resolution rule (owner, 2026-11-13): a role or channel is NEVER
 resolved by name at render time.** The stored id is the only resolver:
