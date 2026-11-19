@@ -583,12 +583,27 @@ directly** — every surface is built through this SDK (`build_view`,
 R-rules) rejects a raw `discord.ui` constructor outside the SDK; the
 dated allowlist only ever shrinks.
 
-**A mod's admin console** is one declared surface
-(`surface:mod:<name>:console`) wired with `wire_view` behind a
-click-time admin guard. The SDK injects a Console button on
-`menu:mod:<name>:admin` automatically when that surface is declared —
-danger (red) style for destructive admin actions, never a dedicated
-admin salon with a pinned panel.
+**A mod's admin console is always there** — the SDK owns it: the SDK
+auto-declares `panel:mod:<name>:admin:console` (kind surface) for every
+enabled mod at boot (`declare_mod_views`) and always injects a **🛠️
+danger Console button** on `menu:mod:<name>:admin` (no per-mod
+declaration needed; never a dedicated admin salon with a pinned
+panel). The mod only wires its content —
+`wire_view("panel:mod:<name>:admin:console", handler)` behind a
+click-time admin guard; an unwired surface answers `not_configured`,
+never raw i18n keys. Console ops register with
+`register_console_action(ConsoleAction(..., mod="<name>"))` and render
+in the MOD's console only, never in the global `panel:admin:console`.
+The shared 🛠️ (`CONSOLE_EMOJI`, ids via `console_view_id()` /
+`mod_console_view_id(name)`) rides both Console buttons, both consoles'
+headers, and the mod admin menu's header emoji.
+
+**Mod view ids follow the naming contract (architecture rule R9):**
+every id a mod declares (`conf/views.yaml`) or renders is
+`panel:mod:<name>:…` or `menu:mod:<name>:…` of its OWN mod. The legacy
+`view:mod:` / `surface:mod:` prefixes are drift — rejected by the
+architecture test (`tests/architecture/test_mod_view_ids.py` in
+botforge-services) and skipped loudly by the views loader.
 
 
 **The resolution rule (owner, 2026-11-13): a role or channel is NEVER

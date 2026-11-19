@@ -80,3 +80,10 @@ use the Git path.
   new features the minor, fixes the patch.
 - Never release with a red check or an unsynced roadmap; the Makefile
   pre-flight fails closed.
+- **Every commit a session pushes is English and conventional**
+  (`type(scope): subject`, e.g. `fix(kingdom): …`) — the changelog is
+  computed from them and `Check commits` gates every PR. A non-English
+  or non-conventional commit on a branch is a bug: reword it on the
+  branch, never let one reach `main` (squash merges carry an English
+  message). Issues specific to certain mods may exceptionally be
+  written in another language — commits, branches and PRs never are.

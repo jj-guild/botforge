@@ -43,7 +43,7 @@ Buttons:
 - → [`menu:mods:admin`](#menumodsadmin) — `ui.homes.btn_mods`
 - `ui.homes.btn_sync` ⚙️ sync
 
-### `menu:console`
+### `panel:admin:console`
 
 _menu_ — pinned in `bot/admin`.
 
@@ -77,9 +77,9 @@ _menu_ — pinned in `games/aoe2/general`.
 
 Buttons:
 
-- → [`panel:profile`](#panelprofile) — `ui.homes.btn_profile`
 - → [`panel:game:aoe2:live`](#panelgameaoe2live) — `ui.homes.btn_live`
 - → [`panel:game:aoe2:players`](#panelgameaoe2players) — `ui.homes.btn_users`
+- → [`panel:profile`](#panelprofile) — `ui.homes.btn_profile`
 - → [`menu:game:aoe2:admin`](#menugameaoe2admin) — `ui.homes.btn_admin` 🔒
 
 ### `menu:game:aoe2:admin`
@@ -193,3 +193,18 @@ botforge#179) and merge into the same registry.
 5. **Test**: the registry validates the YAML — an undeclared
    target, a button with no driver, an action without a label
    are drifts the tests reject.
+
+## The mod views (SDK-generated + mod-declared)
+
+The SDK auto-declares, for every enabled mod (no mod code needed):
+`menu:mod:<name>`, `menu:mod:<name>:admin` and the admin console
+`panel:mod:<name>:admin:console`, plus the 🛠️ danger Console button
+on the admin menu. A mod declares only its OWN extra surfaces in
+its `conf/views.yaml`.
+
+**Naming contract (architecture rule R9):** a mod's view ids are
+`panel:mod:<name>:…` / `menu:mod:<name>:…` of its own mod only — the
+`view:mod:` / `surface:mod:` prefixes are drift, rejected by
+`tests/architecture/test_mod_view_ids.py` and skipped loudly by the
+views loader. The console ids/emoji are SDK-owned: `console_view_id()`,
+`mod_console_view_id(name)`, `CONSOLE_EMOJI`.

@@ -60,6 +60,7 @@ lint conclusion).
   filter — if a required check is missing on a PR, verify the workflow's
   `on:` triggers, not the ruleset first.
 - **Generated pydoc stale** (botforge-services Docs workflow: `docs/DEVELOPMENT/pydoc is stale — regenerate with 'make docs' and commit`): any edit under `src/` — a docstring counts — changes the generated pydoc. Local repro: `make docs-check`; fix: `make docs` in botforge-services and commit the regenerated HTML on the same branch.
+- **`Check commits` (commitizen) red** (botforge-services): a commit on the PR does not match the conventional pattern — a non-English or non-conventional subject silently drops out of the release changelog and fails the gate. Reflex: reword the offending commits to English conventional (`type(scope): subject`) on the branch before marking the PR ready; never merge with them (a squash-merge with an English message is the last-resort cleanup, and a history rewrite is a single human-authorized push only after verifying a null file diff). **All GitHub output is English** — issues, PRs, comments, commit messages; the only tolerated exceptions are locale/translation files and, exceptionally, the *content of issues specific to certain mods* — never commits, branches or PRs (CONVENTIONS.md, *Working language*).
 
 ## Conventions kept
 
