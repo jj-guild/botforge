@@ -27,6 +27,7 @@ The standard file set (copy from `TEMPLATE/` when creating the mod):
 | `ENVIRONMENT.md` | yes | the environment + season configuration |
 | `DECISIONS.md` | recommended | the validated decisions — **they win over everything else** |
 | `REFERENCE.md` | when a reference plan exists | the designer's functional reference (moved here from `docs/PLANS/`) |
+| `TESTS.md` | yes (shipped behavior) | the test scenarios (`SC-<MOD>-NNN`, Given/When/Then) — each has ONE test in `modules/mods/<mod>/tests/test_scenarios.py`, run by CI and cross-checked by validate_docs |
 | `CHANGELOG.md` | optional | the mod's own history |
 | any mod-specific file | optional | e.g. kingdoms' `CADASTRE.md`, `PROMISES.md`, `CIVILIZATIONS.md` |
 
