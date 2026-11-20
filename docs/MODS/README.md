@@ -45,6 +45,18 @@ Agents find a mod's lore at `docs/MODS/<mod-name>/` — see the
 load-when-working-on-a-mod rule. A mod with no directory here has no
 lore yet: say so and scaffold it from `TEMPLATE/`.
 
+**The lore is alive**: it evolves with the discussions — every decision
+taken with the designer updates `docs/MODS/<mod>/` in the same PR as the
+code (dated `DECISIONS.md` entry, `RULES.md`/`REFERENCE.md` corrections,
+`TESTS.md` scenario when a behavior is fixed; if it was discussed, it is
+written). The session-level rules that always apply — how to talk to the
+human, temporary-vs-delegate with a workaround, English GitHub output,
+pre-push checks — live in the agent skills
+([human-interaction](../../.agents/skills/human-interaction/SKILL.md),
+[mod-lore](../../.agents/skills/mod-lore/SKILL.md),
+[ci-monitoring](../../.agents/skills/ci-monitoring/SKILL.md)), not in any
+one session's prompt.
+
 #### Game-bound mods
 
 A mod is normally game-agnostic (it may declare `allowed_games`, but its

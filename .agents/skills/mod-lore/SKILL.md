@@ -60,6 +60,24 @@ UI select if ambiguous), then apply the procedure below.
    every mod change are pinned in [discord-ui](../discord-ui/SKILL.md)
    and `docs/CONVENTIONS.md` (view ids `panel:mod:<name>:…`/`menu:mod:<name>:…`
    R9, SDK-owned admin console, data i18n, English conventional commits).
+6. **Discord-first**: everything admins manage is managed in Discord —
+   the SDK-owned mod console (🛠️, `panel:mod:<name>:admin:console`) and the
+   pinned panels declared in `conf/mod.yaml`. Do not add new slash commands
+   unless the designer explicitly asks. Player-facing strings live in
+   `conf/locales/{fr,en}.yaml` and are parity-tested
+   ([discord-ui](../discord-ui/SKILL.md)).
+
+## The lore evolves with the discussions (same-PR rule)
+
+Every decision, clarification or answer from the designer updates
+`docs/MODS/<mod>/` **in the same PR as the code concerned**:
+
+- `DECISIONS.md` gets a dated entry;
+- `RULES.md` / `REFERENCE.md` are corrected;
+- `TESTS.md` gets a scenario when a behavior is fixed;
+- a "À DÉFINIR" is either resolved or left as an explicit open question.
+
+Never stale docs: if it was discussed, it is written.
 
 ## Anticipation mandate (the designer must feel understood)
 
@@ -112,6 +130,16 @@ explains it in ONE plain sentence, and fixes it. In plain language:
 - **Blocked on a platform rule or a maintainer decision** → one plain
   sentence in the PR comment naming the platform owner (roster). Never
   force-push, never merge, never rewrite history alone.
+- **Temporary vs delegate** ([human-interaction](../human-interaction/SKILL.md)
+  §7): a platform-internal blocker is never the human's to fix — open the
+  issue to the platform maintainer AND ship a workaround/mock so the
+  session keeps moving.
+- **Before every push**: local checks green
+  ([ci-monitoring](../ci-monitoring/SKILL.md) §1 — tests, lint, typecheck,
+  docs), English conventional commit, plain push — never force, never
+  merge, never push `main`. Then an English PR comment plus a
+  one-paragraph plain-language summary to the human in their chat
+  language ([human-interaction](../human-interaction/SKILL.md)).
 - **GitHub output is English + conventional commits** — the
   `Check commits` gate enforces it; reword, don't bypass.
 

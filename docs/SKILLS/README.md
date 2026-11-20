@@ -21,7 +21,7 @@ browse the table below to see what the agents know how to do.
 | Skill | Purpose |
 | ----- | ------- |
 | [automate-or-learn](../../.agents/skills/automate-or-learn/SKILL.md) | Where each automation belongs; the propose-to-memorize rule |
-| [human-interaction](../../.agents/skills/human-interaction/SKILL.md) | How the session talks to its human — UI-select asks, live plan, context links, aliases |
+| [human-interaction](../../.agents/skills/human-interaction/SKILL.md) | How the session talks to its human — UI-select asks, live plan, context links, aliases, functional language, temporary-vs-delegate (never blocked), anamnesis on legacy work |
 | [diagnose-deploy](../../.agents/skills/diagnose-deploy/SKILL.md) | Diagnose a stuck/pending deploy before blaming the runner |
 | [generated-artifacts](../../.agents/skills/generated-artifacts/SKILL.md) | The generated artifacts (ROADMAP, DEPENDENCIES, pydoc): single writer, drift detection, preview |
 | [troubleshooting](../../.agents/skills/troubleshooting/SKILL.md) | The platform's failure memory — check it before diagnosing, add an entry when a fix lands |
@@ -34,7 +34,7 @@ browse the table below to see what the agents know how to do.
 | [discord-components](../../.agents/skills/discord-components/SKILL.md) | Build Discord components with discord.py / Components V2 — each component, the silent wire traps, the patterns to follow (reusable in any bot project) |
 | [external-provider](../../.agents/skills/external-provider/SKILL.md) | Integrate any external API/provider — config gates, real-wire tests, id mapping, logs first (reusable) |
 | [workflow-router](../../.agents/skills/workflow-router/SKILL.md) | Route the human's intention to the right workflow before any work starts |
-| [mod-lore](../../.agents/skills/mod-lore/SKILL.md) | Load the lore of the mod the human works on (docs/MODS/<mod>/) in every mod session; if the mod has no docs, say so and scaffold them from TEMPLATE; propose/anticipate the next moves |
+| [mod-lore](../../.agents/skills/mod-lore/SKILL.md) | Load the lore of the mod the human works on (docs/MODS/<mod>/) in every mod session — lore-first, lore evolves in the same PR, TESTS.md pairing; if the mod has no docs, say so and scaffold them from TEMPLATE; propose/anticipate the next moves |
 | [discord-bot-docs](https://github.com/jj-guild/botforge-services/blob/main/.agents/skills/discord-bot-docs/SKILL.md) | Keep `docs/DEVELOPMENT/DISCORD-BOT.md` up to date on every Discord surface change (repo-local, botforge-services) |
 
 This directory is kept as the documentation entry point; do not add new

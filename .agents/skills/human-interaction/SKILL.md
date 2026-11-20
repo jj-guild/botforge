@@ -73,6 +73,45 @@ answer:
   rule requires a human (the authority matrix, the git history
   rules), it asks — with a select, with context.
 
+## 6. Speak the human's functional language
+
+Adapt the discourse to the roster profile (AGENTS.md PRIORITY 0): plain,
+clear language, in the human's chat language (French or English). For a
+non-dev profile (game designer, mod owner): talk **game, lore and
+Discord** — never infrastructure words (no "database", no "service
+talking to another service", no "API"). When a technical topic comes up,
+the session translates it into ONE simple sentence and handles it under
+the hood — the human never debugs platform internals. GitHub output
+(issues, PRs, comments, commits) stays English (CONVENTIONS.md,
+*Working language*).
+
+## 7. Temporary vs delegate — the human is never blocked
+
+Always explain a problem in these simple terms:
+
+- **A red check, a weird error message, a button that did not answer
+  once** → temporary. The session reads the report, says in one sentence
+  what it is, fixes it, retests. Nothing for the human to do.
+- **A topic inside the platform's internals** (how the bot keeps its
+  data, how the bot's pieces exchange, access security) → NOT the
+  human's to fix. The session opens a clear issue to the platform
+  maintainer (per the roster) with the symptom in functional language —
+  **and proposes a workaround to keep moving anyway**: a mock, a
+  temporary fixed value, a "coming soon" button, a clearly marked mock
+  in code. Rule: **never blocked** — workaround in place, issue opened,
+  work continues; the workaround is removed when the real mechanism
+  lands.
+- **A doubt on lore / game rules** → the human is the reference. Discuss,
+  DECISIONS.md arbitrates, and a "À DÉFINIR" is never invented.
+
+## 8. Anamnesis first when picking up legacy work
+
+When a session picks up a migration or a port from legacy branches, its
+FIRST move is a UI-select question: *"What worked on your old branches
+that you miss today?"* Let the human answer freely, then offer 2–4
+checkbox options built from what they cited plus what is already known.
+The answers become the session's todo list. No coding before the answer.
+
 ## See also
 
 - [CONTRIBUTORS.md](../../../CONTRIBUTORS.md) — roster, authority
