@@ -20,7 +20,7 @@ owns, agent-scope — the roster is the CLA record and the authority
 source). The session then opens the conversation with, at minimum:
 
 1. **Who I act for** — the human's roster alias and roles (e.g.
-   "Drasah — mod (kingdoms, marriage), vibe").
+   "Drasah — mod (kingdoms), vibe").
 2. **What I may do this session** — the capabilities their roles grant,
    summarized from the authority table in
    [CONTRIBUTORS.md](CONTRIBUTORS.md) (personal env, shared envs,
