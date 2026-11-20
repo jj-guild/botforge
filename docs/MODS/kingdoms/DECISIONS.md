@@ -889,3 +889,20 @@ Seigneurs global devient le leaderboard Scriptorium). Les images
   les onze autres actions étaient déjà portées (y compris
   « + Ajouter un royaume manuellement », qui servira le futur flux
   royaume-persistant).
+
+## D78 — La catégorie admin s'installe toute seule (admin-category-v1)
+
+- **Décision Drasah 20/11 (priorité n°1)** : la catégorie admin doit être
+  FONCTIONNELLE sans geste manuel — le salon ⚙️ paramètres est capital
+  pour continuer le projet.
+- Le passage d'auto-guérison au démarrage (une fois par process, ~30 s
+  après ready) PROVISIONNE les rôles puis les salons déclarés AVANT de
+  re-poser les panneaux : un serveur qui n'a jamais reçu
+  l'installation reçoit sa surface complète (⚙️ paramètres, machine à
+  temps, distributeur, journal-admin…) sans clic Réparer.
+- Idempotent par résolutions stockées (un serveur convergé = no-op
+  cheap) ; kill-switch `BOTFORGE_KINGDOM_BOOT_PROVISION`.
+- Nettoyage au passage : le fichier de tests selfheal portait un chemin
+  d'import périmé (`cogs.kingdom → cogs`, chargeur §7) — ses 5 tests
+  ne tournaient plus ; réparés + 3 nouveaux (ordre provisioning→pins,
+  kill-switch, lecture env).

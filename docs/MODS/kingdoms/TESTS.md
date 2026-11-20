@@ -96,3 +96,12 @@ scenario here has no test.
   reference capture) and the pinned panel titles
   « ⚙️ Kingdoms — paramètres » with an « Administration » section header
 - **And** the strings exist in full fr/en parity (`settings_section`)
+## SC-KING-014 — the boot pass provisions the declared salons before pinning
+
+- **Given** a served guild that never received the mod's provisioning
+  (legacy salons, no ⚙️ paramètres)
+- **When** the once-per-boot self-heal pass runs
+- **Then** it provisions the declared roles then channels (the Repair-click
+  seams) BEFORE ensuring the pins — the pins land in salons that exist
+- **And** `BOTFORGE_KINGDOM_BOOT_PROVISION=off/0/false` skips the
+  provisioning (pins/commands passes stay) — the report says « off »
