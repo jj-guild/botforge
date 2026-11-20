@@ -15,6 +15,26 @@ A mod is a self-contained feature that:
 - documents its rules and environment here, in `docs/MODS/<mod-name>/`
   (following [TEMPLATE/](TEMPLATE/))
 
+### The standard per-mod doc hierarchy (common to every mod)
+
+Every mod's lore lives in **one place**: `docs/MODS/<mod-name>/`.
+The standard file set (copy from `TEMPLATE/` when creating the mod):
+
+| File | Required | Holds |
+| ---- | -------- | ----- |
+| `README.md` | yes | purpose, concepts, core integration, links |
+| `RULES.md` | yes | the game rules, written to be automatable/testable |
+| `ENVIRONMENT.md` | yes | the environment + season configuration |
+| `DECISIONS.md` | recommended | the validated decisions — **they win over everything else** |
+| `REFERENCE.md` | when a reference plan exists | the designer's functional reference (moved here from `docs/PLANS/`) |
+| `CHANGELOG.md` | optional | the mod's own history |
+| any mod-specific file | optional | e.g. kingdoms' `CADASTRE.md`, `PROMISES.md`, `CIVILIZATIONS.md` |
+
+Agents find a mod's lore at `docs/MODS/<mod-name>/` — see the
+[mod-lore](../../.agents/skills/mod-lore/SKILL.md) skill for the
+load-when-working-on-a-mod rule. A mod with no directory here has no
+lore yet: say so and scaffold it from `TEMPLATE/`.
+
 #### Game-bound mods
 
 A mod is normally game-agnostic (it may declare `allowed_games`, but its

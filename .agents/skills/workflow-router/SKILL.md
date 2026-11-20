@@ -19,7 +19,7 @@ through the bug workflow; apply judgment, not bureaucracy.
 | "I want to report a bug" | Bug intake | Issue with the bug template (auto-triage labels it), then a fix branch/PR once confirmed |
 | "I have an idea / I want a feature" | Feature shaping | [shape-game-designer-idea](../shape-game-designer-idea/SKILL.md) — challenge, scope, acceptance criteria, then the issue |
 | "I want to create a mod" | Mod bootstrap | Sandbox mode ([MODES.md](../../../docs/MODES.md)): `vibe/<alias>/main` branch, draft mod PR, personal env |
-| "I want to work on my mod" | Sandbox mode | Stack commits on `vibe/<alias>/main`, the mod PR's checks re-run, deploy on the personal env. For the **kingdoms** mod, the [kingdom-lore](../kingdom-lore/SKILL.md) skill loads in every session — read the lore, then propose the next moves |
+| "I want to work on my mod" | Sandbox mode | Stack commits on `vibe/<alias>/main`, the mod PR's checks re-run, deploy on the personal env. The [mod-lore](../mod-lore/SKILL.md) skill loads for ANY mod: it reads `docs/MODS/<mod>/` (or says the mod has no docs and scaffolds them), then proposes the next moves |
 | "I want to fix a bug in the platform" / "I want to add a platform feature" | Pro mode | Feature branch per subject → PR → CODEOWNERS review → [deploy-and-validate](../deploy-and-validate/SKILL.md) |
 | "I want to document the project" | Docs change | `botforge` repo, PR (docs are code: same lifecycle, same checks) |
 | "I want to improve QoL (skills, scripts, tokens, CLI)" | Automation work | [automate-or-learn](../automate-or-learn/SKILL.md) — where the automation belongs, then the same PR lifecycle |
