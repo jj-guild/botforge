@@ -20,7 +20,9 @@ browse the table below to see what the agents know how to do.
 
 **Skills hold the always-valid rules; a session prompt holds only what is
 specific to that session** (who the human is, which branches and env, the
-current roadmap) — never the reverse.
+current roadmap) — never the reverse (binding rule:
+[docs/CONVENTIONS.md](../CONVENTIONS.md), *Enrich the docs and skills
+proactively*).
 
 | Skill | Purpose |
 | ----- | ------- |

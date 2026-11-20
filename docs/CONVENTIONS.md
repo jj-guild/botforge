@@ -532,6 +532,12 @@ updates `AGENTS.md`, the vibe-coding docs (`docs/CONVENTIONS.md`,
 - a **repo `AGENTS.md` / `docs/DEVELOPER.md`** entry for repo-local
   discovery (one-liner plus a link to the skill/convention, no
   duplication);
+- a **session prompt** (the ad-hoc instructions a human pastes to open a
+  session) for what is specific to THAT session only — who the human is,
+  which branches and env, the current roadmap. Never always-valid rules
+  there: a prompt is gone at the end of the session, so the rule would be
+  lost next time; and never session-specific context in a skill — it
+  would leak into every session;
 - never the same rule in three places — one home, links elsewhere.
 
 ## The reasoning lives on the artifacts (developer-mandated)

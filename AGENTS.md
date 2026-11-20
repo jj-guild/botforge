@@ -155,11 +155,10 @@ Rules of the map:
 - **One home per rule**: the binding text lives once (CONVENTIONS,
   architecture page, or skill) and everything else links to it — an
   `AGENTS.md` entry is a one-liner plus a link, never a copy.
-- **Skills = always-valid rules; the session prompt = session-specific
-  context only.** Never copy an always-valid rule into a one-off session
-  prompt (it would be lost in the next session), and never put
-  session-specific context (who the human is, which branches and env,
-  the current roadmap) into a skill (it would leak into every session).
+- **Always-valid rules live in skills/conventions; a session prompt holds
+  only session-specific context** — binding rule in
+  [docs/CONVENTIONS.md](docs/CONVENTIONS.md) (*Enrich the docs and skills
+  proactively*), skill index in [docs/SKILLS/README.md](docs/SKILLS/README.md).
 - **Humans enter by [README.md](README.md)** (documentation map), agents
   by this page; both converge on [docs/INDEX.md](docs/INDEX.md).
 

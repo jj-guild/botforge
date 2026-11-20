@@ -49,13 +49,10 @@ lore yet: say so and scaffold it from `TEMPLATE/`.
 taken with the designer updates `docs/MODS/<mod>/` in the same PR as the
 code (dated `DECISIONS.md` entry, `RULES.md`/`REFERENCE.md` corrections,
 `TESTS.md` scenario when a behavior is fixed; if it was discussed, it is
-written). The rules that are **always valid** — how to talk to the human,
-temporary-vs-delegate with a workaround, English GitHub output, pre-push
-checks — live in the skills
-([human-interaction](../../.agents/skills/human-interaction/SKILL.md),
-[mod-lore](../../.agents/skills/mod-lore/SKILL.md),
-[ci-monitoring](../../.agents/skills/ci-monitoring/SKILL.md)); a session
-prompt carries only what is specific to that session, never those rules.
+written). The always-valid session rules live in the agent skills — index
+and loading model in [docs/SKILLS/README.md](../SKILLS/README.md) (binding
+rule: [docs/CONVENTIONS.md](../CONVENTIONS.md)); a session prompt holds only
+what is specific to that session.
 
 #### Game-bound mods
 
