@@ -35,9 +35,9 @@ The standard file set (copy from `TEMPLATE/` when creating the mod):
 | Mod dir | Status | Note |
 | ------- | ------ | ---- |
 | `kingdoms/` | current | the active mod (Season II reference in `REFERENCE.md`) |
-| `ladder/` | **outdated** | stale doc set, kept for history |
-| `register/` | **outdated** | stale doc set, kept for history |
 | `TEMPLATE/` | scaffold | copied when creating a new mod |
+
+The old `ladder/` and `register/` doc sets were relics and have been deleted (2026-11-20).
 
 Agents find a mod's lore at `docs/MODS/<mod-name>/` — see the
 [mod-lore](../../.agents/skills/mod-lore/SKILL.md) skill for the
@@ -126,13 +126,12 @@ Every mod — developed, scoped, specified, shaped or a vague idea — is listed
 with its maturity level, categories and links in the
 [**mod catalogue**](CATALOGUE.md). The catalogue is the game designers'
 entry point for browsing and **prioritizing** ideas; the linked issue or doc
-holds the decisions. The register, ladder and kingdoms design docs live
-under [register/](register/), [ladder/](ladder/) and [botforge/](botforge/) —
-they describe the target behavior, not shipped code.
+holds the decisions. The kingdoms design docs live under [kingdoms/](kingdoms/) — they describe
+the target behavior, not shipped code.
 
 ## Mod version history
 
-Mod rule and environment changes are tracked per mod (`register/CHANGELOG.md`)
+Mod rule and environment changes are tracked per mod (`<mod>/CHANGELOG.md`)
 and in the [roadmap](https://github.com/jj-guild/botforge/blob/sync/generated-artifacts/generated/ROADMAP.md).
 
 ## See also

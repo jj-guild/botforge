@@ -53,8 +53,7 @@ botforge/
 │   ├── WORKFLOWS.md               # Game workflows (registration, ladder, ...)
 │   ├── SKILLS/README.md           # The agent skills index
 │   ├── MODS/                      # Mods documentation
-│   │   ├── register/              # Registration mod (rules, environment)
-│   │   ├── ladder/                # Ladder mod (rules, environment)
+│   │   ├── kingdoms/              # Kingdoms mod (lore: README/RULES/DECISIONS/REFERENCE/…)
 │   │   └── TEMPLATE/              # Template referenced by new mod docs
 │   └── DECISIONS/                 # Architecture Decision Records (ADR)
 ├── .agents/skills/                # Agent skills (one directory per skill, SKILL.md)

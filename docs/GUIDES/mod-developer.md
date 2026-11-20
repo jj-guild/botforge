@@ -63,8 +63,8 @@ the mod system, lifecycle and composition rules.
 ## Worked example
 
 The ladder mod is the reference implementation:
-[docs/MODS/ladder](../MODS/ladder/README.md) (seasons, pluggable rating,
-queue+invites, Discord-first admin surface).
+[docs/MODS/kingdoms](../MODS/kingdoms/README.md) (seasons, territory meta-game,
+Discord-first admin surface).
 
 ## Review gate
 
