@@ -1,5 +1,7 @@
 # Ladder mod
 
+> **⚠️ OUTDATED (2026-11-20)** — this doc set is stale: kept for history, never the source for new work. See the mod-status table in [../README.md](../README.md).
+
 > Rewritten from the JeanJack V2.0 reference
 > ([../PLANS/reference/ladder-1v1-jeanjack-v2.md](../../PLANS/reference/ladder-1v1-jeanjack-v2.md))
 > for BotForge v0.4.0. The reference is the **functional source of truth**
