@@ -38,6 +38,41 @@ MERMAID_TYPES = (
 
 REQUIRED_MOD_FILES = ("README.md", "RULES.md", "ENVIRONMENT.md")
 
+SCENARIO_ID_RE = re.compile(r"SC-[A-Z0-9]+-\d+")
+
+
+def check_test_scenarios(docs_root: Path, source_root: Path | None) -> list[str]:
+    """Every SC-* scenario in docs/MODS/<mod>/TESTS.md has one test.
+
+    The test lives in botforge-services
+    ``modules/mods/<mod>/tests/test_scenarios.py`` and carries the id in
+    its docstring/name. Skipped when the services modules tree is absent.
+    """
+    if source_root is None:
+        return []
+    services_root = source_root.parents[1] if source_root.name == "botforge" else source_root.parent
+    modules_root = services_root / "modules"
+    if not modules_root.is_dir():
+        return []
+    scenario_files = sorted((docs_root / "MODS").glob("*/TESTS.md"))
+    if not scenario_files:
+        return []
+    test_corpus = "
+".join(
+        p.read_text(encoding="utf-8", errors="replace")
+        for p in sorted(modules_root.glob("mods/*/tests/test_scenarios.py"))
+    )
+    problems: list[str] = []
+    for tests_md in scenario_files:
+        mod_dir = tests_md.parent.name
+        for scenario_id in sorted(set(SCENARIO_ID_RE.findall(tests_md.read_text(encoding="utf-8")))):
+            if scenario_id not in test_corpus:
+                problems.append(
+                    f"{tests_md.relative_to(docs_root)}: scenario {scenario_id} has no test "
+                    "in modules/mods/*/tests/test_scenarios.py"
+                )
+    return problems
+
 
 def repo_root() -> Path:
     return Path(__file__).resolve().parents[3]
@@ -207,6 +242,7 @@ def main() -> int:
         check_mods_docs(docs_root, config_root)
         + check_docstrings(source_root)
         + check_mermaid(docs_root)
+        + check_test_scenarios(docs_root, source_root)
     )
 
     for problem in problems:

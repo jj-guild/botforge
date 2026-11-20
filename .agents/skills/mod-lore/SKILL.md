@@ -38,7 +38,7 @@ UI select if ambiguous), then apply the procedure below.
    blocks: channel tree/roles, external-system integration, views &
    buttons, pinned salons, player/admin/bot interactions — note any
    missing block and fill it with the designer — then `RULES.md`,
-   `ENVIRONMENT.md`),
+   `ENVIRONMENT.md`, `TESTS.md`),
    then `DECISIONS.md` and `REFERENCE.md` when present, then every
    mod-specific extra (e.g. kingdoms' `CADASTRE.md`, `PROMISES.md`,
    `CIVILIZATIONS.md`).
@@ -114,3 +114,19 @@ explains it in ONE plain sentence, and fixes it. In plain language:
   force-push, never merge, never rewrite history alone.
 - **GitHub output is English + conventional commits** — the
   `Check commits` gate enforces it; reword, don't bypass.
+
+## Test scenarios are part of the lore (TESTS.md)
+
+`docs/MODS/<mod>/TESTS.md` lists the scenarios (`SC-<MOD>-NNN`) that
+validate the implementation. Rules:
+
+- **every documented scenario has exactly one test** in
+  `modules/mods/<mod>/tests/test_scenarios.py` (botforge-services), whose
+  docstring carries the id — CI runs that file
+  (`pytest tests modules/mods/*/tests/test_scenarios.py`) and the botforge
+  docs check (`validate_docs.py`) fails when a scenario has no test;
+- **the agent writes the missing tests in the same PR** as the doc
+  change — scenarios may be complex multi-step flows, driven against
+  fakes/mocks;
+- when proposing the next moves, prefer closing a documented scenario
+  over inventing an undocumented one.
