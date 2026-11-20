@@ -906,3 +906,17 @@ Seigneurs global devient le leaderboard Scriptorium). Les images
   d'import périmé (`cogs.kingdom → cogs`, chargeur §7) — ses 5 tests
   ne tournaient plus ; réparés + 3 nouveaux (ordre provisioning→pins,
   kill-switch, lecture env).
+
+## D79 — Un panneau perdu se guérit tout seul (pins-heal-v1)
+
+- **Décision Drasah 20/11** : après admin-category-v1, le salon
+  ⚙️ paramètres était apparu mais VIDE — la passe d'épinglage du boot
+  (best-effort) se perd dans la tempête API du provisioning.
+- Le refresher 5 minutes (machine-temps-v4) est élargi à TOUS les
+  pins du scope `mod/kingdom` : un salon vide se remplit dans un cycle
+  (≤ 5 min), sans geste manuel ni re-boot.
+- Idempotent et gratuit en régime stable (garde d'empreinte : zéro
+  appel API si rien n'a changé) ; kill-switch
+  `BOTFORGE_KINGDOM_PIN_REFRESHER` (+ l'ancien
+  `BOTFORGE_KINGDOM_MACHINE_REFRESHER` honoré par compatibilité).
+- Alias conservé : `run_machine_refresh_pass` = `run_mod_pin_refresh_pass`.

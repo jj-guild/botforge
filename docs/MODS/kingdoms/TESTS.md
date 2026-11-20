@@ -87,8 +87,9 @@ scenario here has no test.
 
 - **Given** the pinned time-machine panel
 - **When** the refresher pass runs every 5 minutes
-- **Then** only the machine pin is ensured, and a pass with an unchanged
-  fingerprint makes no Discord API call
+- **Then** the machine pin is re-ensured, and a pass with an unchanged
+  fingerprint makes no Discord API call (since pins-heal-v1 the pass
+  actually walks every kingdom pin — see SC-KING-015)
 ## SC-KING-013 — the admin salon wears the ⚙️ paramètres name
 
 - **Given** the admin category's console salon (key `console`, SC-KING-001)
@@ -105,3 +106,15 @@ scenario here has no test.
   seams) BEFORE ensuring the pins — the pins land in salons that exist
 - **And** `BOTFORGE_KINGDOM_BOOT_PROVISION=off/0/false` skips the
   provisioning (pins/commands passes stay) — the report says « off »
+
+## SC-KING-015 — a lost pin heals within one refresher cycle
+
+- **Given** a guild where a boot pin was lost (best-effort pass dropped
+  in provisioning's API storm — an empty admin salon)
+- **When** the 5-minute refresher pass runs (`run_mod_pin_refresh_pass`)
+- **Then** EVERY pin of scope `mod/kingdom` is re-ensured per guild
+  (console, machine à temps, distributeur), best-effort per spec
+- **And** foreign-scope pins are never touched; steady state costs zero
+  Discord API call (fingerprint guard)
+- **And** `BOTFORGE_KINGDOM_PIN_REFRESHER=off/0/false` disables the pass
+  (legacy `BOTFORGE_KINGDOM_MACHINE_REFRESHER` still honored)
