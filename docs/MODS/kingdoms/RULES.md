@@ -1,7 +1,7 @@
 # Kingdoms mod — Règles
 
 > Source fonctionnelle : la référence Season II
-> ([../../PLANS/reference/kingdoms-mod-saison2.md](../../PLANS/reference/kingdoms-mod-saison2.md))
+> ([REFERENCE.md](REFERENCE.md))
 > corrigée par [DECISIONS.md](DECISIONS.md). Chaque règle ci-dessous est
 > écrite pour être **automatisable** (testable par le bot). Tout point
 > **À DÉFINIR** doit être tranché par le game designer avant

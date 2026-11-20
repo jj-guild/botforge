@@ -2,7 +2,7 @@
 
 > Décisions prises par le game designer **après** la rédaction de la
 > référence Season II
-> ([../../PLANS/reference/kingdoms-mod-saison2.md](../../PLANS/reference/kingdoms-mod-saison2.md)).
+> ([REFERENCE.md](REFERENCE.md)).
 > En cas de désaccord entre la référence et ce document, **ce document
 > gagne**. Les points non tranchés restent **À DÉFINIR** (référence §30)
 > et ne doivent jamais être inventés par une implémentation.
