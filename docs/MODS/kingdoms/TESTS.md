@@ -118,3 +118,18 @@ scenario here has no test.
   Discord API call (fingerprint guard)
 - **And** `BOTFORGE_KINGDOM_PIN_REFRESHER=off/0/false` disables the pass
   (legacy `BOTFORGE_KINGDOM_MACHINE_REFRESHER` still honored)
+
+## SC-KING-016 — founding a realm provisions it dormant (never engages)
+
+- **Given** a player who founds a realm (the camp's founding modal,
+  royaume-persistant-v1)
+- **When** the founding completes
+- **Then** the realm shell PERSISTS (name, Roi, members, presentation,
+  salons — the season wipe NEVER drops it) and the 🏰 category is
+  provisioned in DORMANT mode: only 🏰 Le royaume shows (Discussions /
+  Territoire / Alliances are masked, never destroyed)
+- **And** the 🏰 Entrée button opens the chez-soi window: Ma
+  seigneurie + 📝 Présentation + 📺 Voir la saison + 🏆 Palmarès +
+  🚪 Quitter
+- **And** the Roi's « Voir la saison » records a join request — an
+  admin accepts the season entry (the draft starter, tranche 2)

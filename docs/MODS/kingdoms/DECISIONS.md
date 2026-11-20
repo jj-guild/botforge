@@ -920,3 +920,24 @@ Seigneurs global devient le leaderboard Scriptorium). Les images
   `BOTFORGE_KINGDOM_PIN_REFRESHER` (+ l'ancien
   `BOTFORGE_KINGDOM_MACHINE_REFRESHER` honoré par compatibilité).
 - Alias conservé : `run_machine_refresh_pass` = `run_mod_pin_refresh_pass`.
+
+## D80 — Royaume persistant : fonder n'engage pas (royaume-persistant-v1a)
+
+- **Décision Drasah 20/11** — le royaume est PERSISTANT (nom, Roi,
+  membres, présentation, salons) : il survit aux fins de saison ; la
+  saison est ÉPHÉMÈRE et un royaume n'y entre QUE par sa draft
+  starter (l'acte d'entrée, jamais la création).
+- T1 livrée : la fondation (modale du camp) crée la coquille
+  persistante + provisionne la catégorie en mode DORMANT (seul
+  🏰 Le royaume visible) ; la fenêtre « chez soi » lit le royaume —
+  🛡️ Ma seigneurie avec ligne de fondation + transfert de couronne,
+  📝 Présentation (le Roi écrit, vitrine future de « Joindre un
+  Royaume »), 📺 Voir la saison (récap + S'inscrire — un admin
+  accepte), 🏆 Palmarès, 🚪 Quitter.
+- Technique : la collection des coquilles est ABSENTE du wipe de
+  saison (données) ; habillage Discord à travers les seams (salons
+  dynamiques, overwrites en une passe, adoption par slug, surfaces
+  déclarées, parité fr/en).
+- T2 à venir : la validation admin de l'entrée (draft starter via le
+  seam distribution), le réveil des salons masqués, le lien coquille ↔
+  royaume moteur de saison, « Joindre un Royaume ».
