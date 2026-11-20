@@ -871,3 +871,21 @@ Seigneurs global devient le leaderboard Scriptorium). Les images
 - **À trancher par le game designer** : la beta vise « 3 jours » dans
   l'intention mais le plan réel actuel couvre 52h compressées — un preset
   3 jours peut être ajouté (donnée, pas de code) si souhaité.
+
+## D77 — Paramètres : le salon admin reprend son nom (parametres-restore-v1)
+
+- **Le salon console (clé `console`, SC-KING-001) s'AFFICHE à nouveau
+  ⚙️ paramètres** — le nom d'origine du game designer (capture 08/11)
+  prime sur le nom technique « console ». La clé ne change pas : le
+  seam reste stable, la résolution par nom aplatit déjà
+  (console / parametres / settings).
+- Le panneau épinglé titre « ⚙️ Kingdoms — paramètres » et porte
+  l'entête de section « **Administration** » sous le titre, comme la
+  référence.
+- Aucune mécanique touchée : les 11 actions câblées de la console
+  restent telles quelles — c'est une restauration de surface.
+- Grille de relecture 🟢/🔴 actée avec Drasah (20/11) sur la base de la
+  capture : la casquette test reste RETIRÉE (casquette-removal-v1),
+  les onze autres actions étaient déjà portées (y compris
+  « + Ajouter un royaume manuellement », qui servira le futur flux
+  royaume-persistant).

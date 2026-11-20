@@ -89,3 +89,10 @@ scenario here has no test.
 - **When** the refresher pass runs every 5 minutes
 - **Then** only the machine pin is ensured, and a pass with an unchanged
   fingerprint makes no Discord API call
+## SC-KING-013 — the admin salon wears the ⚙️ paramètres name
+
+- **Given** the admin category's console salon (key `console`, SC-KING-001)
+- **Then** its declared display name is **⚙️ paramètres** (the 08/11
+  reference capture) and the pinned panel titles
+  « ⚙️ Kingdoms — paramètres » with an « Administration » section header
+- **And** the strings exist in full fr/en parity (`settings_section`)
