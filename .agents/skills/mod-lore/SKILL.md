@@ -46,7 +46,10 @@ UI select if ambiguous), then apply the procedure below.
    is the functional source of truth; `DECISIONS.md` wins over both.
    Anything marked **À DÉFINIR** must NEVER be invented by an
    implementation — escalate to the designer.
-5. **Load the code map**: the mod's code lives in
+5. **Load the code map** — and the SDK map: read
+   `docs/architecture/mods.md` §8 (how a mod plugs into the stack: import
+   mapping, allowed/forbidden imports, Mongo/Redis/provider data
+   ownership, isolation R1–R9). The mod's code lives in
    `modules/mods/<mod>/` in botforge-services — `conf/mod.yaml`
    (declaration: salons, groups, roles), `conf/views.yaml` (declared
    surfaces), `conf/locales/{fr,en}.yaml` (ALL user-facing strings,

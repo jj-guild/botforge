@@ -66,6 +66,14 @@ The ladder mod is the reference implementation:
 [docs/MODS/kingdoms](../MODS/kingdoms/README.md) (seasons, territory meta-game,
 Discord-first admin surface).
 
+## How your mod plugs into the stack
+
+The operational map (imports allowed/forbidden, who the mod talks to and
+how, where its data lives in Mongo/Redis/providers, isolation) is
+[architecture/mods.md §8](../architecture/mods.md) — read it before
+writing mod code; the layering rules R1–R9 are enforced by
+`tests/architecture/`.
+
 ## Technical chantiers: you don't debug them, your agent does
 
 DB isolation (one owner per collection, R5), external-provider process

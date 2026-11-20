@@ -192,9 +192,89 @@ cross-mod imports, config-relative references only.
 - Retrofit: the existing game migrates onto this layout and onto the
   mod declaration seam (tracked: botforge-services#310, #311).
 
+## 8. How a mod plugs into the stack (the SDK map)
+
+This section is the operational answer to "what may a mod import, who
+does it talk to, where does its data live" — read it before writing mod
+code; the [mod-lore](../../.agents/skills/mod-lore/SKILL.md) skill loads
+it in every mod session. The rules are enforced by
+`tests/architecture/` in botforge-services (R1–R9), not by convention
+alone.
+
+### Package layout and import mapping
+
+A §7 mod lives in `modules/mods/<mod>/` in botforge-services:
+
+```
+<mod>/
+├── conf/            # mod.yaml (salons/roles/commands), views.yaml, locales/{fr,en}.yaml, data/
+├── cogs/<mod>/      # the Discord layer — the ONLY place `import discord` is allowed (R6)
+├── src/<mod>/       # domain logic — never imports discord, never network
+├── grpc/<mod>/      # the service singleton: service() / stack()
+└── tests/           # incl. test_scenarios.py (the SC-* scenarios of docs/MODS/<mod>/TESTS.md)
+```
+
+`load_mod_package` maps them at runtime: `botforge.mods.<name>`
+(= `src/<name>`), `botforge.mods.<name>.cogs` (= `cogs/<name>/`),
+`botforge.mods.<name>.grpc` (= `grpc/<name>/`). Clean import:
+`from botforge.mods.kingdom.cogs.console import …` — never a sys.path
+hack, never the double-nested `cogs.<name>` path.
+
+### Allowed / forbidden imports
+
+| Layer | May import | Must never import |
+| ----- | ---------- | ----------------- |
+| `cogs/` | `discord`, the `botforge.discord` UI SDK, `botforge.mods.<name>.*` | another mod's package, raw provider clients |
+| `src/` (domain) | `botforge.core.*` (models, ids…), its own package | `discord` / `botforge.discord` (R6), network libs (aiohttp/httpx/requests/socket…), any provider internals |
+| `grpc/` (service) | its own `src/` + storage, core service contracts | `discord`, network libs |
+| `tests/` | the mod's own packages | direct `import discord` lines (R6 scans module tests too) |
+
+### Who the mod talks to, and how
+
+- **Its own service** — through the gRPC singleton:
+  `mod_service("<mod>").stack()` / `.service()` (e.g. `stack.kingdoms`,
+  `stack.attacks`…). A cog never builds the stack by hand.
+- **Core platform services by NAME, via the seams** — `IPlatform`
+  (`send_dm`/`edit_dm`/`delete_dm` #407, `create_channel`/`delete_channel`
+  #408, `apply_access_policy`…), the workflow engine, the catalog. Never
+  by URL, never by another service's internals (R2/R4).
+- **External providers (liquipedia, aoe2lobby…)** — they run in their OWN
+  processes; the mod reaches them only through the named provider client
+  resolved from `EXT_*` env config (R1/R3). Never a hard-coded URL.
+
+### Where the mod reads/writes data
+
+- **MongoDB** — every collection has ONE owner package (R5); the mod
+  reads/writes only its own collections, through its own `storage`
+  module — never a raw `get_collection` from another layer.
+- **Redis** — via the core cache service only; never a direct client.
+- **Config** — `conf/mod.yaml` + `conf/*.yaml`; secrets come from env
+  vars and never appear in code or commits.
+- **Content** — game data (maps, civs) is owned by the core catalog; the
+  mod reads it, never duplicates it.
+
+### Isolation and security
+
+Layering R1–R9 is enforced by `tests/architecture/` (a red test = the
+agent fixes the import/id, not the human). Discord access is gated by the
+channel-tree rules (machine-room, admin-only categories, click-time admin
+guards); mod install/uninstall drives the provisioning gate. The mod's
+Discord surfaces are declared (`conf/views.yaml`, R9 id contract), wired
+(`wire_view`), pinned, i18n'd (fr/en parity) — see the discord-ui skill.
+
+### Lifecycle and tests
+
+Hooks: `register` (sync, at bot build), `setup_hook` (async — boot passes
+ride TASKS here; discord.py 2.7 removed `add_listener` and `bot.event`
+would override core methods), `close`. Tests: the platform `tests/` plus
+the mod's `modules/mods/<mod>/tests/`, including `test_scenarios.py` —
+one test per `SC-<MOD>-NNN` scenario of `docs/MODS/<mod>/TESTS.md`, run by
+CI and cross-checked by the botforge docs validation.
+
 ## See also
 
 - [MODS/README.md](../MODS/README.md) — mod system overview (documentation-facing)
 - [core.md](core.md) — core services design
+- §8 above — how a mod plugs into the stack (imports, data, seams)
 - [ADR-0002](../DECISIONS/002-workflow-engine.md) — workflow engine decision
 - [ADR-0008](../DECISIONS/008-i18n-system.md) — i18n decision
