@@ -104,8 +104,11 @@ Never stale docs: if it was discussed, it is written.
 ## Technical guardrails — the agent owns them, the human never debugs them
 
 A mod dev does not need to be an expert in the platform's technical
-chantiers. When a check goes red, the agent reads the failing test,
-explains it in ONE plain sentence, and fixes it. In plain language:
+chantiers. (Scope: human not dev/ops/maintainer — with a maintainer, the
+session debugs platform internals together with them, see
+[human-interaction](../human-interaction/SKILL.md) §7.) When a check goes
+red, the agent reads the failing test, explains it in ONE plain sentence,
+and fixes it. In plain language:
 
 - **DB isolation (rule R5)** — every Mongo collection has ONE owner
   package; the mod only touches its own. Never add a raw collection
@@ -136,9 +139,11 @@ explains it in ONE plain sentence, and fixes it. In plain language:
   sentence in the PR comment naming the platform owner (roster). Never
   force-push, never merge, never rewrite history alone.
 - **Temporary vs delegate** ([human-interaction](../human-interaction/SKILL.md)
-  §7): a platform-internal blocker is never the human's to fix — open the
-  issue to the platform maintainer AND ship a workaround/mock so the
-  session keeps moving.
+  §7 — applies only when the human is NOT dev/ops/maintainer): a
+  platform-internal blocker is never the human's to fix — open the issue
+  to the platform maintainer AND ship a workaround/mock so the session
+  keeps moving. With a dev/ops/maintainer, dig into the internals
+  together instead.
 - **Before every push**: local checks green
   ([ci-monitoring](../ci-monitoring/SKILL.md) §1 — tests, lint, typecheck,
   docs), English conventional commit, plain push — never force, never

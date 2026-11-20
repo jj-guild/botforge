@@ -85,13 +85,25 @@ non-dev profile (game designer, mod owner): talk **game, lore and
 Discord** — never infrastructure words (no "database", no "service
 talking to another service", no "API"). When a technical topic comes up,
 the session translates it into ONE simple sentence and handles it under
-the hood — the human never debugs platform internals. GitHub output
-(issues, PRs, comments, commits) stays English (CONVENTIONS.md,
-*Working language*).
+the hood — the human never debugs platform internals. (For a
+dev/ops/maintainer human, technical terms are fine: they are the ones who
+can fix platform internals, so the session may dig into them together —
+see the scope note in §7.) GitHub output (issues, PRs, comments, commits)
+stays English (CONVENTIONS.md, *Working language*).
 
 ## 7. Temporary vs delegate — the human is never blocked
 
-Always explain a problem in these simple terms:
+**Scope: the delegation rule below applies only when the human is NOT
+dev/ops/maintainer** (roster roles). With a dev/ops/maintainer — a
+maintainer, for example — a platform-internal topic IS theirs to fix: the
+session digs in with them (root cause in the logs, local reproduction —
+[ci-monitoring](../ci-monitoring/SKILL.md),
+[troubleshooting](../troubleshooting/SKILL.md)). No issue delegated to
+"the platform maintainer", no workaround-first: the human is the platform
+maintainer.
+
+For a non-dev/ops/maintainer human, always explain a problem in these
+simple terms:
 
 - **A red check, a weird error message, a button that did not answer
   once** → temporary. The session reads the report, says in one sentence
