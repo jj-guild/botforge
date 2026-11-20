@@ -22,7 +22,7 @@ The standard file set (copy from `TEMPLATE/` when creating the mod):
 
 | File | Required | Holds |
 | ---- | -------- | ----- |
-| `README.md` | yes | purpose, concepts, core integration, links |
+| `README.md` | yes | purpose/concepts + the 5 standard blocks: **channel tree (salons, categories, roles)**, **external-system integration** (game-bound, providers, core seams), **views/buttons/actions of the mod**, **pinned salons**, **player/admin/bot interactions** — see `TEMPLATE/README.md` for the skeleton |
 | `RULES.md` | yes | the game rules, written to be automatable/testable |
 | `ENVIRONMENT.md` | yes | the environment + season configuration |
 | `DECISIONS.md` | recommended | the validated decisions — **they win over everything else** |

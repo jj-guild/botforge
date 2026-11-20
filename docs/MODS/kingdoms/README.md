@@ -36,6 +36,23 @@ enforces attack/defense budgets, and applies diplomacy.
 - **Diplomatie** — alliances liées aux civilisations, actualisées selon
   les territoires ; mariages ; traités ; Ordre Royal.
 
+## Lore doc coverage map (the 5 standard blocks)
+
+- **Channel tree (salons, categories, roles)** — declared in the mod's
+  `conf/mod.yaml` (botforge-services); the platform rules in
+  [../../architecture/channel-tree.md](../../architecture/channel-tree.md).
+- **External-system integration** — AoE2-bound mod: see *Core
+  integration* below + the provider processes (ext-aoe2techtree…) at
+  the end of this file.
+- **Views, buttons, actions** — declared in the mod's `conf/views.yaml`;
+  the admin console is the SDK's `panel:mod:kingdom:admin:console`.
+- **Pinned salons** — the static pins registered by the mod's cogs
+  (attack, candidates, apply, register, console, time-machine,
+  distributor, validation, market).
+- **Player / admin / bot interactions** — RULES.md + DECISIONS.md for
+  the rules, REFERENCE.md for the functional flows, the cogs for the
+  guards and the boot passes.
+
 ## Core integration
 
 The mod is **game-bound** (AoE2 only, see [../README.md](../README.md) — game-bound mods):

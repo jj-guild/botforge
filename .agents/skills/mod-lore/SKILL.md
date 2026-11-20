@@ -34,7 +34,11 @@ UI select if ambiguous), then apply the procedure below.
    unlisted dir (the old ladder/ and register/ relics are gone) means
    **no lore** — go to step 2. A current dir is read ALL of it, in full,
    before any work: the
-   standard file set first (`README.md`, `RULES.md`, `ENVIRONMENT.md`),
+   standard file set first (`README.md` — which must cover the 5 lore
+   blocks: channel tree/roles, external-system integration, views &
+   buttons, pinned salons, player/admin/bot interactions — note any
+   missing block and fill it with the designer — then `RULES.md`,
+   `ENVIRONMENT.md`),
    then `DECISIONS.md` and `REFERENCE.md` when present, then every
    mod-specific extra (e.g. kingdoms' `CADASTRE.md`, `PROMISES.md`,
    `CIVILIZATIONS.md`).
