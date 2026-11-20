@@ -10,6 +10,11 @@ in this repo (see the hierarchy table in
 [docs/MODS/README.md](../../../docs/MODS/README.md)). An agent working
 on a mod without having read its lore is working blind.
 
+This skill holds **always-valid rules for mod work** — they apply in every
+mod session. What is specific to one session (which mod, which branches,
+which env, the current roadmap) comes from the request and the session
+prompt, never from here.
+
 ## When this skill loads
 
 The human says they want to work on a mod — *"I want to work on the

@@ -12,6 +12,10 @@ cheap and predictable. They apply to **every human the session works
 with, whatever their roster role** (vibe, mod, dev, ops, platform,
 maintainer) — adapt the *content* to the role, never the *form*.
 
+These rules are **always valid** — every session. What is specific to one
+session (who the human is, which branches and env, the current roadmap)
+belongs in the session prompt, never in this skill.
+
 ## 1. Ask through a UI select, never a bare question
 
 When the session needs a decision or authorization only a human can

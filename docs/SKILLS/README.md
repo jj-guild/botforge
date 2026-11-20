@@ -18,6 +18,10 @@ skill's full `SKILL.md` **only when a task matches its description** —
 the modular layer of the instruction loading map (AGENTS.md). Humans
 browse the table below to see what the agents know how to do.
 
+**Skills hold the always-valid rules; a session prompt holds only what is
+specific to that session** (who the human is, which branches and env, the
+current roadmap) — never the reverse.
+
 | Skill | Purpose |
 | ----- | ------- |
 | [automate-or-learn](../../.agents/skills/automate-or-learn/SKILL.md) | Where each automation belongs; the propose-to-memorize rule |
