@@ -28,8 +28,8 @@ requires the [monetization plan](../PLANS/monetization.md) gate).
 
 | Mod | Maturity | Description | Categories | Details |
 |-----|----------|-------------|------------|---------|
-| register | 5 — Developed | Player onboarding: DM name+game workflow, auto game-role assignment, admin notification | platform, social | [register/](register/) (docs outdated), botforge-services#14 |
-| ladder | 4 — Scoped | Competitive 1v1 ladders: queue + blossom matchmaking, map pick, match lifecycle, pluggable rating, leaderboard (AoE2 first) | game | [ladder/](ladder/) (docs outdated), botforge-services#15 (core #134, surface #135) |
+| register | 5 — Developed | Player onboarding: DM name+game workflow, auto game-role assignment, admin notification | platform, social | botforge-services#14 (doc set deleted as a relic, 2026-11-20) |
+| ladder | 4 — Scoped | Competitive 1v1 ladders: queue + blossom matchmaking, map pick, match lifecycle, pluggable rating, leaderboard (AoE2 first) | game | botforge-services#15 (core #134, surface #135) (doc set deleted as a relic, 2026-11-20) |
 | kingdoms | 3 — Specified | Territory-conquest meta-game around AoE2 (Season II reference): seasons, weekly events, attacks/defenses, tech economy, diplomacy | game | [botforge/](botforge/), botforge#129, reference doc |
 | coaching | 2 — Shaped | Pro feedback marketplace: coach pool (level/reputation/free price), booking via dynamic views, per-coach request pool, session workspace (thread + temp voice), cross ratings & reputation, indicative commission ledger (no payment handling in v1) | social, money | botforge-services#151 (monetization: [PLANS/monetization.md](../PLANS/monetization.md) Axis C/D; readiness #154) |
 | tournament (80%) | 2 — Shaped | Operator-assisted tournaments: sign-ups, seeding, brackets, disputes | organizer | botforge-services#120 |

@@ -81,7 +81,7 @@ panels' footers):
 python -m botforge.mods.kingdoms.kingdoms_seed_cli <seed_yaml> <guild_id>
 ```
 
-The YAML file (see the ladder/core seeds for the deploy-time pattern):
+The YAML file (see the core seeds for the deploy-time pattern):
 
 ```yaml
 season_id: kingdoms-aoe2-<guild id>-<index>   # required — the footer id

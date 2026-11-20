@@ -35,7 +35,7 @@ report it, do not work around it.
 - **Degradation**: what should happen when the game data source is
   down? Design the fallback, or accept the default (manual
   confirmation everywhere).
-- Look at [MODS/ladder](../MODS/ladder/README.md) for a fully worked
+- Look at [MODS/kingdoms](../MODS/kingdoms/README.md) for a fully worked
   example (rules, environment, admin surface).
 
 ## Where things are documented (for your reference)
