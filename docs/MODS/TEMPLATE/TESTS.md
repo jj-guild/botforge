@@ -11,18 +11,18 @@ when a documented scenario has no test).
 ## Scenario format
 
 ```markdown
-### SC-<MOD>-001 — short title
+### SC-MOD-NNN — short title
 
 - **Given** …
 - **When** …
 - **Then** … (the acceptance criterion the test asserts)
 
-Implemented by `test_SC_<MOD>_001_*` in `test_scenarios.py`.
+Implemented by `test_SC_MOD_000_*` in `test_scenarios.py`.
 ```
 
 Rules:
 
-- one id per scenario, `SC-<MOD>-NNN` (MOD = the mod id, uppercase);
+- one id per scenario, `SC-MOD-NNN` (MOD = the mod id, uppercase);
 - scenarios may be complex (multi-step flows, several actors) — the test
   drives the same steps against fakes/mocks;
 - the test's docstring carries the id, so doc and code stay paired;

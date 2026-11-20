@@ -57,8 +57,7 @@ def check_test_scenarios(docs_root: Path, source_root: Path | None) -> list[str]
     scenario_files = sorted((docs_root / "MODS").glob("*/TESTS.md"))
     if not scenario_files:
         return []
-    test_corpus = "
-".join(
+    test_corpus = "\n".join(
         p.read_text(encoding="utf-8", errors="replace")
         for p in sorted(modules_root.glob("mods/*/tests/test_scenarios.py"))
     )
