@@ -30,6 +30,15 @@ The standard file set (copy from `TEMPLATE/` when creating the mod):
 | `CHANGELOG.md` | optional | the mod's own history |
 | any mod-specific file | optional | e.g. kingdoms' `CADASTRE.md`, `PROMISES.md`, `CIVILIZATIONS.md` |
 
+### Mod doc status
+
+| Mod dir | Status | Note |
+| ------- | ------ | ---- |
+| `kingdoms/` | current | the active mod (Season II reference in `REFERENCE.md`) |
+| `ladder/` | **outdated** | stale doc set, kept for history |
+| `register/` | **outdated** | stale doc set, kept for history |
+| `TEMPLATE/` | scaffold | copied when creating a new mod |
+
 Agents find a mod's lore at `docs/MODS/<mod-name>/` — see the
 [mod-lore](../../.agents/skills/mod-lore/SKILL.md) skill for the
 load-when-working-on-a-mod rule. A mod with no directory here has no

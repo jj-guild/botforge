@@ -29,7 +29,11 @@ UI select if ambiguous), then apply the procedure below.
    ENVIRONMENT) and fill them with the designer in the session, then
    open the issue/PR. Until the lore exists, the agent works from the
    code + issues only and says so.
-3. **If it exists — read ALL of it, in full, before any work**: the
+3. **Check the mod's status first** (table in
+   [docs/MODS/README.md](../../../docs/MODS/README.md)): an **outdated**
+   dir (ladder, register) is history — do NOT load it as lore unless the
+   human explicitly asks; say it is outdated and work from code+issues.
+   **If it exists and is current — read ALL of it, in full, before any work**: the
    standard file set first (`README.md`, `RULES.md`, `ENVIRONMENT.md`),
    then `DECISIONS.md` and `REFERENCE.md` when present, then every
    mod-specific extra (e.g. kingdoms' `CADASTRE.md`, `PROMISES.md`,

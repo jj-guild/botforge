@@ -1,5 +1,7 @@
 # Register mod
 
+> **⚠️ OUTDATED (2026-11-20)** — this doc set is stale: kept for history, never the source for new work. See the mod-status table in [../README.md](../README.md).
+
 The register mod handles player onboarding: it collects the player's chosen
 name and game in a DM workflow, assigns the game's default role, and notifies
 the admin team.
