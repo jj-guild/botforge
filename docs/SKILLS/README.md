@@ -34,6 +34,7 @@ browse the table below to see what the agents know how to do.
 | [discord-components](../../.agents/skills/discord-components/SKILL.md) | Build Discord components with discord.py / Components V2 — each component, the silent wire traps, the patterns to follow (reusable in any bot project) |
 | [external-provider](../../.agents/skills/external-provider/SKILL.md) | Integrate any external API/provider — config gates, real-wire tests, id mapping, logs first (reusable) |
 | [workflow-router](../../.agents/skills/workflow-router/SKILL.md) | Route the human's intention to the right workflow before any work starts |
+| [kingdom-lore](../../.agents/skills/kingdom-lore/SKILL.md) | Load the Kingdoms mod lore in every kingdom session; know it better than the designer and propose/anticipate the next moves |
 | [discord-bot-docs](https://github.com/jj-guild/botforge-services/blob/main/.agents/skills/discord-bot-docs/SKILL.md) | Keep `docs/DEVELOPMENT/DISCORD-BOT.md` up to date on every Discord surface change (repo-local, botforge-services) |
 
 This directory is kept as the documentation entry point; do not add new
