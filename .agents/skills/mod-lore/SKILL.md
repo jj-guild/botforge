@@ -74,3 +74,40 @@ UI select if ambiguous), then apply the procedure below.
 - **Discourse adapts to the roster profile** (AGENTS.md PRIORITY 0): a
   mod designer who is not dev/ops gets plain language, outcomes and next
   clicks in the human's chat language; GitHub output stays English.
+
+## Technical guardrails — the agent owns them, the human never debugs them
+
+A mod dev does not need to be an expert in the platform's technical
+chantiers. When a check goes red, the agent reads the failing test,
+explains it in ONE plain sentence, and fixes it. In plain language:
+
+- **DB isolation (rule R5)** — every Mongo collection has ONE owner
+  package; the mod only touches its own. Never add a raw collection
+  read — move the access to the owning service.
+- **Process isolation (rule R1)** — external providers (liquipedia,
+  aoe2lobby…) run as their own processes; the mod reaches them only
+  through the named provider seam, never by URL.
+- **gRPC seams** — the mod's service is reached via
+  `mod_service("<mod>").stack()` / `.service()` (the grpc package owns the
+  singleton); a cog never builds the stack by hand.
+- **Layering R1–R9** — `tests/architecture/` enforces the rules
+  automatically (R6: no `import discord` outside the mod's cogs; R9: view
+  ids `panel:mod:<name>:…`). A red architecture test is the agent's fix,
+  not the human's.
+
+## Anti-blocker kit (when the session runs alone)
+
+- **CI red** → read the failing job logs; the reflexes are in
+  [ci-monitoring](../ci-monitoring/SKILL.md) (pydoc stale → `make docs`;
+  Check commits red → reword to English conventional; …).
+- **Deploy / logs / status / restart** → PR comments `/deploy`,
+  `/logs <env>`, `/status <env>`, `/restart <env>` (a vibe-coder uses its
+  OWN env; `test` only via the authorized path); poll the answer, never a
+  fixed sleep ([github-polling](../github-polling/SKILL.md)).
+- **Platform failure memory** → [troubleshooting](../troubleshooting/SKILL.md)
+  before diagnosing from scratch.
+- **Blocked on a platform rule or a maintainer decision** → one plain
+  sentence in the PR comment naming the platform owner (roster). Never
+  force-push, never merge, never rewrite history alone.
+- **GitHub output is English + conventional commits** — the
+  `Check commits` gate enforces it; reword, don't bypass.

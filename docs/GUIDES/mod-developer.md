@@ -66,6 +66,18 @@ The ladder mod is the reference implementation:
 [docs/MODS/kingdoms](../MODS/kingdoms/README.md) (seasons, territory meta-game,
 Discord-first admin surface).
 
+## Technical chantiers: you don't debug them, your agent does
+
+DB isolation (one owner per collection, R5), external-provider process
+isolation (R1), the gRPC service seams (`mod_service("<mod>").stack()`)
+and the layering rules (R1–R9, enforced by `tests/architecture/`) are
+guarded by automated tests: when one goes red, the agent explains it in
+one plain sentence and fixes it — the mod dev never has to. The
+[mod-lore](../../../.agents/skills/mod-lore/SKILL.md) skill (loaded in
+every mod session) carries the same guardrails plus the anti-blocker kit
+(CI failure reflexes, the `/deploy` / `/logs` / `/status` PR comments,
+the troubleshooting memory, who to ask when blocked).
+
 ## Review gate
 
 The developer reviews every PR ([VIBEWORKFLOW](../VIBEWORKFLOW.md)).
