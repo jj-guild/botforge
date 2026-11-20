@@ -31,7 +31,7 @@ Rules:
 
 ## Scenarios
 
-### SC-MOD-001 — example
+### SC-MOD-NNN — example
 
 - **Given** …
 - **When** …

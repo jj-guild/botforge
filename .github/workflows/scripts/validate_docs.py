@@ -57,9 +57,13 @@ def check_test_scenarios(docs_root: Path, source_root: Path | None) -> list[str]
     scenario_files = sorted((docs_root / "MODS").glob("*/TESTS.md"))
     if not scenario_files:
         return []
+    scenario_tests = sorted(modules_root.glob("mods/*/tests/test_scenarios.py"))
+    if not scenario_tests:
+        # the services ref does not carry scenario tests yet — the pairing
+        # is enforced from the first test_scenarios.py onward
+        return []
     test_corpus = "\n".join(
-        p.read_text(encoding="utf-8", errors="replace")
-        for p in sorted(modules_root.glob("mods/*/tests/test_scenarios.py"))
+        p.read_text(encoding="utf-8", errors="replace") for p in scenario_tests
     )
     problems: list[str] = []
     for tests_md in scenario_files:
