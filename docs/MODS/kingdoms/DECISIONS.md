@@ -855,3 +855,108 @@ Seigneurs global devient le leaderboard Scriptorium). Les images
   PR = un déploiement = validation terrain ; le socle commun
   (Journal + Snapshot + Rollback) est construit avec la première
   PR du salon Royaume.
+
+## D76 — Machine à temps : durée de saison et rafraîchissement
+
+- **La durée de la saison est lue du preset actif** : saison officielle =
+  **3 semaines** (cohérent avec D55, tentative de Saison II) ; la beta
+  affiche **son vrai plan compressé** (p. ex. `52h (beta compressée)`),
+  jamais un texte en dur — l'ancien libellé « 4 semaines » est abrogé.
+- Le panneau ⏱️ épinglé affiche une nouvelle ligne **📏 Durée de la
+  saison** et une phrase de rythme en préparation (crons du preset, ou
+  plan beta `T0+4h… T0+52h`).
+- Le panneau **s'actualise automatiquement toutes les 5 minutes**
+  (empreinte : zéro appel Discord si rien n'a changé) ;
+  `BOTFORGE_KINGDOM_MACHINE_REFRESHER` permet de couper la boucle.
+- **À trancher par le game designer** : la beta vise « 3 jours » dans
+  l'intention mais le plan réel actuel couvre 52h compressées — un preset
+  3 jours peut être ajouté (donnée, pas de code) si souhaité.
+
+## D77 — Paramètres : le salon admin reprend son nom (parametres-restore-v1)
+
+- **Le salon console (clé `console`, SC-KING-001) s'AFFICHE à nouveau
+  ⚙️ paramètres** — le nom d'origine du game designer (capture 08/11)
+  prime sur le nom technique « console ». La clé ne change pas : le
+  seam reste stable, la résolution par nom aplatit déjà
+  (console / parametres / settings).
+- Le panneau épinglé titre « ⚙️ Kingdoms — paramètres » et porte
+  l'entête de section « **Administration** » sous le titre, comme la
+  référence.
+- Aucune mécanique touchée : les 11 actions câblées de la console
+  restent telles quelles — c'est une restauration de surface.
+- Grille de relecture 🟢/🔴 actée avec Drasah (20/11) sur la base de la
+  capture : la casquette test reste RETIRÉE (casquette-removal-v1),
+  les onze autres actions étaient déjà portées (y compris
+  « + Ajouter un royaume manuellement », qui servira le futur flux
+  royaume-persistant).
+
+## D78 — La catégorie admin s'installe toute seule (admin-category-v1)
+
+- **Décision Drasah 20/11 (priorité n°1)** : la catégorie admin doit être
+  FONCTIONNELLE sans geste manuel — le salon ⚙️ paramètres est capital
+  pour continuer le projet.
+- Le passage d'auto-guérison au démarrage (une fois par process, ~30 s
+  après ready) PROVISIONNE les rôles puis les salons déclarés AVANT de
+  re-poser les panneaux : un serveur qui n'a jamais reçu
+  l'installation reçoit sa surface complète (⚙️ paramètres, machine à
+  temps, distributeur, journal-admin…) sans clic Réparer.
+- Idempotent par résolutions stockées (un serveur convergé = no-op
+  cheap) ; kill-switch `BOTFORGE_KINGDOM_BOOT_PROVISION`.
+- Nettoyage au passage : le fichier de tests selfheal portait un chemin
+  d'import périmé (`cogs.kingdom → cogs`, chargeur §7) — ses 5 tests
+  ne tournaient plus ; réparés + 3 nouveaux (ordre provisioning→pins,
+  kill-switch, lecture env).
+
+## D79 — Un panneau perdu se guérit tout seul (pins-heal-v1)
+
+- **Décision Drasah 20/11** : après admin-category-v1, le salon
+  ⚙️ paramètres était apparu mais VIDE — la passe d'épinglage du boot
+  (best-effort) se perd dans la tempête API du provisioning.
+- Le refresher 5 minutes (machine-temps-v4) est élargi à TOUS les
+  pins du scope `mod/kingdom` : un salon vide se remplit dans un cycle
+  (≤ 5 min), sans geste manuel ni re-boot.
+- Idempotent et gratuit en régime stable (garde d'empreinte : zéro
+  appel API si rien n'a changé) ; kill-switch
+  `BOTFORGE_KINGDOM_PIN_REFRESHER` (+ l'ancien
+  `BOTFORGE_KINGDOM_MACHINE_REFRESHER` honoré par compatibilité).
+- Alias conservé : `run_machine_refresh_pass` = `run_mod_pin_refresh_pass`.
+
+## D80 — Royaume persistant : fonder n'engage pas (royaume-persistant-v1a)
+
+- **Décision Drasah 20/11** — le royaume est PERSISTANT (nom, Roi,
+  membres, présentation, salons) : il survit aux fins de saison ; la
+  saison est ÉPHÉMÈRE et un royaume n'y entre QUE par sa draft
+  starter (l'acte d'entrée, jamais la création).
+- T1 livrée : la fondation (modale du camp) crée la coquille
+  persistante + provisionne la catégorie en mode DORMANT (seul
+  🏰 Le royaume visible) ; la fenêtre « chez soi » lit le royaume —
+  🛡️ Ma seigneurie avec ligne de fondation + transfert de couronne,
+  📝 Présentation (le Roi écrit, vitrine future de « Joindre un
+  Royaume »), 📺 Voir la saison (récap + S'inscrire — un admin
+  accepte), 🏆 Palmarès, 🚪 Quitter.
+- Technique : la collection des coquilles est ABSENTE du wipe de
+  saison (données) ; habillage Discord à travers les seams (salons
+  dynamiques, overwrites en une passe, adoption par slug, surfaces
+  déclarées, parité fr/en).
+- T2 à venir : la validation admin de l'entrée (draft starter via le
+  seam distribution), le réveil des salons masqués, le lien coquille ↔
+  royaume moteur de saison, « Joindre un Royaume ».
+
+## D81 — La validation devient des cartes souveraines (validation-cards-v1)
+
+- **Décision Drasah 20/11** (sur maquette validée de son ancien
+  panel:royaumes) : un royaume validé s'affiche comme une CARTE avec
+  son nom, son Roi 👑 résolu automatiquement, et les deux actions
+  admin de l'ancien système — 🗑️ Supprimer et 👑 Changer le roi.
+- L'admin est SOUVERAIN : le changement de roi ne demande PAS
+  l'accord du joueur désigné ; l'admin choisit un membre actif dans
+  un menu, la couronne change à l'instant (seam `reassign_king`).
+- Supprimer garde sa carte de confirmation rouge (anti-clic raté),
+  puis le seam `delete_kingdom` (suppression dure : le royaume quitte
+  la saison, ses joueurs redeviennent libres).
+- Chaque action re-rend le pin sur place ; les ids sont
+  restart-proof (`kingdom:valid:del:<id>` / `kingdom:valid:crown:<id>`),
+  surfaces déclarées `validation:confirm` + `validation:crown`.
+- NB moteur : le bouton mort du 20/11 venait d'un agrégateur
+  `distributor_dynamic_items` inexistant importé par setup_hook
+  (SC-KING-017) — réparer les agrégateurs AVANT d'ajouter des vues.
