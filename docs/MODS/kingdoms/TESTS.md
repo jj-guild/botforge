@@ -73,3 +73,19 @@ scenario here has no test.
 - **When** its static pins are registered
 - **Then** attack, candidates, apply, register, console, time-machine,
   distributor, validation and market pins are all declared
+## SC-KING-011 — season durations derive from the active preset
+
+- **Given** the time-machine cockpit (preset official or beta)
+- **When** the panel labels are built
+- **Then** the season length reads the active preset: official = 3 weeks
+  (config `weeks` matches D55), beta shows the real compressed plan in
+  hours (e.g. `52h (compressed beta)`), never a hardcoded text
+- **And** the setup phase line carries the rhythm phrase (cycles from the
+  crons, or the beta plan `T0+4h… T0+52h`)
+
+## SC-KING-012 — the time-machine pin auto-refreshes
+
+- **Given** the pinned time-machine panel
+- **When** the refresher pass runs every 5 minutes
+- **Then** only the machine pin is ensured, and a pass with an unchanged
+  fingerprint makes no Discord API call

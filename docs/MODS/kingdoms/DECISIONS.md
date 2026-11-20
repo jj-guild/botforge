@@ -855,3 +855,19 @@ Seigneurs global devient le leaderboard Scriptorium). Les images
   PR = un déploiement = validation terrain ; le socle commun
   (Journal + Snapshot + Rollback) est construit avec la première
   PR du salon Royaume.
+
+## D76 — Machine à temps : durée de saison et rafraîchissement
+
+- **La durée de la saison est lue du preset actif** : saison officielle =
+  **3 semaines** (cohérent avec D55, tentative de Saison II) ; la beta
+  affiche **son vrai plan compressé** (p. ex. `52h (beta compressée)`),
+  jamais un texte en dur — l'ancien libellé « 4 semaines » est abrogé.
+- Le panneau ⏱️ épinglé affiche une nouvelle ligne **📏 Durée de la
+  saison** et une phrase de rythme en préparation (crons du preset, ou
+  plan beta `T0+4h… T0+52h`).
+- Le panneau **s'actualise automatiquement toutes les 5 minutes**
+  (empreinte : zéro appel Discord si rien n'a changé) ;
+  `BOTFORGE_KINGDOM_MACHINE_REFRESHER` permet de couper la boucle.
+- **À trancher par le game designer** : la beta vise « 3 jours » dans
+  l'intention mais le plan réel actuel couvre 52h compressées — un preset
+  3 jours peut être ajouté (donnée, pas de code) si souhaité.
