@@ -941,3 +941,22 @@ Seigneurs global devient le leaderboard Scriptorium). Les images
 - T2 à venir : la validation admin de l'entrée (draft starter via le
   seam distribution), le réveil des salons masqués, le lien coquille ↔
   royaume moteur de saison, « Joindre un Royaume ».
+
+## D81 — La validation devient des cartes souveraines (validation-cards-v1)
+
+- **Décision Drasah 20/11** (sur maquette validée de son ancien
+  panel:royaumes) : un royaume validé s'affiche comme une CARTE avec
+  son nom, son Roi 👑 résolu automatiquement, et les deux actions
+  admin de l'ancien système — 🗑️ Supprimer et 👑 Changer le roi.
+- L'admin est SOUVERAIN : le changement de roi ne demande PAS
+  l'accord du joueur désigné ; l'admin choisit un membre actif dans
+  un menu, la couronne change à l'instant (seam `reassign_king`).
+- Supprimer garde sa carte de confirmation rouge (anti-clic raté),
+  puis le seam `delete_kingdom` (suppression dure : le royaume quitte
+  la saison, ses joueurs redeviennent libres).
+- Chaque action re-rend le pin sur place ; les ids sont
+  restart-proof (`kingdom:valid:del:<id>` / `kingdom:valid:crown:<id>`),
+  surfaces déclarées `validation:confirm` + `validation:crown`.
+- NB moteur : le bouton mort du 20/11 venait d'un agrégateur
+  `distributor_dynamic_items` inexistant importé par setup_hook
+  (SC-KING-017) — réparer les agrégateurs AVANT d'ajouter des vues.

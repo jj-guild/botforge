@@ -133,3 +133,34 @@ scenario here has no test.
   🚪 Quitter
 - **And** the Roi's « Voir la saison » records a join request — an
   admin accepts the season entry (the draft starter, tranche 2)
+
+## SC-KING-017 — the boot registers every button (setup-hook aggregate)
+
+- **Given** a cog package whose setup_hook imports one or more
+  dynamic-item aggregators (`distributor_dynamic_items`,
+  `machine_dynamic_items`, `camp_dynamic_items`, `realm_dynamic_items`,
+  …)
+- **When** the bot boots
+- **Then** the aggregator import MUST NOT fail silently: an ImportError
+  kills setup_hook BEFORE the registration loop, EVERY panel renders
+  but NO button answers (the whole mod is dead in one line)
+- **And** every aggregator mirrors its file's DynamicItem classes: a
+  class added without its aggregator entry is a dead button at boot
+- **And** a boot-simulation test imports each aggregator and calls
+  `add_dynamic_items` over it — the count is asserted (never zero)
+
+## SC-KING-018 — the validation dashboard is admin-sovereign cards
+
+- **Given** the pinned 📜 validation dashboard of the realms salon
+- **When** kingdoms exist in the season engine
+- **Then** every APPROVED kingdom renders as ONE card (name + the
+  KING-role lord's display name, resolved through the profile seam)
+  with two admin actions: 🗑️ Supprimer and 👑 Changer le roi
+- **And** Supprimer opens a red confirm card, then rides the
+  `delete_kingdom` seam (hard delete, players go free)
+- **And** Changer le roi opens the members designation menu — the
+  admin's pick applies AT ONCE via `reassign_king`, NO player consent
+  (Drasah 20/11: the admin is sovereign; the new king must be an
+  ACTIVE member of the kingdom)
+- **And** both ops re-render the pinned dashboard in place; the 5-min
+  refresher stays the backstop
