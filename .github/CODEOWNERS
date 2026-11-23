@@ -11,7 +11,7 @@
 # require a maintainer review; each mod is delegated by one explicit line
 # (added in the mod's own bootstrap PR).
 /docs/MODS/kingdoms/     @Drasahaoe
-/docs/MODS/pong/         @Ozimendias
+/docs/MODS/pong/         @Ozymendias
 # Default mod ownership: unclaimed mods belong to Merlin (the platform
 # developer) until a designer claims them — the roster 'owns' column and
 # this file stay in sync (contributors-sync ownership check)
