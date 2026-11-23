@@ -73,9 +73,9 @@ outcome, including:
   push landed — verify it with `git cherry origin/main <branch>` (every
   line must be `-`) or an empty `git diff origin/main <branch>`, then the
   branch owner may delete the branch (`git push origin --delete
-  <branch>`). **Never** delete an integration branch `vibe/<alias>/main`,
-  not even after its content reached `main` (CONVENTIONS.md, *Branch
-  lifecycle*).
+  <branch>`) (CONVENTIONS.md, *Branch lifecycle*). There are no per-user
+  integration branches (`vibe/<alias>/main`) to preserve — do not
+  create them.
 
 **Never** answer the human with a result inferred from elapsed time
 ("8 minutes passed, it must be done") — only a terminal status read

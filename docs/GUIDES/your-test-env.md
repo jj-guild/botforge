@@ -48,7 +48,7 @@ rollbacks — is your agent's job, gated by the authority matrix
 - **Prod is never a personal env** — production runs released versions
   only, deployed by ops.
 - One env per contributor, named after your roster alias
-  (lowercase, e.g. `drasah`), matching your branch prefix and your
+  (lowercase, e.g. `drasah`), matching your roster alias and your
   GitHub environment.
 - If your bot misbehaves: `/restart drasah` from your session fixes most
   things; `/logs drasah` shows your agent why. No human ever needs a

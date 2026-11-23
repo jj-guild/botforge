@@ -29,15 +29,13 @@ This page is your boot checklist; the repo is the source of truth.
   with `main` (architecture, conventions, existing patterns), assume
   `main` is right; follow it. Disagreements are raised to the human
   (and, for core/platform, to the maintainer) — never worked around.
-- **Personal mod (sandbox mode): stack commits on the integration
-  branch, not PRs.** Push commits directly to the user's integration
-  branch `vibe/<alias>/main`. Exactly one draft **mod PR**
-  (`vibe/<alias>/main` → `main`) stays open for the whole life of the
-  mod — opened on the first push, re-running the required checks on
-  every push (that is its purpose: continuous validation of the
-  stack). Never stack additional PRs on top of it. It goes ready and
-  merges only when the owner judges the mod complete; until then it
-  stays in draft, whatever the state of its checks.
+- **Personal mod (sandbox mode): feature branch + PR.** Work on
+  `vibe/<slug>`, open the PR to `main` as a draft on the first push,
+  and push commits to the branch — the PR's checks re-run on every push
+  (that is its purpose: continuous validation). Deploy to your personal
+  env with `/deploy` on the PR. The PR goes ready and merges only when
+  the owner judges the work complete; until then it stays in draft,
+  whatever the state of its checks.
 - **Platform work (pro mode): collaborative feature branches → PRs to
   `main`.** One branch per subject (`vibe/<slug>`), PRs reviewed by
   CODEOWNERS, normal reviewable size — several PRs may be open in
@@ -72,10 +70,9 @@ This page is your boot checklist; the repo is the source of truth.
 ## Session flow
 
 ```
-read docs → issue → integration branch vibe/<alias>/main (personal
-mod: stack commits; mod PR opened on first push) or vibe/<slug> (pro
-mode) → implement + tests → lint/typecheck/test/docs → push (mod PR
-checks re-run) → report + CI watch
+read docs → issue → feature branch vibe/<slug> → draft PR to main →
+implement + tests → lint/typecheck/test/docs → push (PR checks re-run)
+→ /deploy on the personal env → report + CI watch
 ```
 
 Report the PR URL, what was verified, and what remains. If the

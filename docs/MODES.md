@@ -16,7 +16,7 @@ Nobody downgrades their gate without an explicit human decision.
 | | Sandbox (vibe coder) | Pro (dev/ops) | Cowboy (maintainer only) |
 |---|---|---|---|
 | Who | Any rostered user, default for `vibe` role | `dev` and `ops` roles | `maintainers` only |
-| Branch | `vibe/<alias>/main` — everything stacks there | Feature branch per subject → PR to `main` | `main` directly |
+| Branch | Feature branch `vibe/<slug>` → PR to `main` (like everyone) | Feature branch per subject → PR to `main` | `main` directly |
 | Review gate | Another user validates the PR to `main` (standard path) | CODEOWNERS review, PR per feature | **Explicit human validation per operation** |
 | Environment | Personal env only (their bot, their Discord, their runner) | Personal env → shared validation env (`test`) → `prod` | Any |
 | Deploy | Own env; `test` via the standard path | Own env, `test`, `prod` (ops check) | Any, including prod |
@@ -27,28 +27,21 @@ Nobody downgrades their gate without an explicit human decision.
 One branch, one PR, one environment, zero friction with the rest of
 the org:
 
-- **Branch**: everything lands on `vibe/<alias>/main`. No per-feature
-  branches, no PRs between own branches — commits stack directly on
-  the integration branch for the whole life of a personal mod. The
-  sync workflow keeps `main` merged in; the owner resolves conflicts.
-- **Mod PR**: while a personal mod is being built, exactly **one PR
-  from `vibe/<alias>/main` to `main`** stays open — the *mod PR*. It
-  is opened as a draft as soon as work starts, it runs the required
-  checks on every push (that is its purpose: continuous validation of
-  the stack), and it is never merged until the mod is complete. Do
-  not stack additional PRs on top of it — that adds workflow friction
-  for no benefit; push to the integration branch instead.
+- **Branch**: a feature branch `vibe/<slug>` per subject, with a PR to
+  `main` opened as a draft when work starts. There is no per-user
+  integration branch. Commits push to the feature branch and the PR's
+  checks re-run on every push (that is its purpose: continuous
+  validation of the stack).
 - **Environment**: the personal environment (bot + Discord server +
-  runner labeled `env-<alias>`) deploys from the user branch; anything
-  can be tested there, it is a sandbox.
-- **Promotion**: when the owner judges the mod complete, they mark the
-  mod PR ready — validated by another user (the standard path,
-  [CONVENTIONS.md](CONVENTIONS.md) — *Integration branches*). Until
-  then, nothing leaves the sandbox.
-- **Agents do the work**: the human describes, the agent stacks commits
-  on the user branch, pushes so the mod PR's checks re-run, deploys on
-  the personal env and reports. The human validates in **their**
-  Discord.
+  runner labeled `env-<alias>`) is the default target of `/deploy` on
+  the PR; anything can be tested there, it is a sandbox.
+- **Promotion**: when the owner judges the work complete, they mark the
+  PR ready — validated per CODEOWNERS (the standard path,
+  [CONVENTIONS.md](CONVENTIONS.md) — *Branch lifecycle*). Until then,
+  nothing leaves the sandbox.
+- **Agents do the work**: the human describes, the agent pushes commits
+  on the feature branch so the PR's checks re-run, deploys on the
+  personal env and reports. The human validates in **their** Discord.
 
 ## Pro mode (dev/ops) — PR per feature
 
@@ -57,8 +50,8 @@ the org:
   review. Platform work is collaborative: several PRs may be open in
   parallel — the sequential-chain constraint applies nowhere.
 - **Personal environment** still exists for work in progress (dev in
-  progress, risky experiments) — same mapping `vibe/<alias>/main` ↔
-  `env-<alias>`.
+  progress, risky experiments) — named after the alias, runner label
+  `env-<alias>`, fed by `/deploy` on a PR.
 - **The ladder**: personal env → shared validation env (`test`) →
   `prod` (ops/owner check). A change is never promoted skipping a rung.
 - Long evolutions follow this mode even for maintainers; only
@@ -106,7 +99,7 @@ the org:
 
 | Environment | Branch | Runner label | Discord | Who deploys |
 |---|---|---|---|---|
-| `env-<alias>` (personal) | `vibe/<alias>/main` | `<alias>` (shared hosting ok) | Personal server, personal bot | The owner (any mode) |
+| `env-<alias>` (personal) | feature-branch PR (`/deploy`) | `<alias>` (shared hosting ok) | Personal server, personal bot | The owner (any mode) |
 | `test` (shared validation) | `deploy/test` | `test` | Shared validation server | Any user, via `/deploy test` |
 | `prod` | `deploy/prod` | `prod` (own hosting) | Production server | Release pipeline + ops approval |
 
@@ -125,8 +118,9 @@ remains an isolated sandbox (own compose project, own data volumes).
    follows `main` and steers the human toward best practices;
    disagreement is raised to the human (and the maintainer for
    core/platform), never worked around.
-3. Sandbox mode never touches `main`, never opens PRs to `main`
-   uninvited, never deploys outside the personal env.
+3. Sandbox mode never pushes to `main` directly, never deploys outside
+   the personal env; its PRs to `main` stay in draft until the owner
+   marks them ready.
 4. Pro mode never force-pushes, never bypasses a ruleset. No mode
    ever force-pushes `main` — history is never rewritten.
 5. Cowboy mode requires a fresh, explicit human validation **per
