@@ -48,10 +48,8 @@ design en attente du mod owner.
   l'emplacement A** (le gagnant monte en B, le perdant descend en A).
 - **D-PONG-008 (ex Q-PONG-004)** — **Nombre de tables = nombre de
   joueurs / 2**, provisionné à l'ouverture de saison (ou de ronde,
-  à trancher en implémentation). Cas **impair** : deux pistes posées
-  par le mod owner — un joueur **remplaçant** qui entre/sort du
-  tournoi selon l'effectif, ou une gestion des tables **à 3+** ; la
-  question reste ouverte (Q-PONG-002 ci-dessous).
+  à trancher en implémentation). Cas **impair** : résolu par la
+  chaîne de parité (D-PONG-019).
 - **D-PONG-009 (ex Q-PONG-005)** — **Drafts externes via aoe2cm** :
   la draft map utilise un simple preset (le map pool) ; la draft civ
   est **dérivée d'un `base_preset`** (génération automatisée — le mod
@@ -69,7 +67,7 @@ design en attente du mod owner.
   distincts :
   1. **Forfait** — un joueur se déclare forfait sur sa table : il
      entre un résultat « perdu », l'autre joueur valide, terminé
-     (format dédié `/add_result --forfeit` ou équivalent, pas de
+     (format dédié `/add_result --forfait` ou équivalent, pas de
      manipulation du score) ;
   2. **Pas de rdv trouvé** — deux joueurs qui n'arrivent pas à
      planifier : **trancher est réservé à l'admin** de la compétition
@@ -78,11 +76,74 @@ design en attente du mod owner.
      autorisé : l'abandon donne les victoires restantes à
      l'adversaire (score complété, déclaration normale + validation).
 
+## 2026-11-23 — Session 2 : flexibilité, seed humain, flux de joueurs
+
+- **D-PONG-012 — Format v1 conservé + alternance + grâce ±3 jours.**
+  La v1 reste le format hebdo (1 match par semaine, fenêtre
+  mercredi → mardi), avec deux assouplissements :
+  1. **`move_policy` alterne par saison** : S1 `classic`, S2
+     `semi_blocked`, S3 `classic`… (paramètre de saison automatique,
+     D-PONG-006 conserve sa définition) ;
+  2. **Grâce ±3 jours** par ronde : le calcul de l'appariement
+     suivant se fait sur les résultats **validés à l'échéance** de la
+     ronde ; un match joué pendant la grâce compte immédiatement
+     (récap), et son mouvement s'applique à la ronde suivante
+     (**mouvement différé d'une ronde**).
+- **D-PONG-013 — Seed humain à l'inscription.** En plus du seed
+  ladder (formule D-PONG-007), le joueur **autodéclare son niveau**
+  (« je joue au-dessus/en-dessous de mon Elo ladder ») ; l'admin peut
+  **corriger le seed d'un joueur** avant le tirage et entre les
+  rondes (console, constat → décision humaine). Les seeds ne sont
+  jamais affichés aux joueurs.
+- **D-PONG-014 — Pas de classement global ; récap personnel.**
+  Objectif du tournoi : un cadre compétitif **sans pression**
+  (pas de cash prize, focus progression et bienveillance). Aucun
+  classement, leaderboard, podium ou score comparatif n'est publié.
+  Chaque joueur reçoit un **récap personnel par saison, en DM
+  privé uniquement** (sets disputés, W/L, adversaires, parcours de
+  tables). Un joueur qui quitte en cours de saison : récap clôturé
+  sur ses sets disputés, aucune remise en ordre. L'ordre des tables
+  existe uniquement comme **donnée interne** (`chain_position`) :
+  noms de tables neutres, messages joueurs sans mention de
+  montée/descente ou de position.
+- **D-PONG-015 — Inscription tardive = file d'attente.** La fenêtre
+  d'inscription se ferme à l'ouverture de la ronde 1. Après : le
+  candidat passe en **`waitlist`** ( état mod). Le **binomage** des
+  candidats en duos d'insertion est décidé **par l'admin** (pas de
+  tolérance automatique de niveau).
+- **D-PONG-016 — Tables « et-demi » théorisées (insertion locale).**
+  Un duo validé entre comme **table pleine insérée dans la chaîne
+  entre les deux tables qui encadrent son niveau** : le bot propose
+  le point d'insertion, l'admin valide. L'insertion est possible **en
+  cours de ronde** (le duo joue entre lui dès la ronde en cours,
+  zéro impact sur les autres tables) et prend effet dans la chaîne de
+  mouvement à la ronde suivante, avec **renumérotation
+  automatique**. Effet strictement local : les voisins changent
+  seulement de voisin de mouvement, aucun re-shuffle global.
+- **D-PONG-017 — Départs.** Notification → le bot dresse le dossier
+  (dates, matchs joués, match en attente — constat) → validation
+  admin en console. Les **résultats déjà validés restent acquis**
+  pour les adversaires. La place du partant est proposée **d'abord à
+  la file d'attente**, au **créneau exact** dans la chaîne (pas de
+  re-shuffle). Un départ pendant une ronde avec match en attente =
+  **forfait (défaite)** pour le partant, l'adversaire valide et avance
+  (D-PONG-011 cas 1).
+- **D-PONG-018 — Match volontaire (absorption d'orphelin).** Sans
+  remplaçant, le bot propose aux **joueurs voisins (par proximité)**
+  un match d'appoint **volontaire** contre l'orphelin. Ce match est
+  **récap-only : aucun mouvement** dans les deux sens (les
+  mouvements ne se calculent que sur les matchs de table,
+  RG-TAB-1).
+- **D-PONG-019 — Chaîne de parité (résout Q-PONG-002).** L'effectif
+  jouable n'est **jamais impair** ; chaque niveau absorbe le suivant :
+  1. les arrivées sont **binômées** (un isolé attend un partenaire) ;
+  2. un départ est **comblé au créneau exact** par la file ;
+  3. sans remplaçant : **match volontaire récap-only** (D-PONG-018) ;
+  4. dernier recours : le **fusible** — un volontaire de la file
+     d'abord, l'admin ensuite.
+  Les tables à 3 sont exclues. La question Q-PONG-002 est close.
+
 ## Ouvertes
 
-- **Q-PONG-002 (issue de l'impair, ex Q-PONG-004)** — effectif joueur
-  impair : joueur remplaçant qui entre/sort du tournoi selon
-  l'effectif, ou tables à 3 (ou plus) avec une politique de
-  mouvement adaptée ? À trancher avant l'ouverture de la première
-  saison (l'ouverture de saison avec effectif impair reste bloquée
-  jusqu'à décision).
+- (aucune — les questions Q-PONG-001..007 sont résolues par
+  D-PONG-005..011, Q-PONG-002 par D-PONG-019.)

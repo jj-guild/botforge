@@ -5,7 +5,7 @@ Règles du jeu appliquées par le mod, extraites de
 pour être automatisable : testable ou vérifiable par le bot. Les zones à
 discrétion admin sont classées **constat, décision humaine** : le bot
 rapporte les faits (tags, timestamps, états), l'admin tranche. Les
-décisions priment ([DECISIONS.md](DECISIONS.md), D-PONG-001..011).
+décisions priment ([DECISIONS.md](DECISIONS.md), D-PONG-001..019).
 
 ## RG-REG — Enregistrement et inscription
 
@@ -32,33 +32,51 @@ discord, et le déclaratif « 2 disponibilités de 3h consécutives dans
 être notifiée à un admin : le mod fournit `/update_entry` qui tagge les
 admins.
 
-- **Seed elo** : à l'inscription, le joueur reçoit son **seed elo** =
-  `(2 × Elo actuel + Elo max) / 3` (D-PONG-007), base de classement
-  des tables de la ronde 1.
+- **Seed ladder** : à l'inscription, le joueur reçoit son **seed elo** =
+  `(2 × Elo actuel + Elo max) / 3` (D-PONG-007).
+- **Seed humain (D-PONG-013)** : le joueur **autodéclare son niveau**
+  (« au-dessus / en-dessous de mon Elo ladder », champ libre court) ;
+  l'admin peut **corriger le seed** d'un joueur avant le tirage et
+  entre les rondes (console, confirm card, log). Le seed sert
+  uniquement au placement initial, **jamais affiché** aux joueurs.
 - **Refus d'inscription** : décision humaine (le mod n'accepte ni ne
   refuse seul), il expose le bouton admin correspondant.
+
+### RG-REG-3 — Inscription tardive : file d'attente
+
+La fenêtre d'inscription se **ferme à l'ouverture de la ronde 1**
+(D-PONG-015). Un `/register_to_tournament` après clôture est refusé
+et propose l'ajout à la **file d'attente** (état joueur `waitlist`,
+rôle `pong_waitlist`). Le **binomage** de deux candidats de la file
+en duo d'insertion est une décision admin (aucune tolérance
+automatique de niveau) ; le duo entre par RG-TAB-3.
 
 ## RG-STRUC — Structure de saison
 
 ### RG-STRUC-1 — Rondes et tables
 
-Une saison compte `rounds_per_season` rondes (config — **4 par saison**,
-D-PONG-005), chacune d'une durée `round_window` (défaut 7 jours,
-mercredi → mardi). Le BO est `bo_format` (défaut BO5). **Le nombre de
-tables = nombre d'inscrits / 2** (D-PONG-008) ; à l'ouverture de
-saison, un effectif impair bloque la génération tant que la question
-Q-PONG-002 (remplaçant vs tables à 3) n'est pas tranchée. À
-l'ouverture d'une ronde, le mod crée le salon de chaque table, y
-annonce joueurs A/B, preset et ronde ; à la clôture, il ferme les
-salons (config `close_tables`).
+Une saison compte `rounds_per_season` rondes (**4**, D-PONG-005),
+chacune d'une fenêtre `round_window` (défaut 7 jours, mercredi →
+mardi) **plus une grâce de `round_grace_days` (3) jours**
+(D-PONG-012). Le BO est `bo_format` (défaut BO5). **Le nombre de
+tables = nombre de joueurs / 2** ; l'effectif jouable n'est jamais
+impair (chaîne de parité, RG-TAB-4). À l'ouverture d'une ronde, le
+mod crée le salon de chaque table, y annonce joueurs A/B, preset et
+ronde ; à la clôture, il ferme les salons (config `close_tables`).
+
+- **Grâce ±3 jours (D-PONG-012)** : l'appariement de la ronde
+  suivante se calcule sur les résultats **validés à l'échéance** de
+  la ronde. Un match joué pendant la grâce compte immédiatement dans
+  le récap du joueur (RG-RES-3) ; son **mouvement est différé d'une
+  ronde** et s'applique au calcul suivant.
 
 ### RG-STRUC-2 — Attribution A/B et rôles de draft
 
 Sur chaque table, **le joueur A est le joueur assis au premier
 emplacement de la table**, le joueur B l'autre (D-PONG-007) :
 
-- **ronde 1** : A = le mieux classé des deux au seed elo
-  (`(2 × Elo actuel + Elo max) / 3` à l'inscription) ;
+- **ronde 1** : A = le mieux classé des deux au seed (ladder + humain,
+  D-PONG-007/013) ;
 - **rondes suivantes** : **le joueur qui monte prend l'emplacement B,
   le joueur qui descend prend l'emplacement A** (issu du calcul de
   mouvement RG-TAB) ;
@@ -70,8 +88,9 @@ emplacement de la table**, le joueur B l'autre (D-PONG-007) :
 ### RG-TAB-1 — Mouvements
 
 Règle centrale (« comme au ping pong ») : **le gagnant monte, le
-perdant descend**. Deux politiques de mouvement, paramètre de saison
-`move_policy` (D-PONG-006) :
+perdant descend**. Deux politiques de mouvement (D-PONG-006), qui
+**alternent par saison** (D-PONG-012 : S1 `classic`, S2
+`semi_blocked`, S3 `classic`…) :
 
 1. **`classic`** — le gagnant monte d'une table, le perdant descend
    d'une table ;
@@ -82,10 +101,12 @@ perdant descend**. Deux politiques de mouvement, paramètre de saison
    va en T2, gagnant de T2 va en T1, perdant de T2 reste en T2).
    Aucun mouvement inter-groupe.
 
-Les mouvements sont calculés après validation du résultat (RG-RES-3),
-au moment de l'ouverture de la ronde suivante, et déterminent les
-emplacements A/B de la ronde suivante (le montant prend B, le
-descendant prend A).
+Les mouvements se calculent **sur les matchs de table uniquement**
+(un match d'appoint volontaire ne déplace personne, RG-TAB-4), au
+moment de l'ouverture de la ronde suivante, sur les résultats
+validés à l'échéance (grâce : mouvement différé d'une ronde,
+D-PONG-012). Ils déterminent les emplacements A/B de la ronde
+suivante (le montant prend B, le descendant prend A).
 
 ### RG-TAB-2 — Blocage de tables
 
@@ -95,6 +116,55 @@ la table cible est bloquée pour son sens de mouvement ; en
 `semi_blocked`, le blocage d'une table verrouille son groupe.
 Opération console admin (`mod="pong"`), confirm card, log de cette
 mutation, appliquée au calcul de la ronde suivante.
+
+### RG-TAB-3 — Tables « et-demi » : insertion d'un duo (D-PONG-016)
+
+La chaîne des tables est une **liste ordonnée interne**
+(`chain_position`, index numérique acceptant les intercalaires type
+7.5). L'entrée d'un duo validé (RG-REG-3) procède ainsi :
+
+1. le bot **propose le point d'insertion** : entre les deux tables
+   qui encadrent le niveau du duo (seed humain de chaque entrant) ;
+2. l'**admin valide** l'insertion en console (confirm card, log) ;
+3. **en cours de ronde** : le duo joue son match entre lui dès la
+   ronde en cours, **zéro impact sur les autres tables** ;
+4. à la ronde suivante, la table prend sa place dans la chaîne de
+   mouvement et la **renumérotation est automatique**. Seuls les
+   voisins directs changent d'interlocuteur de mouvement ; aucun
+   re-shuffle global.
+
+### RG-TAB-4 — Chaîne de parité et matchs d'appoint (D-PONG-019)
+
+L'effectif jouable n'est **jamais impair** ; chaque niveau absorbe le
+suivant :
+
+1. **Arrivées binômées** : un candidat seul de la file d'attente
+   attend un partenaire (RG-REG-3) ;
+2. **Départ comblé au créneau exact** : le premier volontaire de la
+   file prend la place du partant dans la chaîne (pas de re-shuffle,
+   résultats acquis conservés — D-PONG-017) ;
+3. **Sans remplaçant — match volontaire** : le bot propose aux joueurs
+   des **tables voisines (par proximité)** un match d'appoint contre
+   l'orphelin, volontariat, **récap-only** : le résultat compte dans
+   les récaps des deux joueurs mais **aucun mouvement** ne s'applique
+   (RG-TAB-1) ;
+4. **Dernier recours — fusible** : un volontaire de la file, puis
+   l'admin.
+
+Un départ pendant une ronde avec match en attente = **forfait
+(défaite)** pour le partant (D-PONG-011 cas 1 / D-PONG-017).
+
+### RG-TAB-5 — Ordre invisible des tables (D-PONG-014)
+
+L'ordre des tables existe **dans les données, pas dans l'affichage** :
+
+- `chain_position` est interne (consommée par le calcul de mouvement
+  RG-TAB-1 et l'insertion RG-TAB-3, visible console admin uniquement) ;
+- les salons de tables portent des **noms neutres** (pas de numéro
+  d'ordre ni de niveau) ; le salon annonces liste les tables dans un
+  ordre non significatif (alphabétique) ;
+- les messages joueurs ne mentionnent **jamais** de position ni de
+  montée/descente : « cette semaine, ton match : vs Y ».
 
 ## RG-CDRAFT — Civilisations
 
@@ -186,12 +256,20 @@ admin**. Sans validation, le résultat reste `PENDING` jusqu'à un
 traitement admin (constat, décision humaine). Après contestation :
 l'admin tranche via la console (valider/invalider/redéclarer).
 
-### RG-RES-3 — Enregistrement et mouvement
+### RG-RES-3 — Enregistrement, récap personnel, mouvement
 
-Un résultat **validé** (ou arbitré admin) est persisté et déclenche
-RG-TAB-1 (mouvement de table), puis la mise à jour des vues de ronde
-et du classement global. Idempotent : re-valider un résultat déjà
-validé est sans effet (log seulement).
+Un résultat **validé** (ou arbitré admin) est persisté, déclenche
+RG-TAB-1 (mouvement de table — différé d'une ronde si joué pendant
+la grâce, D-PONG-012) et alimente le **récap personnel** du joueur
+(D-PONG-014) :
+
+- **pas de classement global** : aucun tableau comparatif publié ;
+- chaque joueur reçoit son récap (sets disputés, W/L, adversaires,
+  parcours de tables) **en DM privé**, à la demande et en fin de
+  saison ; un joueur qui quitte reçoit le récap clôturé de ses sets
+  disputés (D-PONG-017) ;
+- idempotent : re-valider un résultat déjà validé est sans effet (log
+  seulement).
 
 ## RG-REC — Records et casting
 
@@ -232,6 +310,16 @@ Le mod fournit les documents et boutons, la décision reste humaine :
   in-game, liste des bugs de génération de la référence), annonce de
   table ; mêmes civs/couleurs après restart (à rafraîchir dans le
   panneau).
+- **Correction de seed (D-PONG-013)** : l'admin ajuste le seed d'un
+  joueur (avant le tirage, entre les rondes) ; confirm card + log ;
+  le seed corrigé sert au placement suivant, jamais affiché.
+- **Validation d'insertion (D-PONG-016)** : le bot propose le point
+  d'insertion d'un duo, l'admin valide en console (confirm card) ;
+  **binomage de la file (D-PONG-015)** : décision admin duo par duo.
+- **Départ d'un joueur (D-PONG-017)** : le bot dresse le dossier
+  (matchs joués/en attente, dates) ; l'admin valide le retrait en
+  console ; place proposée à la file, sinon match volontaire
+  (RG-TAB-4).
 - **Patch en cours de tournoi** : choix ancien/nouveau patch →
   paramètre de saison modifiable par la console (config
   `patch_policy`, défaut « admin decides »).

@@ -31,22 +31,25 @@ Implémenté par `test_SC_PONG_001_register_with_consent` dans
 
 - **Given** un utilisateur non enregistré
 - **When** il fait `/register` et refuse la privacy gate
-- **Then** rien n'est persisté (aucune collection Mongo/Redis touche)
+- **Then** rien n'est persisté (aucune collection Mongo/Redis touchée)
 
 Implémenté par `test_SC_PONG_002_register_no_consent`.
 
-### SC-PONG-003 — inscription à la saison et seed elo
+### SC-PONG-003 — inscription à la saison : seed ladder + seed humain
 
 - **Given** un joueur enregistré (`pong_candidate`), la saison active
 - **When** il fait `/register_to_tournament` (« AOE Pong S<N> »)
-  avec `rules: True` et le déclaratif de disponibilités
+  avec `rules: True`, le déclaratif de disponibilités **et son
+  autodéclaration de niveau** (seed humain)
 - **Then** il est inscrit (trace de la version du règlement acceptée),
-  reçoit `pong_player`, et son **seed elo** est calculé à l'inscription :
-  `(2 × Elo actuel + Elo max) / 3` (D-PONG-007)
+  reçoit `pong_player`, son **seed elo** est calculé :
+  `(2 × Elo actuel + Elo max) / 3` (D-PONG-007) et son seed humain
+  enregistré (D-PONG-013) — aucun des deux n'est jamais affiché au
+  joueur
 
 Implémenté par `test_SC_PONG_003_register_to_tournament`.
 
-### SC-PONG-004 — ouverture de ronde : salons + ban civs
+### SC-PONG-004 — ouverture de ronde : salons neutres + ban civs
 
 - **Given** une saison active avec N tables et des joueurs répartis
 - **When** un admin lance l'op console d'ouverture de ronde
@@ -55,7 +58,9 @@ Implémenté par `test_SC_PONG_003_register_to_tournament`.
   civs automatisé laisse exactement `civs_remaining` (15) civs
   disponibles **par table** (seed persistée ronde+table pour audit),
   le preset draft-civ par table est affiché, et l'annonce du mercredi
-  est postée
+  est postée — **noms de tables neutres, aucune position ni
+  montée/descente dans les messages joueurs, liste non ordonnée**
+  (D-PONG-014, RG-TAB-5)
 
 Implémenté par `test_SC_PONG_004_open_round`.
 
@@ -105,8 +110,9 @@ Implémenté par `test_SC_PONG_008_bad_score`.
 
 - **Given** un résultat `PENDING`
 - **When** le second joueur fait `/validate_score`
-- **Then** le résultat passe `VALIDATED`, les vues ronde/classement se
-  mettent à jour, et la re-validation est idempotente (log sans effet)
+- **Then** le résultat passe `VALIDATED`, les vues de ronde se mettent
+  à jour, le récap personnel du joueur est alimenté (D-PONG-014), et
+  la re-validation est idempotente (log sans effet)
 - **When** le second joueur fait `/contest_score`
 - **Then** le résultat passe `CONTESTED` et les admins sont taggés
 
@@ -175,8 +181,8 @@ Implémenté par `test_SC_PONG_015_selfheal`.
   est forfait sur la discussion de sa table
 - **When** il saisit le résultat forfait (« perdu ») et que le joueur B
   valide (`/validate_score`)
-- **Then** le résultat est validé** sans manipulation du score** (D-PONG-011
-  cas 1), le mouvement RG-TAB s'applique
+- **Then** le résultat est **validé sans manipulation du score**
+  (D-PONG-011 cas 1), le mouvement RG-TAB s'applique
 
 Implémenté par `test_SC_PONG_016_forfeit`.
 
@@ -203,8 +209,79 @@ Implémenté par `test_SC_PONG_017_mid_set_abandon`.
 
 Implémenté par `test_SC_PONG_018_admin_no_schedule`.
 
+### SC-PONG-019 — inscription après clôture : file d'attente
+
+- **Given** la ronde 1 ouverte (fenêtre d'inscription fermée), un
+  joueur `pong_candidate` qui fait `/register_to_tournament`
+- **When** la commande est traitée
+- **Then** l'inscription à la saison est refusée avec un message
+  explicite, le joueur passe en **`waitlist`** (rôle `pong_waitlist`,
+  D-PONG-015) ; aucun joueur actif n'est modifié
+
+Implémenté par `test_SC_PONG_019_waitlist`.
+
+### SC-PONG-020 — insertion d'un duo (« table et-demi », D-PONG-016)
+
+- **Given** deux candidats en `waitlist` binômés par l'admin, une
+  ronde en cours, une chaîne de tables avec `chain_position`
+- **When** le bot propose le point d'insertion et l'admin le valide
+  (console, confirm card)
+- **Then** le duo joue **entre lui** dès la ronde en cours (aucune
+  autre table modifiée), la table prend sa place dans la chaîne à la
+  ronde suivante avec **renumérotation automatique** ; seuls les
+  voisins directs changent d'interlocuteur de mouvement ; l'opération
+  est loggée
+
+Implémenté par `test_SC_PONG_020_duo_insertion`.
+
+### SC-PONG-021 — départ comblé au créneau exact (D-PONG-017)
+
+- **Given** un joueur qui quitte entre deux rondes, un volontaire en
+  `waitlist`, des résultats déjà validés impliquant le partant
+- **When** l'admin valide le retrait en console (dossier de faits)
+- **Then** le partant passe `departed` (récap clôturé), **ses
+  résultats validés restent acquis** aux adversaires, et le
+  volontaire prend **le créneau exact** dans la chaîne (`replacing`) :
+  aucune autre table n'est re-shufflée
+
+Implémenté par `test_SC_PONG_021_departure_slot_swap`.
+
+### SC-PONG-022 — orphelin sans remplaçant : match volontaire recap-only (D-PONG-018/019)
+
+- **Given** un départ validé sans volontaire en `waitlist`, les
+  joueurs des tables voisines
+- **When** le bot propose un match d'appoint et un voisin accepte
+- **Then** le match est joué et validé **récap-only** : il compte
+  dans les récaps des deux joueurs (DM privé), **aucun mouvement de
+  table** ne s'applique (RG-TAB-1) ; l'orphelin reste à sa place ;
+  dernier recours fusible : volontaire de la file, puis admin
+
+Implémenté par `test_SC_PONG_022_orphan_volunteer_match`.
+
+### SC-PONG-023 — grâce ±3 jours : mouvement différé (D-PONG-012)
+
+- **Given** une ronde à l'échéance avec un résultat `PENDING`, et la
+  ronde suivante appariée sur les résultats validés
+- **When** le match est joué pendant la grâce et validé
+- **Then** le récap des joueurs est mis à jour immédiatement, et le
+  mouvement de table s'applique **à la ronde suivante** (différé
+  d'une ronde : le montant/descendant bouge un cycle plus tard)
+
+Implémenté par `test_SC_PONG_023_grace_deferred_move`.
+
+### SC-PONG-024 — récap personnel en DM, aucun classement global (D-PONG-014)
+
+- **Given** une saison avec des résultats validés, un joueur qui
+  demande son récap (ou la fin de saison)
+- **When** le récap est généré
+- **Then** le joueur reçoit **en DM privé** ses sets disputés, W/L,
+  adversaires et parcours de tables ; **aucun classement global,
+  tableau comparatif ou podium n'est publié** sur le serveur ; les
+  tables sont listées sans ordre de niveau (RG-TAB-5)
+
+Implémenté par `test_SC_PONG_024_personal_recap_dm`.
+
 > Les records auto (D-PONG-010, phase 2 — provider de zip sans spoiler)
-> et la question de l'effectif impair (Q-PONG-002) arrivent avec leur
-> scénario dans le PR qui les implémente. Chaque nouvelle règle
-> automatisable ajoutée à RULES.md arrive avec son scénario dans le
-> même PR.
+> arrivent avec leur scénario dans le PR qui les implémente. Chaque
+> nouvelle règle automatisable ajoutée à RULES.md arrive avec son
+> scénario dans le même PR.
