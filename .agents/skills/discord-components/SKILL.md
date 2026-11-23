@@ -22,6 +22,7 @@ description: Build Discord components the right way (discord.py / Components V2)
 - **A silent failure with empty logs = the dispatch never happened.** The interaction never reached a callback: a modal nobody submits, an id nobody matches, a component nobody registered. Grep the dispatch path (modal `on_submit`, template vs custom_id, view registration) before suspecting backend services.
 - **A modal submit refreshes the message it came from.** Capture `interaction.message` at the click, then `origin.edit(view=fresh)` at submit. Never send a second copy of the view; if the origin is gone, answer with plain text. Never edit a Components V2 message through `content` (50035) — edit through a View/container.
 - **Never open a modal from a modal** — chain through an ephemeral message.
+- **A `-#` subtext line eats its leading whitespace.** Discord's renderer trims the gap after the `-#` prefix \u2014 regular spaces AND `\u00a0` nbsp both vanish (a line that reads aligned in the source renders flush left), and an inline-code span of spaces shows as a visible boxed token, not an indent (owner 2026-11-23, the match cards' elo lines). The invisible fixed-width decal is the braille blank `\u2800`: a glyph, not whitespace, never trimmed, renders as a blank. Repeated per column: `"\u2800" * n`.
 
 ## Patterns to follow
 
