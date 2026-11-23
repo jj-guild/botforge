@@ -1,3 +1,4 @@
+
 # Pong — Mod Environment
 
 Environnement et configuration du mod. Les valeurs par défaut viennent du
@@ -9,7 +10,7 @@ règlement S5 ([REFERENCE.md](REFERENCE.md)) ; tout ce qui est marqué
 | Key | Type | Description |
 | --- | ---- | ----------- |
 | `enabled` | bool | Mod activé ou non |
-| `game_key` | str | Clé du juego → jeu lié — défaut `aoe2` (mod game-bound ; le mod lit le catalogue via le core, ne le possède pas) |
+| `game_key` | str | Clé du jeu lié — défaut `aoe2` (mod game-bound ; le mod lit le catalogue via le core, ne le possède pas) |
 | `season_name` | str | Nom de la saison active (forme « AOE Pong S<N> ») |
 | `rounds_per_season` | int | Nombre de rondes par saison — **À DÉFINIR** (source S5 contradictoire : 4 vs 6, DECISIONS) |
 | `round_window` | dict | Fenêtre de ronde — défaut mercredi → mardi (7 jours), timer de clôture auto |
