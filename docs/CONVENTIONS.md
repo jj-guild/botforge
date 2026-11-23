@@ -246,41 +246,29 @@ contributors-sync workflow enforces this automatically
 that drift from the roster `owns` column are flagged for the
 maintainers.
 
-## Integration branches (per user)
+## Branch lifecycle (feature branches)
 
-Every rostered user owns **one integration branch**: `vibe/<alias>/main`
-(alias = the roster alias, e.g. `vibe/drasah/main`). It is the base of
-all that user's PRs and the only place their work consolidates.
+All work — personal mods and platform work alike — happens on **feature
+branches** `vibe/<short-slug>` (one branch per coherent subject), each
+opened as a PR to `main`. There are **no per-user integration branches**
+(`vibe/<alias>/main` is gone; do not create one).
 
-- **One branch per user, not per mod.** All of a user's work lands on
-  their integration branch, whatever mod it belongs to.
-- **Personal mods stack there directly.** While building a personal
-  mod, the agent pushes commits straight to the integration branch —
-  no stacked PRs on top of it. A single **mod PR** from
-  `vibe/<alias>/main` to `main` is opened as a draft at the start of
-  the work, re-runs the required checks on every push (its purpose is
-  continuous validation), and is merged only when the mod is
-  complete.
-- **The user decides maturity.** The integration branch is never
-  auto-merged to `main`; its owner decides when the accumulated work is
-  ready and marks the mod PR ready themselves.
-- **Sync, never auto-resolve.** The sync workflow merges `main` into
-each `vibe/*/main` branch automatically; conflicts are resolved by
-  the branch owner, never automatically.
-
-- **Never delete a user branch** (`vibe/<alias>/main`), not even
-  after a cowboy direct-push of its content to `main`: the
-  integration branch is the user's long-lived home (their mod lives
-  there even when `main` deliberately excludes it). Only feature
-  branches and branches whose code is fully on `main` or their
-  integration branch may be deleted.
+- **One branch per subject, not per user.** A personal mod is developed
+  on its own feature branch(es) with normal PRs to `main` — opened as a
+  draft while work is in progress, going ready when the owner judges the
+  work complete.
+- **The personal environment follows PRs.** A rostered user's personal
+  env (named after them, e.g. alias `Drasah` → env `drasah`) is the
+  default target of their `/deploy` on a PR: the PR image is pinned on
+  `deploy/<env>` and deployed. No autopin.
+- **Never delete a branch whose code is not fully on `main`.** Verify
+  with `git cherry origin/main <branch>` (every line `-`) or an empty
+  `git diff origin/main <branch>` first; the branch owner deletes
+  (`git push origin --delete <branch>`), never automatically.
 - **An agent acts for its own human only (non-overridable).** A
-  session acting for user X never touches another user's integration
-  branch, mod code or environment — `vibe/<Y>/main` belongs to Y's
-  sessions, whoever they are. Each user's agent (their own sessions)
-  has full rights on that user's branches; every other session has
-  none. Cross-user collaboration happens through PRs and issues,
-  never through a direct push to the other's branch.
+  session acting for user X never touches another user's branches, mod
+  code or environment. Cross-user collaboration happens through PRs
+  and issues, never through a direct push to the other's branch.
 
 ### Cowboy mode (maintainer-only, per-push confirmation)
 
@@ -302,9 +290,8 @@ exceptions, no confirmation can unlock it.
 
 ### Standard path (every user)
 
-1. Consolidate on your integration branch `vibe/<alias>/main`
-   (personal mod: one draft mod PR to `main` stays open, checks run
-   on every push, merge only when the mod is complete).
+1. Work on a feature branch `vibe/<slug>`; the PR to `main` is opened
+   as a draft while work is in progress (see *Branch lifecycle*).
 2. Test it on your personal environment.
 3. Mark the PR ready for review when the work is complete — validated
    by **another user**.
@@ -315,17 +302,17 @@ exceptions, no confirmation can unlock it.
 ### Roles and their environments
 
 Every rostered user has a **personal environment** (their bot, their
-Discord, their runner) mapped to their user branch `vibe/<alias>/main`;
+Discord, their runner), named after their roster alias (e.g. `Drasah` →
+env `drasah`) and fed by `/deploy` on their PRs;
 every role also has access to the **shared validation environment**
 (test) and **prod** (ops/owner check). What differs per role is the
 scope of what they may do:
 
-- **Vibe coder (novice)** — sandboxed by design. They live entirely
-  on their user branch + personal environment: a sandbox where they
-  test freely and do everything through agents (personal mods stack
-  commits on their integration branch — see *Integration branches*
-  above). Promoting to `main` follows the standard path above (PR
-  validated by another user).
+- **Vibe coder (novice)** — sandboxed by design. They work on feature
+  branches + their personal environment: a sandbox where they test
+  freely and do everything through agents (personal mods are normal
+  feature-branch PRs — see *Branch lifecycle* above). Promoting to
+  `main` follows the standard path above (PR validated per CODEOWNERS).
 - **Dev / ops** — same personal environment for work in progress
   (mapped to their user branch), plus **feature branches per subject**
   with collaborative PRs. They test on their personal env, then on
@@ -396,7 +383,8 @@ needs, trunk-based style:
   time — `main` stays always deployable; no release branch to
   backport or stabilize.
 - **Pre-integration (validate several PRs together before merging
-  them one by one)**: a **throwaway integration branch** — merge the
+  them one by one)**: a **throwaway validation branch** (a temporary
+  branch — there are no per-user integration branches) — merge the
   candidate PRs locally, deploy it to the test environment, validate,
   then delete it. It is ephemeral and never merged to `main`.
 
