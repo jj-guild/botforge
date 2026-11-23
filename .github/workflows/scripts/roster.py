@@ -14,7 +14,7 @@ Capabilities (from the authority matrix):
   env-reset    -> ops (any env) or the env's own owner (self reset only)
   deploy       -> requestor rostered (vibe or better); never prod-like
   env-control  -> ops (any env) or dev (test only)
-  env-logs    -> ops (any env) or dev (test only)
+  env-logs    -> ops (any env); any rostered contributor (vibe+) on shared test, read-only
   db-dump     -> ops
   release      -> dev or platform
   rollback     -> ops
@@ -36,7 +36,7 @@ CAPABILITY_RULES: dict[str, dict] = {
                "usage": "/deploy [env] — build the PR image and pin it on deploy/<env> (default test). Never prod-like envs."},
     "env-control": {"roles": ["ops", "dev", "mod", "vibe"], "own_env_roles": ["vibe", "mod", "dev", "ops"], "shared_env_roles": ["dev", "ops"], "help": "start/stop/restart/status an env",
                     "usage": "/restart [env] — restart the env stack in place. Also /start /stop /status via env-control."},
-    "env-logs": {"roles": ["ops", "dev", "mod", "vibe"], "own_env_roles": ["vibe", "mod", "dev", "ops"], "shared_env_roles": ["dev", "ops"], "help": "read an env's logs",
+    "env-logs": {"roles": ["ops", "dev", "mod", "vibe"], "own_env_roles": ["vibe", "mod", "dev", "ops"], "shared_env_roles": ["vibe", "mod", "dev", "ops"], "help": "read an env's logs",
                  "usage": "/logs [env] [--service S] [--since 30m] [--from iso] [--to iso] [--tail N] — collect logs and post them back (read-only)."},
     "db-dump": {"roles": ["ops"], "help": "dump an env's databases",
                 "usage": "/dump-db [env] — mongodump + Redis snapshot, hosting archive + private artifact."},

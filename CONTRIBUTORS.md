@@ -97,7 +97,7 @@ the session checks its human's agent-scope before acting):
 | `/deploy [env]` — deploy a PR to a non-prod env | `vibe` (any contributor with a roster entry) — on their personal env by default, any non-prod env with the owner's turn | Never on prod-like envs; the requestor's roster entry must exist; the PR author's agent-scope must allow deploys |
 | `/restart`, `/status`, `/stop`, `/start` — control a running env (env-control workflow) | `vibe`+ on **their personal env**; `dev`+ on shared envs (`test`); `ops`+ anywhere; maintainers everywhere | Prod control additionally requires the GitHub environment approval |
 | `/clean-env [env] [--deep]` — clean an env runner's Docker residue (dangling images, stopped containers, build cache; never the running stack) | `vibe`+ on **their personal env**; `dev`+ on shared envs (`test`); `ops`+ anywhere; maintainers everywhere | Never on prod; `--deep` also drops unused volumes/images (referenced ones stay) |
-| `/logs [env] [--service S] [--since 30m] [--from iso] [--to iso] [--tail N]` — dump an env's logs (read-only) | `vibe`+ on **their personal env**; `dev`+ on shared envs (`test`); `ops`+ anywhere; maintainers everywhere | Read-only; posted back on the thread, full dump as a private artifact |
+| `/logs [env] [--service S] [--since 30m] [--from iso] [--to iso] [--tail N]` — dump an env's logs (read-only) | `vibe`+ on **their personal env and on shared `test`**; `ops`+ anywhere (prod stays ops-only) | Read-only; posted back on the thread, full dump as a private artifact |
 | `/dump-db [env]` — dump an env's databases | `ops` | mongodump + Redis snapshot; hosting archive + private artifact; also runs daily on cron (04:30 UTC) |
 | `/release` — tag and release | `dev` or `platform` | Released tags only; prod deployment stays a separate ops approval |
 | `/rollback <env>` — revert a pin | `ops` | Prod reverts go through the revert PR + environment gate |
@@ -119,7 +119,7 @@ plain language.**
 | Deploy on **my env** | `/deploy` | ✅ | ✅ | ✅ |
 | Deploy on **shared** `test` | `/deploy test` | ❌ | ✅ | ✅ |
 | Logs of **my env** | `/logs <my-env>` | ✅ | ✅ | ✅ |
-| Logs of **shared** `test` | `/logs test` | ❌ | ✅ | ✅ |
+| Logs of **shared** `test` | `/logs test` | ✅ | ✅ | ✅ |
 | Restart/status **my env** | `/restart <my-env>` | ✅ | ✅ | ✅ |
 | Restart/status **shared** `test` | `/restart test` | ❌ | ✅ | ✅ |
 | Anything on **someone else's env** | — | ❌ | ops+ | ✅ |
@@ -134,7 +134,8 @@ you ask, it posts, the gate checks *your* roster rights. Concretely,
 per role:
 
 - **vibe-coders** — your agent may comment `/deploy` (your personal env
-  by default), `/logs <your-env>`, `/restart|/status|/start|/stop
+  by default), `/logs <your-env>` and `/logs test` (shared test logs are
+  read-only for every rostered contributor), `/restart|/status|/start|/stop
   <your-env>` on your own environment, identified by your roster
   alias. No need to ask anyone or post anything yourself.
 - **devs / ops** — everything above, **plus** the same commands on the

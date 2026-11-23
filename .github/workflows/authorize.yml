@@ -7,7 +7,7 @@ name: Authorize PR command
 #
 # Keywords and their capability (see the authority matrix):
 #   /deploy [env]     -> deploy      (any rostered vibe+; never prod-like)
-#   /logs [env] ...   -> env-logs    (ops; dev on test)
+#   /logs [env] ...   -> env-logs    (ops anywhere; any rostered contributor (vibe+) on shared test, read-only)
 #   /dump-db [env]    -> db-dump     (ops)
 #   /env <cmd> <env>  -> env-control  (ops; dev on test)
 #   /release          -> release      (dev/platform)
