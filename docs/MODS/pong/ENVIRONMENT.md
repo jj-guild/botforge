@@ -24,7 +24,7 @@ règlement S5 ([REFERENCE.md](REFERENCE.md)) et des décisions
 | `table_naming` | enum | **Noms neutres (D-PONG-014)** : les salons de tables ne portent ni numéro d'ordre ni niveau — défaut `neutral_random` ; `chain_position` interne, jamais affichée |
 | `waitlist_admin_pairing` | bool | Le binomage de la file d'attente en duos d'insertion est décidé par l'admin, duo par duo (D-PONG-015) — défaut vrai (pas de tolérance automatique) |
 | `orphan_match` | enum | Match d'appoint volontaire contre un orphelin sans remplaçant : `recap_only` (défaut, D-PONG-018) — aucun mouvement de table, proposé aux voisins par proximité ; fusible en dernier recours : volontaire de la file, puis admin (D-PONG-019) |
-| `recap_delivery` | enum | Récap personnel par saison (sets, W/L, adversaires, parcours de tables) — **`dm_private`** (défaut, D-PONG-014) : DM privé uniquement, aucune vue comparative publiée |
+| `recap_delivery` | dict | Récap personnel par saison (sets, W/L, adversaires, parcours de tables) — **`on_request: ephemeral`** (réponse de `/recap` visible uniquement du demandeur, D-PONG-014) et **`season_close: dm`** (récap final en DM privé à la clôture). Aucune vue comparative publiée |
 | `draft_map_preset` | url | Preset aoe2cm du map pool de la saison (S5 : https://aoe2cm.net/preset/pGWoJ) |
 | `civ_draft_base_preset` | url | `base_preset` aoe2cm duquel le mod **dérive** le preset draft-civ de chaque table (D-PONG-009 ; générateur Python du mod owner, source aoe2cm : SiegeEngineers/aoe2cm2) |
 | `map_pool` | ref | Référence au pool de maps de saison du core (`GameDataService`) — jamais une liste en dur dans le mod |
@@ -64,7 +64,7 @@ rôles par des clés logiques. Le core les provisionne via
 | Clé | Nom | Groupe | Kind | Accès |
 | --- | --------------- | ------ | ---- | ----- |
 | `pong:announcements` | annonces-pong | ladder | text | joueurs (lecture), admins (post) ; liste des tables **sans ordre de niveau** (D-PONG-014) |
-| `pong:bot-commands` | bot-commands | ladder | text | players (commandes) |
+| `pong:bot-commands` | bot-commands | ladder | text | players (commandes, dont `/recap` en réponse ephemeral) |
 | `pong:planning` | planification | ladder | forum (1 topic par match) | players |
 | `pong:records` | records | ladder | text | players, casters |
 | `pong:casting` | casting | ladder | text | public read |
@@ -89,5 +89,6 @@ map pool (référence core), presets (map + `base_preset` civs),
 `bo_format`, `rounds_per_season` (4), `round_grace_days` (3),
 `move_policy` résolu par `move_policy_schedule: alternate`
 (S1 classic, S2 semi_blocked, S3 classic…, D-PONG-012), politique
-de parité (`waitlist_admin_pairing`, `orphan_match`),
-`recap_delivery`, politiques (`open_stream`, `patch_policy`).
+de parité (`waitlist_admin_pairing`, `orphan_match`), `recap_delivery`
+(`on_request: ephemeral`, `season_close: dm`), politiques
+(`open_stream`, `patch_policy`).

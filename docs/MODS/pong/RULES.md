@@ -264,10 +264,11 @@ la grâce, D-PONG-012) et alimente le **récap personnel** du joueur
 (D-PONG-014) :
 
 - **pas de classement global** : aucun tableau comparatif publié ;
-- chaque joueur reçoit son récap (sets disputés, W/L, adversaires,
-  parcours de tables) **en DM privé**, à la demande et en fin de
-  saison ; un joueur qui quitte reçoit le récap clôturé de ses sets
-  disputés (D-PONG-017) ;
+- **`/recap` (réponse `ephemeral`** — visible uniquement du
+  demandeur) : sets disputés, W/L, adversaires, parcours de tables ;
+- **à la clôture de la saison**, le récap final complet est envoyé
+  **en DM privé** ; un joueur qui quitte reçoit le récap clôturé de
+  ses sets disputés (D-PONG-017) ;
 - idempotent : re-valider un résultat déjà validé est sans effet (log
   seulement).
 

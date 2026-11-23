@@ -99,13 +99,15 @@ design en attente du mod owner.
   Objectif du tournoi : un cadre compétitif **sans pression**
   (pas de cash prize, focus progression et bienveillance). Aucun
   classement, leaderboard, podium ou score comparatif n'est publié.
-  Chaque joueur reçoit un **récap personnel par saison, en DM
-  privé uniquement** (sets disputés, W/L, adversaires, parcours de
-  tables). Un joueur qui quitte en cours de saison : récap clôturé
-  sur ses sets disputés, aucune remise en ordre. L'ordre des tables
-  existe uniquement comme **donnée interne** (`chain_position`) :
-  noms de tables neutres, messages joueurs sans mention de
-  montée/descente ou de position.
+  Chaque joueur accède à son **récap personnel par saison** (sets
+  disputés, W/L, adversaires, parcours de tables) : **à la demande,
+  via une réponse `ephemeral` de la commande `/recap`** (visible
+  uniquement du demandeur), et **en DM privé à la clôture de la
+  saison** (récap final). Un joueur qui quitte en cours de saison :
+  récap clôturé sur ses sets disputés, aucune remise en ordre.
+  L'ordre des tables existe uniquement comme **donnée interne**
+  (`chain_position`) : noms de tables neutres, messages joueurs sans
+  mention de montée/descente ou de position.
 - **D-PONG-015 — Inscription tardive = file d'attente.** La fenêtre
   d'inscription se ferme à l'ouverture de la ronde 1. Après : le
   candidat passe en **`waitlist`** ( état mod). Le **binomage** des

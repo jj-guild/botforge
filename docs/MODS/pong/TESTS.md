@@ -252,9 +252,9 @@ Implémenté par `test_SC_PONG_021_departure_slot_swap`.
   joueurs des tables voisines
 - **When** le bot propose un match d'appoint et un voisin accepte
 - **Then** le match est joué et validé **récap-only** : il compte
-  dans les récaps des deux joueurs (DM privé), **aucun mouvement de
-  table** ne s'applique (RG-TAB-1) ; l'orphelin reste à sa place ;
-  dernier recours fusible : volontaire de la file, puis admin
+  dans les récaps des deux joueurs, **aucun mouvement de table** ne
+  s'applique (RG-TAB-1) ; l'orphelin reste à sa place ; dernier
+  recours fusible : volontaire de la file, puis admin
 
 Implémenté par `test_SC_PONG_022_orphan_volunteer_match`.
 
@@ -269,17 +269,19 @@ Implémenté par `test_SC_PONG_022_orphan_volunteer_match`.
 
 Implémenté par `test_SC_PONG_023_grace_deferred_move`.
 
-### SC-PONG-024 — récap personnel en DM, aucun classement global (D-PONG-014)
+### SC-PONG-024 — récap personnel : ephemeral à la demande, DM à la clôture (D-PONG-014)
 
-- **Given** une saison avec des résultats validés, un joueur qui
-  demande son récap (ou la fin de saison)
-- **When** le récap est généré
-- **Then** le joueur reçoit **en DM privé** ses sets disputés, W/L,
-  adversaires et parcours de tables ; **aucun classement global,
-  tableau comparatif ou podium n'est publié** sur le serveur ; les
-  tables sont listées sans ordre de niveau (RG-TAB-5)
+- **Given** une saison avec des résultats validés, un joueur
+- **When** le joueur fait `/recap` (à tout moment de la saison)
+- **Then** la réponse est **`ephemeral`** : visible uniquement de lui
+  (sets disputés, W/L, adversaires, parcours de tables)
+- **When** la saison se clôture (ou le joueur quitte, D-PONG-017)
+- **Then** le récap final complet est envoyé **en DM privé** ; **aucun
+  classement global, tableau comparatif ou podium n'est publié** sur
+  le serveur ; les tables sont listées sans ordre de niveau
+  (RG-TAB-5)
 
-Implémenté par `test_SC_PONG_024_personal_recap_dm`.
+Implémenté par `test_SC_PONG_024_personal_recap`.
 
 > Les records auto (D-PONG-010, phase 2 — provider de zip sans spoiler)
 > arrivent avec leur scénario dans le PR qui les implémente. Chaque
