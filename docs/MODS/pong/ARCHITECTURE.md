@@ -3,7 +3,7 @@
 Target architecture of the mod's Discord space: categories, channels,
 permissions, the per-round lifecycle, and usage rules. Complements
 [ENVIRONMENT.md](ENVIRONMENT.md) (config keys) and
-[RULES.md](RULES.md) (business rules). Decisions D-PONG-006..025
+[RULES.md](RULES.md) (business rules). Decisions D-PONG-006..035
 ([DECISIONS.md](DECISIONS.md)) apply.
 
 ## 1. Principle: mod-scoped categories, provisioned by the core
@@ -16,39 +16,65 @@ permissions, the per-round lifecycle, and usage rules. Complements
   name. The mod never depends on physical naming: renaming a channel
   breaks nothing.
 - Table channels are **generated per round** (the `open_round`
-  operation) and **archived** at round close; never statically
-  declared.
+  operation), moved **read-only** to the archive category at round
+  close and purged after `archive_retention_days` (D-PONG-031);
+  never statically declared.
 
 ## 2. Map
 
 ```
 🏓 AOE PONG (ladder group — visible to players)       [pong:ladder]
-├─ 📣 annonces-pong        pong:announcements   (text)
-├─ 🤖 bot-commands         pong:bot-commands    (text)
-├─ 📅 planification        pong:planning        (text, 1 thread/match)
-├─ 🎞️ records              pong:records         (text)
-└─ 🎙️ casting              pong:casting         (text, public read)
+├─ 📖 tutoriel              pong:tutorial          (text, pinned how-to)
+├─ 🏓 register-as-a-player  pong:register_player  (text, /register front door)
+├─ 🎙️ register-as-a-caster  pong:register_caster  (text, caster signup)
+├─ 📣 annonces-pong         pong:announcements    (text, news)
+├─ 🔊 cast-studio           pong:cast_studio      (voice, optional, D-PONG-034)
+├─ ℹ️ infos                  pong:infos            (text, wizard-edited)
+├─ 🖼️ media-kit             pong:media_kit        (text)
+├─ ✍️ register              pong:enroll           (text, enrollment, players write)
+├─ 🤖 bot-commands          pong:bot-commands     (text, all commands)
+├─ 📅 match-scheduled        pong:schedule         (text, bot-managed board)
+├─ 🎞️ records               pong:records         (text, bot-authored result cards)
+└─ 🎙️ casting               pong:casting          (text, public read)
 
-🏓 TABLES (tables group — generated per round)       [pong:tables]
+🏓 TABLES (tables groups — generated per round)     [pong:tables]
 └─ table-<slug>            pong:table_<slug>    (text, 1 per table)
                                                      neutral slugs, unique
-                                                     per round, recycled
+                                                     per round; a 51st table
+                                                     channel opens a new group
+                                                     (tables-2, tables-3, ...;
+                                                     50 channels per category
+                                                     cap, D-PONG-030)
+
+🗄️ ARCHIVE (read-only, purge after retention)       [pong:archive]
+└─ round-closed table channels                       (D-PONG-031)
 
 ⚙️ PONG-STAFF (admin group — admin_only)             [pong:admin]
-├─ ⚙️ paramètres           pong:settings        (lifecycle panel)
-└─ 📜 journal-admin        pong:admin_log       (time-stamped ops)
+├─ 💬 admins               pong:admins           (text, staff discussion)
+├─ 📋 roster                pong:roster           (text, roster-export destination)
+├─ ⚙️ paramètres            pong:settings        (lifecycle panel)
+└─ 📜 journal-admin         pong:admin_log       (time-stamped ops)
 ```
 
 ## 3. Permission matrix
 
 | Channel | Candidate | Waitlist | Player | Caster | Admin | off-server |
 | --- | --- | --- | --- | --- | --- | --- |
+| `tutoriel` | read | read | read | read | write | no |
+| `register-as-a-player` | cmd + post | read | read | read | write | no |
+| `register-as-a-caster` | cmd + post | read | read | read | write | no |
 | `annonces-pong` | read | read | read | read | write | no |
 | `bot-commands` | `/register` cmd | waitlist-enroll cmd | all cmds | — | all cmds | no |
-| `planning` | no | no | read + start thread | read | write | no |
-| `records` | no | no | read + post | read/post | write | no |
+| `infos` | read | read | read | read | write | no |
+| `media-kit` | read | read | read | read | write | no |
+| `register` | write | write | write | read | write | no |
+| `match-scheduled` | read | read | read | read | write (bot writes) | no |
+| `records` | read | read | read | read | read (bot writes) | no |
 | `casting` | read | read | read | write | write | read (everyone) |
+| `cast-studio` | no | no | connect | connect | connect | no |
 | `table_<slug>` | no | no unless in the table | the table's players | read/write | write | no |
+| `admins` | no | no | no | no | write | no |
+| `roster` | no | no | no | no | read | no |
 | `paramètres` | no | no | no | no | write | no |
 | `journal-admin` | no | no | no | no | read | no |
 
@@ -64,21 +90,30 @@ resynchronises permissions at every round (open/close).
    (±3-day grace: D-PONG-012, deferred movement for late finishers).
    Round 1 pairs seed-adjacent: 1v2, 3v4, and so on (D-PONG-020).
 2. `table-<slug>` channels created in the tables group (slug drawn
-   from the `neutral_random` pool, unordered, D-PONG-014) + pinned
-   panel: players A/B (A = first slot, host of both drafts), the
-   draft-civ preset, reminders (3 bans = 1 category, neutral map =
-   last picked, loser picks the next one), deadline = window end +
-   grace.
+   from the `neutral_random` pool, unordered, D-PONG-014) with the
+   pinned **welcome panel** (D-PONG-035): both players tagged by
+   Discord id, the handbook link, the season map preset link, the
+   table's generated civ preset link (D-PONG-009), the round end
+   date (window + grace), the command list with an example each
+   (`/update_date`, `/add_result`, `/validate_score`,
+   `/contest_score`), the admin role tag to call for help, a
+   kindness reminder (D-PONG-014), and the panel facts (player A =
+   first slot, host of both drafts; 3 bans = 1 category; neutral
+   map = last picked, loser picks the next one).
 3. Permissions sync: only the table's two players + admins.
-4. Planning thread created in `pong:planning`:
-   `Round <n> — <slug>: <NickA> vs <NickB>`.
+4. A line created for the table on the round's pinned schedule
+   board in `pong:schedule` (one board message per round, one
+   line per table; the date is filled in by `/update_date`,
+   D-PONG-032).
 5. Announcement in `annonces-pong`: the table list **without any
    level order**, deadlines, usage reminder. No mention of moves up
    or down (RG-TAB-5).
 
 ### During the round
 
-- Players schedule in their thread, play, declare
+- Players agree on a slot in their table channel and publish it
+  with `/update_date` (their line on the round's schedule board
+  updates, D-PONG-032), then play, declare
   (`/add_result` on the table channel) and validate
   (`/validate_score`) or contest (`/contest_score`, tags an
   admin).
@@ -91,11 +126,14 @@ resynchronises permissions at every round (open/close).
 
 1. `PENDING` results listed in an arbitration thread (never
    log-only); admin win/loose if needed (D-PONG-011).
-2. `table_<slug>` channels **archived** (closed + moved to a
-   core-provisioned archive category, not deleted: history is part
-   of the fact thread).
+2. `table_<slug>` channels moved **read-only** to the archive
+   category (`pong:archive`, D-PONG-031): history stays
+   consultable, grace-window validations keep working there; the
+   purge job deletes them after `archive_retention_days`
+   (default 14), and the pass report lists the purged channels
+   (never log-only).
 3. Matches played inside the grace window (±3 days) keep being
-   validated in the archived threads; the recap updates at once,
+   validated in the archived read-only channels; the recap updates at once,
    the movement applies at the next pairing computation.
 
 ### Self-heal (boot + periodic)
@@ -114,20 +152,38 @@ resynchronises permissions at every round (open/close).
   (declare/validate/contest also work on the table channel).
   Sensitive command replies are **ephemeral**: notices, recap,
   registration status.
-- **`planning`**: one thread per match and per round; scheduling
-  exchanges stay inside it (no mandatory DM); the thread is locked
-  at round close.
+- **`schedule` (match-scheduled)**: the bot-managed per-round
+  schedule board (D-PONG-032). One pinned message per round, one
+  line per table (players + date, written by `/update_date`);
+  read-only for members, write bot + admins; the negotiation
+  happens in the table channel; T-48h before the deadline the bot
+  posts a reminder in the table channel when no date is set.
+  (Supersedes the per-match planning thread.)
 - **`table_<slug>`**: the match workspace; automated table
-  messages (panel, broadcasts). The channel name discloses no level.
+  messages (pinned welcome panel per D-PONG-035, broadcasts). The
+  channel name discloses no level.
 - **`casting`**: free stream announcements (open stream, D-PONG-002
   REFERENCE), at the caster-player's hand; the bot does not inspect
   titles.
-- **`records`**: the packs (phase 1: template + button; phase 2:
-  spoiler-free auto zip, D-PONG-010) per match, standardised
-  message format `AOE Pong Round X Table X: P1 || S || P2`.
+- **`records` (results)**: **bot-written** (D-PONG-033). On every
+  validation the bot posts the match's result card: map draft preset
+  link, the table's civ draft preset link, the score **inside a
+  spoiler**, and the records zip (phase 2, D-PONG-010; the
+  players' set link until then), keeping the standardised
+  `AOE Pong Round X Table X: P1 || S || P2` header. Members
+  read, never post; a pinned manual template stays as the
+  documented last-resort fallback.
+- **Tournament surface (D-PONG-030)**: `tutoriel` (pinned
+  registration how-to), the front doors `register-as-a-player` /
+  `register-as-a-caster`, `infos` (wizard-edited: audience, base
+  preset links, map pack, handbook), `media-kit` (logo,
+  graphics), `register` (players write: enrollment
+  confirmations), and the staff space `admins` (discussion) +
+  `roster` (roster-export destination, D-PONG-027).
 - **Roster export**: admin-initiated export of the enrolled roster
   (Discord nickname, in-game nickname, 1v1/max Elo, tournament
-  seed) into a chosen channel that MUST be staff-restricted (seeds
+  seed) into a staff-restricted channel (the provisioned default:
+  `pong:roster`) (seeds
   are never player-facing, D-PONG-027). Casters get read+write on
   the table channels (D-PONG-027) to organise casts.
 - **Player DMs**: only the closing recap (season close or departure,
