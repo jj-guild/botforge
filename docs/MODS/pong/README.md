@@ -210,6 +210,10 @@ D-PONG-023); every op is logged (confirm card + mutation log).
 
 ## Usage
 
+> Slice v1 (D-PONG-037): only `/home` and `/admin` are live — the mod
+> registers no command. The flows below land step by step, as declared
+> action buttons on the auto-generated menus first.
+
 ```text
 /home > Profil                # core identity link (steam <-> discord, AoE2 profile)
 pong:register (front door)    # player registration (consent required)

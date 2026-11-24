@@ -299,6 +299,20 @@ mod owner.
   pair review) applied to RULES/TESTS/README/ENVIRONMENT/ARCHITECTURE
   in the same PR.
 
+## 2026-11-24 — Session 7: slice v1 surface (owner direction)
+
+- **D-PONG-037 — The slice ships no mod slash commands.** Owner
+  direction 2026-11-24: the v1 slice exposes NO standalone command
+  (no `/pong`, no `/register_to_tournament`): the Discord surface is
+  the two core commands `/home` and `/admin` plus the platform's
+  auto-generated mod menus (`menu:mod:pong` / `menu:mod:pong:admin`,
+  botforge-services#377 — the developer declares nothing). The
+  declaration's `commands:` list stays empty. The future flows
+  (registration front door SC-PONG-001/002, enrollment, results) ride
+  declared action buttons on the generated menus (wired through
+  `wire_action` in the cog), not mod-declared top-level commands;
+  the exact enrollment surface (RG-REG-2) is settled at step 3.
+
 ## Open
 
 - (none — Q-PONG-001..007 are resolved by D-PONG-005..011,
