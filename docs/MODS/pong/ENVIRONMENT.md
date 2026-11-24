@@ -2,7 +2,7 @@
 
 The mod's environment and configuration. Defaults come from the S5
 rulebook ([REFERENCE.md](REFERENCE.md)) and the decisions
-([DECISIONS.md](DECISIONS.md), D-PONG-001..025).
+([DECISIONS.md](DECISIONS.md), D-PONG-001..035).
 
 ## Configuration
 
@@ -38,6 +38,10 @@ rulebook ([REFERENCE.md](REFERENCE.md)) and the decisions
 | `roster_export` | dict | Admin-initiated export of the enrolled roster (Discord nickname, in-game nickname, 1v1/max Elo, tournament seed); the target channel MUST be staff-restricted (seeds are never player-facing, D-PONG-027) |
 | `logo_url` | url | Tournament logo URL, cosmetic, editable after creation (D-PONG-028) |
 | `caster_table_access` | str | Caster access to table channels; default `read_write` (D-PONG-027) |
+| `archive_retention_days` | int | Days a round-closed table channel stays readable in the archive category before the purge job deletes it (D-PONG-031); default **14** |
+| `schedule_board` | dict | Bot-managed per-round schedule board in `pong:schedule` (D-PONG-032): `/update_date` (Discord timestamp) creates/updates the table's line in the pinned board message; read for everyone, write bot + admins; T-48h reminder in the table channel when no date is set |
+| `results_channel` | dict | `pong:records` is **bot-written** (D-PONG-033): a result card (map draft link, per-table civ draft link, score in a spoiler, records zip when available) is posted on every validation; members read only, pinned manual template as fallback |
+| `cast_studio` | dict | Optional `cast-studio` **voice** channel offered by the season-creation view, referenced by the events announcements; default **off** (D-PONG-034) |
 
 ## Player state (lifecycle)
 
@@ -67,6 +71,7 @@ platform category here.
 | `pong:ladder` | AOE Pong | no | `member`, `admin` |
 | `pong:tables` | AOE Pong — Tables | no | `member`, `admin` |
 | `pong:admin` | AOE Pong — Staff | yes | `admin` |
+| `pong:archive` | AOE Pong — Archive | no (read-only) | `member`, `admin` |
 
 ### Channels
 
@@ -74,10 +79,19 @@ platform category here.
 | --- | --------------- | ------ | ---- | ----- |
 | `pong:announcements` | annonces-pong | ladder | text | players (read), admins (post); table list **without any level order** (D-PONG-014) |
 | `pong:bot-commands` | bot-commands | ladder | text | players (commands, including `/recap` as an ephemeral reply) |
-| `pong:planning` | planification | ladder | text (one thread per match) | players |
-| `pong:records` | records | ladder | text | players, casters |
+| `pong:tutorial` | tutoriel | ladder | text | public read; pinned how-to (registration, enrollment, caster signup) (D-PONG-030) |
+| `pong:register_player` | register-as-a-player | ladder | text | public read; guided `/register` front door (D-PONG-030) |
+| `pong:register_caster` | register-as-a-caster | ladder | text | public read; caster signup, cumulable with the player role (D-PONG-027, US-043) |
+| `pong:infos` | infos | ladder | text | wizard-edited tournament info (audience, base preset links, map pack, handbook) (D-PONG-030) |
+| `pong:media_kit` | media-kit | ladder | text | logo and tournament graphics (D-PONG-028/030) |
+| `pong:enroll` | register | ladder | text | enrollment, players write (D-PONG-030) |
+| `pong:schedule` | match-scheduled | ladder | text (bot-managed board) | read for everyone, written by the bot (`/update_date`) and admins (D-PONG-032) |
+| `pong:cast_studio` | cast-studio | ladder | voice | optional cast voice channel, wizard **default off** (D-PONG-034) |
+| `pong:records` | records (results) | ladder | text | players, casters **read**; the bot posts the result card on validation (D-PONG-033) |
 | `pong:casting` | casting | ladder | text | public read |
-| `pong:table_<slug>` | table-<neutral name> | tables | text | the table's `member`s + admins (channels **generated** per round, neutral names with no level number; D-PONG-014/RG-TAB-5, created at open, closed/archived at close) |
+| `pong:table_<slug>` | table-<neutral name> | tables | text | the table's `member`s + admins (channels **generated** per round, neutral names with no level number; D-PONG-014/RG-TAB-5, created at open, moved read-only to `pong:archive` at close (D-PONG-031)) |
+| `pong:admins` | admins | admin | text | staff discussion space (D-PONG-030) |
+| `pong:roster` | roster | admin | text | staff-restricted; roster-export destination (D-PONG-027, SC-031) |
 
 ### Roles
 

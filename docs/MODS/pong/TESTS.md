@@ -202,7 +202,7 @@ Implemented by `test_SC_PONG_017_mid_set_abandon`.
 ### SC-PONG-018 — no date found: admin arbitration
 
 - **Given** a table with no possible scheduling at round close (no
-  result, empty planning thread)
+  result, no `/update_date` line on the round's schedule board (D-PONG-032))
 - **When** the closing pass lists the facts and the admin applies an
   admin win via the console
 - **Then** the admin result is persisted with the decision's author
@@ -374,6 +374,55 @@ Implemented by `test_SC_PONG_030_caster_table_access`.
   player-facing, D-PONG-013/014)
 
 Implemented by `test_SC_PONG_031_roster_export_staff_only`.
+
+### SC-PONG-032 — bot-managed schedule board (D-PONG-032)
+
+- **Given** an open round, a table channel with its two players, the
+  round's pinned board message in `pong:schedule`
+- **When** player A runs `/update_date` with a Discord timestamp
+- **Then** the table's board line (players + rendered timestamp) is
+  created or updated; a repeat run updates it in place; regular
+  members **cannot post** in the channel (bot and admins write); at
+  T-48h before the deadline a reminder is posted in the table channel
+  when no date is set
+
+Implemented by `test_SC_PONG_032_schedule_board`.
+
+### SC-PONG-033 — bot-authored result card on validation (D-PONG-033)
+
+- **Given** a match with a `PENDING` result on an open table
+- **When** the opponent validates (`/validate_score`)
+- **Then** the bot posts the result card in the results channel: map
+  draft preset link, the table's civ draft preset link, the score
+  **inside a spoiler**, and the records link (set link until the
+  phase-2 provider, D-PONG-010); members other than the bot cannot
+  write there; a pinned manual template remains the documented
+  fallback
+
+Implemented by `test_SC_PONG_033_result_card`.
+
+### SC-PONG-034 — optional cast voice channel (D-PONG-034)
+
+- **Given** the season-creation view
+- **When** the admin enables the cast studio
+- **Then** a `cast-studio` voice channel is provisioned (players and
+  casters connect) and the events announcements reference it; with
+  the default **off**, no voice channel is ever created and
+  announcements stay text-only
+
+Implemented by `test_SC_PONG_034_cast_studio`.
+
+### SC-PONG-035 — archive then purge of table channels (D-PONG-031)
+
+- **Given** a closed round with its table channels, the grace window
+- **When** the closing pass runs
+- **Then** the table channels move **read-only** to the archive
+  category, grace-window validations keep working there; when
+  `archive_retention_days` (default 14) elapse, the purge job
+  deletes them (the pass report lists the purged channels, never
+  log-only)
+
+Implemented by `test_SC_PONG_035_archive_retention`.
 
 > Auto records (D-PONG-010, phase 2, spoiler-free zip provider)
 > arrive with their scenario in the PR that implements them. Every

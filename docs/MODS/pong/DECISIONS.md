@@ -223,6 +223,67 @@ mod owner.
   by the admin. Same generation rules as the season presets
   (RG-CDRAFT-1).
 
+## 2026-11-24 — Session 5: tournament channel topology
+
+- **D-PONG-030 — Tournament channel layout (v1).** The
+  season-creation view (D-PONG-028) provisions the tournament's
+  category with the fixed channel set: **news** (the announcements
+  channel), **events** (the D-PONG-025 target), **infos**
+  (`pong:infos`, wizard-edited: audience, base preset links, map
+  pack, handbook link; Elo-restricted ranges are a v2 bracket/swiss
+  concern), **media-kit** (`pong:media_kit`: logo URL, tournament
+  graphics), **register** (`pong:enroll`: players write,
+  enrollment confirmations), **match-scheduled** (`pong:schedule`,
+  D-PONG-032), **results** (`pong:records`, D-PONG-033), **roster**
+  (`pong:roster`, staff-restricted, roster-export destination,
+  D-PONG-027) and the staff space (the admin category + a staff
+  discussion channel `pong:admins`). The registration front doors
+  stay mod-level: `pong:tutorial` (pinned how-to),
+  `pong:register_player` ("register-as-a-player") and
+  `pong:register_caster` ("register-as-a-caster"). Platform caps
+  drive the layout: **50 channels per category** (beyond that, table
+  groups split as `tables`, `tables-2`, `tables-3`, ...) and
+  **500 channels per guild** — the D-PONG-031 lifecycle keeps the
+  count sustainable.
+- **D-PONG-031 — Table-channel lifecycle: read-only archive, then
+  purge.** At round close the table channels move to the mod's
+  archive category **read-only** (history stays consultable,
+  grace-window validations keep working there, SC-014/023); a purge
+  job deletes archived channels older than `archive_retention_days`
+  (default **14**). At season close the tournament's fixed channels
+  enter the same flow. Validated over deletion: results already live
+  in the results channel, the archive only buys grace and history.
+- **D-PONG-032 — Match-scheduled is a bot-managed schedule board.**
+  `/update_date` (a Discord timestamp parameter) creates or updates
+  the table's line in the round's **pinned schedule board message** in
+  `pong:schedule` (one line per table: players + rendered
+  timestamp). Regular members **read only**; the bot and admins
+  write. Scheduling negotiation stays in the table channel (no
+  DMs). Anti-ghosting: T-48h before the deadline the bot posts a
+  reminder in the table channel when no date is set. This
+  supersedes the per-match planning thread (ARCHITECTURE §5).
+- **D-PONG-033 — The results channel is bot-written.** On every
+  validation (`/validate_score`, SC-009) the bot posts the match's
+  **result card** in `pong:records`: map draft preset link, the
+  table's civ draft preset link, the **score in a spoiler** and the
+  records zip (phase 2, D-PONG-010; until then, the players' set
+  link). Members read, never post; a pinned manual template stays
+  as the documented last-resort fallback (provider outage).
+- **D-PONG-034 — Optional cast voice channel (wizard, default
+  off).** The season-creation view offers a `cast-studio` voice
+  channel next to the caster-events choice; the events
+  announcements reference it. Default **off** (casters keep their
+  own platforms).
+- **D-PONG-035 — Table welcome panel.** Every table channel opens
+  with a pinned **welcome panel** containing: both players tagged by
+  Discord id, the handbook link, the season map preset link, the
+  table's generated civ preset link (D-PONG-009), the round end date
+  (window + grace), the command list with an example each
+  (`/update_date`, `/add_result`, `/validate_score`,
+  `/contest_score`), the admin role tag to call for help, and a
+  kindness reminder (fun-first, no-pressure frame, D-PONG-014). One
+  message, pinned, bot-edited on replacement/withdrawal.
+
 ## Open
 
 - (none — Q-PONG-001..007 are resolved by D-PONG-005..011,

@@ -18,8 +18,8 @@ Roles: **C**andidate, **W**aitlist, **P**layer, **K** (caster),
 | US-PONG-002 | C | enroll in the season by validating the rulebook (a traced version) and declare my availabilities | play the season having accepted known rules | RG-REG-2 |
 | US-PONG-003 | C | self-declare my level ("I play above/below my Elo") | be placed at my real height from round 1 | D-PONG-013, RG-REG-2 |
 | US-PONG-004 | P | receive my weekly match ("this week, vs Y") with no position and no move up/down displayed | play without ranking pressure | RG-TAB-5, D-PONG-014, SC-004 |
-| US-PONG-005 | P | have a dedicated table channel with both civ/map drafts ready and the full panel (A hosts, neutral map, 3 bans = 1 category) | know everything needed to play without rereading the rulebook | RG-CDRAFT-1, RG-MDRAFT-1/2, SC-004 |
-| US-PONG-006 | P | schedule my match in a dedicated thread (planning channel) | agree on a slot without DM ping-pong | ARCHITECTURE §5 |
+| | US-PONG-005 | P | have a dedicated table channel whose pinned welcome panel holds everything: both players tagged by Discord id, handbook and preset links, round end date, the command list with an example each, the admin role tag, and a kindness reminder | know everything needed to play without rereading the rulebook | RG-CDRAFT-1, RG-MDRAFT-1/2, D-PONG-035, SC-004 |
+| | US-PONG-006 | P | agree on a slot in my table channel and publish it with `/update_date` (Discord timestamp): the round's schedule board updates our line, read-only for everyone | agree on a slot without DM ping-pong | D-PONG-032, SC-032 |
 | US-PONG-007 | P | declare my result (`3-2`) on my table and have my opponent validate it | close the match with no admin intervention | RG-RES-1/2, SC-007/009 |
 | US-PONG-008 | P | contest a wrong result (`/contest_score`, tags an admin) | be protected against false declarations | RG-RES-2 |
 | US-PONG-009 | P | declare a forfeit (a "lost" result, no score manipulation) | cleanly give up an impossible week | D-PONG-011-1, SC-016 |
@@ -38,7 +38,9 @@ Roles: **C**andidate, **W**aitlist, **P**layer, **K** (caster),
 | US-PONG-021 | K | announce my cast (open stream, "AOE Pong" title) | cast freely | RG-REC-2 |
 | US-PONG-041 | K | plan a Discord event for the games I cast and get it announced automatically when it starts | get extra visibility without spamming by hand | D-PONG-025, SC-028/029 |
 | US-PONG-043 | K/P | register as a caster for a tournament, cumulable with my player role, and get the caster surface (records, casting, table channels) | cast the games I want without being a player | D-PONG-027, SC-030 |
-| US-PONG-022 | S/P | read the standardised records packs (`Round X Table X: P1 ‖ S ‖ P2` + zip) | review/arbitrate matches spoiler-free | RG-REC-1, D-PONG-010 |
+| | US-PONG-022 | S/P | read the standardised records packs (`Round X Table X: P1 ‖ S ‖ P2` + zip) | review/arbitrate matches spoiler-free | RG-REC-1, D-PONG-010 |
+| US-PONG-044 | P | see the round's schedule board, updated by the bot from both players' `/update_date`, and get a T-48h reminder in my table channel when no date is set | never ghost a match by accident | D-PONG-032, SC-032 |
+| US-PONG-045 | S | read every validated match's bot-authored result card in the results channel (map draft, civ draft, score in a spoiler, records link) | follow the tournament spoiler-free | D-PONG-033, SC-033 |
 
 ## Admin journey (facts stated, decision by a human)
 
@@ -58,7 +60,8 @@ Roles: **C**andidate, **W**aitlist, **P**layer, **K** (caster),
 | US-PONG-038 | A | withdraw a player from the season (console op `remove_player`) | handle contentious cases | D-PONG-023, SC-026 |
 | US-PONG-039 | A | be notified when a member leaves the server: automatic withdrawal from the active seasons, immediate forfeit, replacement attempt at the exact slot, profile kept | not manage silent walk-outs by hand | D-PONG-024, SC-027 |
 | US-PONG-040 | A | choose the caster-events announcement channel in the season-creation view: an existing channel, one to create, or off (feature disabled) | decide where event announcements land, per season | D-PONG-025, SC-029 |
-| US-PONG-042 | A | export the enrolled roster (Discord nickname, in-game nickname, 1v1/max Elo, tournament seed) into a staff-restricted channel | work from a full roster without exposing seeds to players | D-PONG-027, SC-031 |
+| | US-PONG-042 | A | export the enrolled roster (Discord nickname, in-game nickname, 1v1/max Elo, tournament seed) into a staff-restricted channel | work from a full roster without exposing seeds to players | D-PONG-027, SC-031 |
+| US-PONG-046 | A | provision the whole tournament surface from the creation view (news, events, infos, media-kit, register, schedule board, results, roster, staff space, optional cast studio) and edit it after creation | open a tournament in one flow | D-PONG-028/030/034, SC-034 |
 
 ## Platform journey (the mod itself)
 
@@ -66,7 +69,8 @@ Roles: **C**andidate, **W**aitlist, **P**layer, **K** (caster),
 | --- | --- | --- | --- | --- |
 | US-PONG-034 | system | open/close rounds automatically (timer + grace), self-heal the channels/pins at boot | run without manual supervision (no more S5 manual management) | RG-STRUC-1, SC-004/014/015 |
 | US-PONG-035 | system | compute movements per the season's `move_policy` (alternating S1 classic, S2 semi_blocked, ...) | run the pong without human error | D-PONG-006/012, SC-005/006 |
-| US-PONG-036 | system | keep the whole journey auditable: admin logs, seeds persisted per round/table (replayable drafts), nothing silent | earn the community's trust | D-001..004, SC-014 |
+| | US-PONG-036 | system | keep the whole journey auditable: admin logs, seeds persisted per round/table (replayable drafts), nothing silent | earn the community's trust | D-001..004, SC-014 |
+| US-PONG-047 | system | archive round-closed table channels read-only and purge them after `archive_retention_days` | keep the guild under the platform channel caps without losing history | D-PONG-031, SC-035 |
 
 > The "system" stories 34-36 trace the automation; the rests of the
 > manual S5 flow (fuse, half tables, voluntary matches) live in
