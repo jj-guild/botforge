@@ -192,7 +192,7 @@ resynchronises permissions at every round (open/close).
   other DM use (no private nudges).
 - **`waitlist`**: candidates enrolled after the window close keep
   access to `bot-commands` (waitlist enrollment) and read
-  `annonces`; they only enter `tables`/`planning` once inserted
+  `annonces`; they only enter `tables` once inserted
   as a duo (RG-TAB-3) or as a replacement (RG-TAB-4).
 
 ## 6. Insertions, replacements, withdrawals, archives (player flows, D-PONG-015..024)
@@ -201,7 +201,7 @@ resynchronises permissions at every round (open/close).
   **in the running round** (the two play each other), the chain
   position takes effect next round, automatic renumbering.
 - Replacement: the exact slot is taken over; the table channel
-  permissions are updated, the planning thread reused or reopened.
+  permissions are updated, the schedule-board line reused or reopened.
 - Self-service withdrawal (`/unregister_from_tournament`, admins
   notified) or admin removal (`remove_player`, D-PONG-023), in the
   two modes: **scheduled** (effective next round; the running match
