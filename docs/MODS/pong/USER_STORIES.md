@@ -1,67 +1,72 @@
 # Pong — User stories
 
-Toutes les user stories que le bot doit couvrir. Chaque story :
-**En tant que <rôle>, je veux <capacité> afin de <bénéfice>** —
-tracée vers les règles (RULES.md), décisions (DECISIONS.md) et
-scénarios de test (TESTS.md) qui la réalisent. Toute story sans trace
-règle = point de design à trancher ; toute règle sans story = dead
-doc signalé en revue.
+Every user story the bot must cover. Each story:
+**As a <role>, I want <capability> so that <benefit>**, traced to the
+rules (RULES.md), decisions (DECISIONS.md) and test scenarios
+(TESTS.md) that realise it. Any story with no rule trace = a design
+point to settle; any rule with no story = dead doc, flagged in
+review.
 
-Rôles : **C**andidat, **W**aitlist, **P**layer, **K** (caster),
-**A**dmin, **S**pectateur.
+Roles: **C**andidate, **W**aitlist, **P**layer, **K** (caster),
+**A**dmin, **S**pectator.
 
-## Parcours joueur
+## Player journey
 
-| ID | En tant que | je veux | afin de | Trace |
+| ID | As | I want | so that | Trace |
 | --- | --- | --- | --- | --- |
-| US-PONG-001 | C | m'enregistrer (steam ↔ discord) avec mon consentement explicite | lier mon profil AoE2 sans surprise de confidentialité | RG-REG-1, SC-001/002 |
-| US-PONG-002 | C | m'inscrire à la saison en validant le règlement (version tracée) et déclarer mes disponibilités | jouer la saison en ayant accepté des règles connues | RG-REG-2 |
-| US-PONG-003 | C | autodéclarer mon niveau (« je joue au-dessus/en-dessous de mon Elo ») | être placé à ma hauteur réelle dès la ronde 1 | D-PONG-013, RG-REG-2 |
-| US-PONG-004 | P | recevoir chaque semaine mon match (« cette semaine, vs Y ») sans position ni montée/descente affichées | jouer sans pression de classement | RG-TAB-5, D-PONG-014, SC-004 |
-| US-PONG-005 | P | avoir un salon de table dédié avec les deux drafts civs/map prêtes et le panneau complet (A host, map neutre, ban 3=1 catégorie) | tout savoir pour jouer sans relire le règlement | RG-CDRAFT-1, RG-MDRAFT-1/2, SC-004 |
-| US-PONG-006 | P | planifier mon match dans un topic dédié (forum planification) | convenir d'un créneau sans DM chassé-croisé | ARCHITECTURE §5 |
-| US-PONG-007 | P | déclarer mon résultat (`3-2`) sur ma table et faire valider par mon adversaire | clore le match sans intervention admin | RG-RES-1/2, SC-007/009 |
-| US-PONG-008 | P | contester un résultat erroné (`/contest_score` → tag admin) | être protégé contre les fausses déclarations | RG-RES-2 |
-| US-PONG-009 | P | déclarer un forfait (résultat « perdu », pas de manipulation de score) | abandonner proprement une semaine impossible | D-PONG-011-1, SC-016 |
-| US-PONG-010 | P | abandonner en cours de set avec score complété (victoires restantes à l'adversaire) | arrêter un set perdu sans litige | D-PONG-011-3, SC-017 |
-| US-PONG-011 | P | signaler « aucune date trouvée » et laisser l'admin trancher sur dossier de faits | ne pas porter le fardeau de l'arbitrage | D-PONG-011-2, SC-018 |
-| US-PONG-012 | P | jouer dans la grâce ±3 jours et savoir que mon mouvement différera d'une ronde | absorber un imprévu sans bloquer la chaîne | D-PONG-012, SC-023 |
-| US-PONG-013 | P | consulter mon récap à la demande (`/recap`, réponse ephemeral visible de moi seul) | suivre MA progression sans être jugé (ni me juger) | D-PONG-014, SC-024 |
-| US-PONG-014 | P | recevoir mon récap final en DM à la clôture | garder une trace de ma saison | D-PONG-014, SC-024 |
-| US-PONG-015 | P | signaler un preset de civs injouable (≥ 3 civs non possédées) ou une draft map non conforme (3 bans ≠ 1 catégorie) | jouer dans des conditions valides | RG-CDRAFT-2, RG-MDRAFT-2, SC-013 |
-| US-PONG-016 | P | quitter le tournoi entre deux rondes et recevoir mon récap clôturé | partir sans pénaliser mes adversaires ni la structure | D-PONG-017, SC-021 |
-| US-PONG-017 | P | me porter volontaire pour un match d'appoint contre un orphelin (sans mouvement de table, récap only) | aider la communauté à ne jamais laisser un joueur seul | D-PONG-018/019, SC-022 |
-| US-PONG-018 | W | être repêché comme remplaçant au créneau exact d'un partant | jouer la saison sans bousculer les tables | D-PONG-017, SC-021 |
-| US-PONG-019 | W | être inséré en duo (« table et-demi ») à notre niveau et jouer notre match dès la ronde en cours | entrer en cours de saison comme une table normale | D-PONG-016, SC-020 |
-| US-PONG-020 | W | rejoindre la file d'attente quand l'inscription est close et être visible pour le binomage admin | ne pas rater la saison pour quelques jours de retard | D-PONG-015, SC-019 |
-| US-PONG-021 | K | annoncer mon cast (open stream, titre « AOE Pong ») | caster librement | RG-REC-2 |
-| US-PONG-022 | S/P | consulter les packs de records normalisés (`Ronde X Table X : P1 ‖ S ‖ P2` + zip) | revoir/arbitrer les matchs spoiler-free | RG-REC-1, D-PONG-010 |
+| US-PONG-001 | C | register myself (steam ↔ discord) with my explicit consent | link my AoE2 profile with no privacy surprise | RG-REG-1, SC-001/002 |
+| US-PONG-002 | C | enroll in the season by validating the rulebook (a traced version) and declare my availabilities | play the season having accepted known rules | RG-REG-2 |
+| US-PONG-003 | C | self-declare my level ("I play above/below my Elo") | be placed at my real height from round 1 | D-PONG-013, RG-REG-2 |
+| US-PONG-004 | P | receive my weekly match ("this week, vs Y") with no position and no move up/down displayed | play without ranking pressure | RG-TAB-5, D-PONG-014, SC-004 |
+| US-PONG-005 | P | have a dedicated table channel with both civ/map drafts ready and the full panel (A hosts, neutral map, 3 bans = 1 category) | know everything needed to play without rereading the rulebook | RG-CDRAFT-1, RG-MDRAFT-1/2, SC-004 |
+| US-PONG-006 | P | schedule my match in a dedicated thread (planning channel) | agree on a slot without DM ping-pong | ARCHITECTURE §5 |
+| US-PONG-007 | P | declare my result (`3-2`) on my table and have my opponent validate it | close the match with no admin intervention | RG-RES-1/2, SC-007/009 |
+| US-PONG-008 | P | contest a wrong result (`/contest_score`, tags an admin) | be protected against false declarations | RG-RES-2 |
+| US-PONG-009 | P | declare a forfeit (a "lost" result, no score manipulation) | cleanly give up an impossible week | D-PONG-011-1, SC-016 |
+| US-PONG-010 | P | resign mid-set with the score completed (remaining wins to the opponent) | stop a lost set without a dispute | D-PONG-011-3, SC-017 |
+| US-PONG-011 | P | report "no date found" and let the admin settle on the facts dossier | not carry the arbitration burden | D-PONG-011-2, SC-018 |
+| US-PONG-012 | P | play inside the ±3-day grace and know my movement will defer by one round | absorb the unexpected without blocking the chain | D-PONG-012, SC-023 |
+| US-PONG-013 | P | read my recap on demand (`/recap`, ephemeral reply visible only to me) | track MY progress without being judged (or judging myself) | D-PONG-014, SC-024 |
+| US-PONG-014 | P | receive my final recap as a DM at season close, with a resend button in `pong:bot-commands` if my DMs are closed | keep a trace of my season | D-PONG-014/021, SC-024 |
+| US-PONG-015 | P | report an unplayable civ preset (≥ 3 unowned civs) or a non-conforming map draft (3 bans ≠ 1 category) | play under valid conditions | RG-CDRAFT-2, RG-MDRAFT-2, SC-013 |
+| US-PONG-016 | P | leave the tournament between rounds, self-service (`/unregister_from_tournament`), and receive my closed recap | leave without penalising my opponents or the structure | D-PONG-017/023, SC-021 |
+| US-PONG-017 | P | volunteer for a make-up match against an orphan (no table movement, recap only) | help the community never leave a player alone | D-PONG-018/019, SC-022 |
+| US-PONG-037 | P | self-withdraw mid-round and know my pending match plays out and becomes a forfeit at round close, with the admins notified | leave mid-season without penalising my opponent | D-PONG-023, SC-025 |
+| US-PONG-018 | W | be drafted as a replacement at a leaver's exact slot | play the season without disrupting the tables | D-PONG-017, SC-021 |
+| US-PONG-019 | W | be inserted as a duo ("half table") at our level and play our match from the running round | enter mid-season like a normal table | D-PONG-016, SC-020 |
+| US-PONG-020 | W | join the waitlist once enrollment is closed and be visible for the admin pairing | not miss the season over a few late days | D-PONG-015, SC-019 |
+| US-PONG-021 | K | announce my cast (open stream, "AOE Pong" title) | cast freely | RG-REC-2 |
+| US-PONG-041 | K | plan a Discord event for the games I cast and get it announced automatically when it starts | get extra visibility without spamming by hand | D-PONG-025, SC-028/029 |
+| US-PONG-022 | S/P | read the standardised records packs (`Round X Table X: P1 ‖ S ‖ P2` + zip) | review/arbitrate matches spoiler-free | RG-REC-1, D-PONG-010 |
 
-## Parcours admin (constat, décision humaine)
+## Admin journey (facts stated, decision by a human)
 
-| ID | En tant que | je veux | afin de | Trace |
+| ID | As | I want | so that | Trace |
 | --- | --- | --- | --- | --- |
-| US-PONG-023 | A | ouvrir une saison : tirage au seed (ladder + humain), appariement ronde 1, provision salons | lancer la compétition en confiance | RG-STRUC-1, SC-004 |
-| US-PONG-024 | A | corriger le seed d'un joueur (avant tirage, entre rondes) en console | intégrer les retours terrain sans publier les seeds | D-PONG-013, RG-ADM |
-| US-PONG-025 | A | binômer les candidats de la file en duos d'insertion, avec les côte-à-côte de seed humain | décider des entrées au feeling éclairé | D-PONG-015, RG-ADM |
-| US-PONG-026 | A | valider le point d'insertion proposé par le bot pour un duo | insérer sans bousculer la chaîne | D-PONG-016, SC-020 |
-| US-PONG-027 | A | valider un départ sur dossier de faits (matchs joués, en attente) et déclencher la chaîne de parité (file → match volontaire → fusible) | gérer les départs humainement en 2 clics | D-PONG-017/019, SC-021/022 |
-| US-PONG-028 | A | appliquer un admin win/loose sur faits horodatés (retard 30 min, replanification <24 h, pas de rdv) | arbitrer vite et traçable | D-PONG-011-2, SC-018 |
-| US-PONG-029 | A | bloquer des tables à la montée/descente (anti-rematch), le blocage verrouillant le groupe en semi_blocked | éviter les res-series indésirables | RG-TAB-2 |
-| US-PONG-030 | A | relancer une draft civ non conforme via le bouton de signalement | garder les tables jouables | RG-CDRAFT-2 |
-| US-PONG-031 | A | décider de la politique de patch en cours de tournoi | ne pas figer la compétition sur une MAJ | RG-ADM |
-| US-PONG-032 | A | disposer du fil de faits d'une table sur demande console (timestamps, états) | arbitrer les litiges avec des preuves | RG-ADM, D-PONG-004 |
-| US-PONG-033 | A | voir en console les seeds/positions (seul endroit où l'ordre existe) | administrer sans l'exposer aux joueurs | RG-TAB-5 |
+| US-PONG-023 | A | open a season: seed draw (ladder + human), round 1 pairing (seed-adjacent), channel provisioning | launch the competition with confidence | RG-STRUC-1, D-PONG-020, SC-004 |
+| US-PONG-024 | A | correct a player's seed (before the draw, between rounds) in the console | fold in field feedback without publishing seeds | D-PONG-013, RG-ADM |
+| US-PONG-025 | A | pair the waitlist candidates into insertion duos, with human-seed side-by-sides | decide entries with informed feel | D-PONG-015, RG-ADM |
+| US-PONG-026 | A | validate the bot's proposed insertion point for a duo | insert without roughing up the chain | D-PONG-016, SC-020 |
+| US-PONG-027 | A | validate a departure on the facts dossier (played matches, pending) and trigger the parity chain (waitlist → voluntary match → fuse) | handle departures humanely in 2 clicks | D-PONG-017/019, SC-021/022 |
+| US-PONG-028 | A | apply an admin win/loose on time-stamped facts (30-min lateness, rescheduling <24h, no date) | arbitrate fast and traceably | D-PONG-011-2, SC-018 |
+| US-PONG-029 | A | block tables against moves up/down (anti-rematch), the block locking the `semi_blocked` group | avoid unwanted re-series | RG-TAB-2 |
+| US-PONG-030 | A | regen a non-conforming civ draft from the report button | keep the tables playable | RG-CDRAFT-2 |
+| US-PONG-031 | A | decide the patch policy mid-tournament | not freeze the competition on a game update | RG-ADM |
+| US-PONG-032 | A | pull a table's fact thread from the console on demand (timestamps, states) | arbitrate disputes with evidence | RG-ADM, D-PONG-004 |
+| US-PONG-033 | A | see the seeds/positions in the console (the only place where the order exists) | administer without exposing it to players | RG-TAB-5 |
+| US-PONG-038 | A | withdraw a player from the season (console op `remove_player`) | handle contentious cases | D-PONG-023, SC-026 |
+| US-PONG-039 | A | be notified when a member leaves the server: automatic withdrawal from the active seasons, immediate forfeit, replacement attempt at the exact slot, profile kept | not manage silent walk-outs by hand | D-PONG-024, SC-027 |
+| US-PONG-040 | A | choose the caster-events announcement channel in the season-creation view: an existing channel, one to create, or off (feature disabled) | decide where event announcements land, per season | D-PONG-025, SC-029 |
 
-## Parcours plateforme (mod lui-même)
+## Platform journey (the mod itself)
 
-| ID | En tant que | je veux | afin de | Trace |
+| ID | As | I want | so that | Trace |
 | --- | --- | --- | --- | --- |
-| US-PONG-034 | système | ouvrir/clôturer les rondes automatiquement (timer + grâce), self-heal des salons/pins au boot | tenir sans supervision manuelle (fini la gestion manuelle S5) | RG-STRUC-1, SC-004/014/015 |
-| US-PONG-035 | système | calculer les mouvements selon `move_policy` de la saison (alternance S1 classic, S2 semi_blocked, …) | exécuter le pong sans erreur humaine | D-PONG-006/012, SC-005/006 |
-| US-PONG-036 | système | garder tout le parcours auditable : logs d'admin, seeds persistés par ronde/table (drafts rejouables), rien de silencieux | garantir la confiance de la communauté | D-001..004, SC-014 |
+| US-PONG-034 | system | open/close rounds automatically (timer + grace), self-heal the channels/pins at boot | run without manual supervision (no more S5 manual management) | RG-STRUC-1, SC-004/014/015 |
+| US-PONG-035 | system | compute movements per the season's `move_policy` (alternating S1 classic, S2 semi_blocked, ...) | run the pong without human error | D-PONG-006/012, SC-005/006 |
+| US-PONG-036 | system | keep the whole journey auditable: admin logs, seeds persisted per round/table (replayable drafts), nothing silent | earn the community's trust | D-001..004, SC-014 |
 
-> Les stories 34-36 façon « système » tracent l'automatisation ; le
-> restes du flux manuel S5 (fusible, tables et-demi, deux matchs
-> volontaires) se retrouve dans US-017/019/025/027 — c'est la
-> désécralisation complète de la charge admin qui motivait ce mod.
+> The "system" stories 34-36 trace the automation; the rests of the
+> manual S5 flow (fuse, half tables, voluntary matches) live in
+> US-017/019/025/027; producing the complete de-sacralisation of
+> the admin workload is what motivated this mod.
