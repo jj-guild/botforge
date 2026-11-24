@@ -48,7 +48,7 @@ permissions, the per-round lifecycle, and usage rules. Complements
 | `planning` | no | no | read + start thread | read | write | no |
 | `records` | no | no | read + post | read/post | write | no |
 | `casting` | read | read | read | write | write | read (everyone) |
-| `table_<slug>` | no | no unless in the table | the table's players | — | write | no |
+| `table_<slug>` | no | no unless in the table | the table's players | read/write | write | no |
 | `paramètres` | no | no | no | no | write | no |
 | `journal-admin` | no | no | no | no | read | no |
 
@@ -125,6 +125,11 @@ resynchronises permissions at every round (open/close).
 - **`records`**: the packs (phase 1: template + button; phase 2:
   spoiler-free auto zip, D-PONG-010) per match, standardised
   message format `AOE Pong Round X Table X: P1 || S || P2`.
+- **Roster export**: admin-initiated export of the enrolled roster
+  (Discord nickname, in-game nickname, 1v1/max Elo, tournament
+  seed) into a chosen channel that MUST be staff-restricted (seeds
+  are never player-facing, D-PONG-027). Casters get read+write on
+  the table channels (D-PONG-027) to organise casts.
 - **Player DMs**: only the closing recap (season close or departure,
   D-PONG-017). If the player's DMs are closed: ephemeral notice in
   `bot-commands` with a "resend it to me" button (D-PONG-021). No

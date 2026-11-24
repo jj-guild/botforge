@@ -286,15 +286,19 @@ Implemented by `test_SC_PONG_023_grace_deferred_move`.
 
 Implemented by `test_SC_PONG_024_personal_recap`.
 
-### SC-PONG-025 — self-withdrawal mid-round: deferred forfeit (D-PONG-023)
+### SC-PONG-025 — withdrawal in two modes: scheduled or immediate (D-PONG-023)
 
 - **Given** an open round, a player with a pending match on their
   table
-- **When** the player runs `/unregister_from_tournament`
-- **Then** the withdrawal is recorded and the admins are notified;
-  the pending match **stays playable**, and if it goes unplayed the
-  withdrawing player's result becomes a **forfeit at round close**;
-  the opponent follows the normal end-of-round placement
+- **When** the player runs `/unregister_from_tournament` in
+  **scheduled** mode
+- **Then** the withdrawal is recorded for the next round and the
+  admins are notified; the running match **plays out to the end and
+  its validated result counts normally, no forfeit applies**
+- **When** the withdrawal is requested in **immediate** mode
+- **Then** the running match is forfeit for the withdrawing player
+  and a replacement is attempted through the parity chain (waitlist
+  at the exact slot first)
 
 Implemented by `test_SC_PONG_025_self_withdrawal`.
 
@@ -346,6 +350,28 @@ Implemented by `test_SC_PONG_028_caster_event_announcement`.
   posted for that season
 
 Implemented by `test_SC_PONG_029_events_channel_options`.
+
+### SC-PONG-030 — caster read+write on table channels (D-PONG-027)
+
+- **Given** an open round with a provisioned table channel, a
+  `pong_caster` member
+- **When** the channel permissions are provisioned
+- **Then** the caster may read **and post** in the table channel;
+  players outside the table and non-casters still cannot
+
+Implemented by `test_SC_PONG_030_caster_table_access`.
+
+### SC-PONG-031 — roster export restricted to staff channels (D-PONG-027)
+
+- **Given** an enrolled roster, an admin running the export action
+- **When** the target channel is staff-restricted, then
+  player-visible
+- **Then** the export (Discord nickname, in-game nickname, 1v1/max
+  Elo, tournament seed) lands in the staff channel; targeting a
+  player-visible channel is **refused** (seeds are never
+  player-facing, D-PONG-013/014)
+
+Implemented by `test_SC_PONG_031_roster_export_staff_only`.
 
 > Auto records (D-PONG-010, phase 2, spoiler-free zip provider)
 > arrive with their scenario in the PR that implements them. Every

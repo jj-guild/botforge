@@ -31,12 +31,13 @@ Roles: **C**andidate, **W**aitlist, **P**layer, **K** (caster),
 | US-PONG-015 | P | report an unplayable civ preset (≥ 3 unowned civs) or a non-conforming map draft (3 bans ≠ 1 category) | play under valid conditions | RG-CDRAFT-2, RG-MDRAFT-2, SC-013 |
 | US-PONG-016 | P | leave the tournament between rounds, self-service (`/unregister_from_tournament`), and receive my closed recap | leave without penalising my opponents or the structure | D-PONG-017/023, SC-021 |
 | US-PONG-017 | P | volunteer for a make-up match against an orphan (no table movement, recap only) | help the community never leave a player alone | D-PONG-018/019, SC-022 |
-| US-PONG-037 | P | self-withdraw mid-round and know my pending match plays out and becomes a forfeit at round close, with the admins notified | leave mid-season without penalising my opponent | D-PONG-023, SC-025 |
+| US-PONG-037 | P | self-withdraw from the season in one of two modes: scheduled (effective next round, my running match plays out and its result counts, no forfeit) or immediate (forfeit on my running match, replacement through the parity chain) | leave mid-season without penalising my opponent | D-PONG-023, SC-025 |
 | US-PONG-018 | W | be drafted as a replacement at a leaver's exact slot | play the season without disrupting the tables | D-PONG-017, SC-021 |
 | US-PONG-019 | W | be inserted as a duo ("half table") at our level and play our match from the running round | enter mid-season like a normal table | D-PONG-016, SC-020 |
 | US-PONG-020 | W | join the waitlist once enrollment is closed and be visible for the admin pairing | not miss the season over a few late days | D-PONG-015, SC-019 |
 | US-PONG-021 | K | announce my cast (open stream, "AOE Pong" title) | cast freely | RG-REC-2 |
 | US-PONG-041 | K | plan a Discord event for the games I cast and get it announced automatically when it starts | get extra visibility without spamming by hand | D-PONG-025, SC-028/029 |
+| US-PONG-043 | K/P | register as a caster for a tournament, cumulable with my player role, and get the caster surface (records, casting, table channels) | cast the games I want without being a player | D-PONG-027, SC-030 |
 | US-PONG-022 | S/P | read the standardised records packs (`Round X Table X: P1 ‖ S ‖ P2` + zip) | review/arbitrate matches spoiler-free | RG-REC-1, D-PONG-010 |
 
 ## Admin journey (facts stated, decision by a human)
@@ -57,6 +58,7 @@ Roles: **C**andidate, **W**aitlist, **P**layer, **K** (caster),
 | US-PONG-038 | A | withdraw a player from the season (console op `remove_player`) | handle contentious cases | D-PONG-023, SC-026 |
 | US-PONG-039 | A | be notified when a member leaves the server: automatic withdrawal from the active seasons, immediate forfeit, replacement attempt at the exact slot, profile kept | not manage silent walk-outs by hand | D-PONG-024, SC-027 |
 | US-PONG-040 | A | choose the caster-events announcement channel in the season-creation view: an existing channel, one to create, or off (feature disabled) | decide where event announcements land, per season | D-PONG-025, SC-029 |
+| US-PONG-042 | A | export the enrolled roster (Discord nickname, in-game nickname, 1v1/max Elo, tournament seed) into a staff-restricted channel | work from a full roster without exposing seeds to players | D-PONG-027, SC-031 |
 
 ## Platform journey (the mod itself)
 
