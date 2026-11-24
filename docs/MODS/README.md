@@ -36,7 +36,7 @@ The standard file set (copy from `TEMPLATE/` when creating the mod):
 | Mod dir | Status | Note |
 | ------- | ------ | ---- |
 | `kingdoms/` | current | the active mod (Season II reference in `REFERENCE.md`) |
-| `pong/` | specified | montante/descendante 1v1 tournament mod on AoE2 (S5 règlement in `REFERENCE.md`) |
+| `pong/` | specified | ascending/descending 1v1 tournament mod on AoE2 (S5 ruleset in `REFERENCE.md`) |
 | `TEMPLATE/` | scaffold | copied when creating a new mod |
 
 The old `ladder/` and `register/` doc sets were relics and have been deleted (2026-11-20).
@@ -67,8 +67,7 @@ but it MUST NOT own its game data:
 
 - the game catalog (maps, map pools, civilizations) is owned by the core
   `GameDataService` — the mod reads it and never duplicates it
-- seasons are registered in the core season registry with a visible,
-  game-scoped id (`<mod>-<game key>-<guild id>-<index>`) — the mod never
+- seasons are registered in the core season registry with a visible, game-scoped id (`<mod>-<game key>-<guild id>-<index>`) — the mod never
   runs its own season numbering
 - Discord surfaces (forum topics such as `<game key>-maps` and
   `<game key>-map-pools` in the `games` category) are provisioned by the
