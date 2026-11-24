@@ -147,10 +147,11 @@ resynchronises permissions at every round (open/close).
 - Replacement: the exact slot is taken over; the table channel
   permissions are updated, the planning thread reused or reopened.
 - Self-service withdrawal (`/unregister_from_tournament`, admins
-  notified) or admin removal (`remove_player`, D-PONG-023): a
-  mid-round match plays out; the withdrawing player's pending match
-  becomes a forfeit at round close, the opponent follows the normal
-  end-of-round placement.
+  notified) or admin removal (`remove_player`, D-PONG-023), in the
+  two modes: **scheduled** (effective next round; the running match
+  plays out and its validated result counts, no forfeit) or
+  **immediate** (forfeit on the running match, replacement through
+  the parity chain).
 - Guild leave (D-PONG-024): automatic withdrawal from every active
   season and **immediate forfeit**; the freed slot is offered first
   to the waitlist at the exact chain slot; the player profile is

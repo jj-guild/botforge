@@ -304,13 +304,15 @@ Implemented by `test_SC_PONG_025_self_withdrawal`.
 
 ### SC-PONG-026 — admin removal of a player (D-PONG-023)
 
-- **Given** an enrolled player, an admin
+- **Given** an enrolled player, an admin, a removal requested in
+  **scheduled** or **immediate** mode
 - **When** the admin runs the console op `remove_player` (confirm
-  card)
-- **Then** the player is withdrawn with the same semantics as
-  SC-PONG-025 (mid-round match plays out, forfeit at round close),
-  the operation is logged with its author, and the player is
-  notified
+  card) in that mode
+- **Then** the player is withdrawn with the same two modes as
+  SC-PONG-025 (scheduled: the running match plays out and its
+  result counts, no forfeit; immediate: forfeit on the running
+  match + replacement through the parity chain), the operation is
+  logged with its author, and the player is notified
 
 Implemented by `test_SC_PONG_026_admin_removal`.
 
