@@ -1,126 +1,153 @@
-# Pong — REFERENCE (règlement AOE Pong, source fonctionnelle)
+# Pong — REFERENCE (AOE Pong rulebook, the functional source)
 
-> **Document source, archivé tel quel** : le règlement officiel du tournoi
-> AOE Pong (saison 5, « Antre de l'Ours »), fourni par Aramatu (mod owner).
-> C'est la **source de vérité fonctionnelle** pour la migration « en mieux »
-> vers BotForge. L'adaptation aux contrats réels de BotForge (seams ADR-0011,
-> split ADR-0020, core GameDataService, DraftProvider) se spécifie dans
-> [RULES.md](RULES.md) et [DECISIONS.md](DECISIONS.md), jamais en éditant
-> cette référence. Les écarts/conflits et les zones non automatisables y
-> sont tracés au lieu d'être résolus ici.
+> **Source document, translated from the original French**: the official
+> AOE Pong tournament rulebook (season 5, "Antre de l'Ours"), provided by
+> Aramatu (mod owner). The original rulebook was written in French; this
+> is its English translation, kept as the **functional source of truth**
+> for the "better, on BotForge" migration. Adapting to BotForge's real
+> contracts (ADR-0011 seams, ADR-0020 split, core GameDataService,
+> DraftProvider) happens in [RULES.md](RULES.md) and
+> [DECISIONS.md](DECISIONS.md), never by editing this reference.
+> Gaps/conflicts and non-automatable zones are traced there instead of
+> being resolved here.
 
-## AOE Pong (règlement original — S5)
+## AOE Pong (original rulebook, S5)
 
-**Présentation du tournoi :**
+**Tournament presentation:**
 
-L'AOE Pong est un tournoi qui a pour but de vous donner un cadre compétitif dans lequel vous pourrez progresser sur différents aspects du jeu et plus généralement dans la préparation de tournois.
-L'objectif est donc de vous permettre de jouer des matchs régulièrement, en condition de tournoi, contre l'adversaire le plus proche de votre niveau possible.
+AOE Pong is a tournament meant to give you a competitive frame in which
+you can improve on different aspects of the game, and more generally
+on tournament preparation.
+The goal is to let you play matches regularly, in tournament
+conditions, against the opponent closest to your own level.
 
-L'idée et l'origine du tournoi vient de \[TabA\] Zyxuwyz qui a proposé de faire des sortes de montées/descentes comme au ping pong. Le gagnant d'une ronde va monter, et le perdant va descendre.
-Il se peut que nous décidions de bloquer des tables pour la montée ou la descente afin d'éviter les (re)matchs.
+The idea and the origin of the tournament come from \[TabA\] Zyxuwyz,
+who proposed climbs and drops like in ping pong. The winner of a round
+moves up, and the loser moves down.
+We may decide to block tables against moving up or down to avoid
+(re)matches.
 
-**Déroulement du tournoi :**
+**Tournament flow:**
 
-Le tournoi va se jouer sur une durée de six rondes étalées sur six semaines.
-Vous aurez donc une semaine pour faire votre match en BO5.
+The tournament runs over six rounds spread over six weeks.
+You will therefore have one week to play your BO5 match.
 
-> ⚠️ Conflit interne à la source : la présentation annonce six rondes sur
-> six semaines, la section « Dates et durée » (S5) en annonce quatre
-> (rondes du mercredi au mardi). Exploité comme **paramètre de config**
-> (`rounds_per_season`), valeur tranchée par le mod owner — voir
-> [DECISIONS.md](DECISIONS.md).
+> ⚠️ Internal conflict in the source: the presentation announces six
+> rounds over six weeks, while the "Dates and duration" section (S5)
+> announces four (Wednesday-to-Tuesday rounds). Used as a **config
+> parameter** (`rounds_per_season`), the value settled by the mod
+> owner; see [DECISIONS.md](DECISIONS.md).
 
-Au début de chaque round, pour chaque table, nous allons ban de façon automatisée et aléatoire le nombre de civilisation requis afin qu'il n'en reste que 15 à votre disposition. Nous vous communiquerons à ce moment-là le preset de draft-civ lié à votre table. Ensuite, nous resterons plus classique puisque la draft map et la draft civ se dérouleront comme dans tous les autres tournois.
+At the start of each round, for every table, we will ban in an
+automated and random way the number of civilizations required so that
+only 15 remain at your disposal. We will communicate the draft-civ
+preset linked to your table at that time. Afterwards we stay more
+classic: the map draft and the civ draft run as in every other
+tournament.
 
-Le joueur A sera le premier joueur annoncé sur la table, le joueur B l'autre. Le joueur A sera l'host de la draft map. Le joueur A sera l'host de la draft civ.
+Player A is the first player announced on the table, player B the
+other one. Player A hosts the map draft. Player A hosts the civ
+draft.
 
-La dernière map choisie dans la draft sera la map neutre, c'est-à-dire la première map jouée.
+The last map picked in the draft is the neutral map, meaning the
+first map played.
 
-Lien de la draft map : https://aoe2cm.net/preset/pGWoJ
+Map draft link: https://aoe2cm.net/preset/pGWoJ
 
-**Précision sur la draft map :**
+**Map draft specifics:**
 
-Les **trois premiers bans** de chaque joueur équivalent à un ban d'une catégorie. Ils doivent donc concerner les maps de la **même** catégorie. Toute draft ne respectant pas cette règle sera considérée comme non valide et devra être refaite à partir du début.
+Each player's **three first bans** amount to one category ban. They
+must therefore hit maps from the **same** category. Any draft not
+respecting this rule is considered invalid and must be redone from
+the start.
 
-**Précision sur le choix des maps :**
+**Map-picking specifics:**
 
-Le perdant choisit la map suivante parmi toutes celles disponibles (i.e qui n'ont pas déjà été jouées), même parmi celles draftées par son adversaire.
+The loser picks the next map among all available ones (i.e. not
+already played), even among the ones their opponent drafted.
 
-**Inscriptions (extrait automatisable) :**
+**Enrollment (automatable excerpt):**
 
-- `/register` sur le channel #bot-commands : enregistre le joueur, lie
-  steamID ↔ discordID + données AoE2 (pays, elo). Consentement explicite
-  requis (mise en base de données).
-- Pseudo Discord = pseudo in-game exigé (renommage demandé sinon).
-- Deux disponibilités de 3h consécutives par semaine dans la plage 17h-23h
-  (fuseau FR) demandées aux participants.
-- `/register_to_tournament` avec le nom « AOE Pong S5 » + validation
-  `rules: True` (les règles lues sont acceptées). Toute modification
-  d'inscription notifiée à un admin. Les admins peuvent refuser une
-  inscription.
-- Présence sur le Discord exigée au démarrage (exclusion sinon).
+- `/register` on the #bot-commands channel: registers the player,
+  links steamID ↔ discordID + AoE2 data (country, elo). Explicit
+  consent required (database storage).
+- Discord nickname = in-game nickname required (renaming requested
+  otherwise).
+- Two consecutive 3-hour availability windows per week within
+  17:00-23:00 (FR timezone) asked from participants.
+- `/register_to_tournament` with the name "AOE Pong S5" +
+  `rules: True` validation (the rules read are accepted). Any
+  enrollment change notified to an admin. Admins can refuse an
+  enrollment.
+- Discord presence required at the start (exclusion otherwise).
 
-**Dates et durée (S5) :** rondes du mercredi au mardi ; Ronde 1 : mer 3 juin → mar 9 juin 2026, puis une ronde par semaine (mercredi → mardi), quatre rondes en S5.
+**Dates and duration (S5):** Wednesday-to-Tuesday rounds; Round 1:
+Wed 3 June → Tue 9 June 2026, then one round per week (Wednesday to
+Tuesday), four rounds in S5.
 
-**Déroulement d'une ronde :**
+**Round flow:**
 
-- **Planification** : le mercredi, l'admin publie la liste des tables et le
-  preset de civ draft. Si le preset contient plus de deux civilisations que
-  le joueur ne possède pas, taguer un admin pour une nouvelle draft. Les
-  joueurs fixent eux-mêmes date/heure et préviennent les admins dans la
-  section du tournoi prévue à cet effet. Absence annoncée : proposer une
-  nouvelle date ; demande à moins de 24h du match initial → l'adversaire
-  peut demander l'Admin Win. Match non planifiable dans les délais : délai
-  supplémentaire ou Admin Win à la discrétion des admins.
-- **Retard** : > 30 minutes de retard → Admin Loose possible. Retard
-  annoncé : l'adversaire peut l'accepter ou non, et peut réclamer l'Admin
-  Win à tout moment ; les admins restent arbitres au-delà des 30 minutes.
-- **Résultats** : `/add_result` sur la table (joueur A, score « X-X »,
-  joueur B). Le second joueur valide via `/validate_score` ou conteste via
-  `/contest_score` (tag un admin).
-- **Records** (casting/admins) : poster le résultat au format
-  `AOE Pong Ronde X Table X : Pseudo1 || Score || Pseudo 2` avec un zip
-  contenant un fichier texte « Drafts » (drafts maps et civs) + les parties
-  renommées `AOEPong_Pseudo1_vs_Pseudo2_Game_X.aoe2rec`.
+- **Scheduling**: on Wednesday, the admin publishes the table list
+  and the civ draft preset. If the preset contains more than two
+  civilizations the player does not own, tag an admin for a new
+  draft. Players set date/time themselves and inform the admins in
+  the tournament section provided for that. Announced absence:
+  propose a new date; a request less than 24h before the initial
+  match → the opponent can claim the Admin Win. Match not schedulable
+  in time: extra delay or Admin Win at the admins' discretion.
+- **Lateness**: > 30 minutes late → possible Admin Loose. Announced
+  lateness: the opponent may accept it or not, and may claim the
+  Admin Win at any time; the admins remain the referees beyond 30
+  minutes.
+- **Results**: `/add_result` on the table (player A, "X-X" score,
+  player B). The second player validates via `/validate_score` or
+  contests via `/contest_score` (tags an admin).
+- **Records** (casting/admins): post the result in the format
+  `AOE Pong Ronde X Table X : Pseudo1 || Score || Pseudo 2` with a
+  zip containing a "Drafts" text file (map and civ drafts) + the
+  games renamed `AOEPong_Pseudo1_vs_Pseudo2_Game_X.aoe2rec`.
 
-**Règles générales (extraits liés au mod) :**
+**General rules (mod-related excerpts):**
 
-- Pas de bug use volontaire ; patch : choix ancien/nouveau à la discrétion
-  des admins pendant l'événement.
-- Tricherie : disqualification immédiate + bannissement des événements
-  futurs ; interdiction de communication tierce pendant une partie ; accord
-  écrit obligatoire pour streamer sa POV (streamer « en sourdine ») ;
-  partage de compte interdit.
-- Comportement : respect exigé de tous les acteurs (joueurs, admins,
-  casters) ; arbitrage et sanctions (blâme → exclusion) réservés aux admins.
-- Règlement modifiable par les admins en cours de tournoi.
+- No voluntary bug use; patch: old/new choice at the admins'
+  discretion during the event.
+- Cheating: immediate disqualification + ban from future events; no
+  third-party communication allowed during a game; written agreement
+  required to stream one's POV (streaming "on mute"); account sharing
+  forbidden.
+- Behaviour: respect required from everyone (players, admins,
+  casters); arbitration and sanctions (warning → exclusion) reserved
+  to the admins.
+- Rulebook modifiable by the admins mid-tournament.
 
-**Règles en partie (extraits liés au mod) :**
+**In-game rules (mod-related excerpts):**
 
-- Pas de restart sauf **Admin Restart** : demandable dans les 6 premières
-  minutes in-game pour génération de map buguée (villageois/animaux
-  manquants, > 50 % de côtés de minerai/baies inaccessibles, reliques
-  manquantes, unité piégée, génération non conforme). Après restart : mêmes
-  civilisations et couleurs.
-- **Laming** (maps sans forum, 3 villageois, jusqu'à 3 min in-game ou fin
-  du traité) : interdit d'attaquer villageois/bâtiments/animaux, murer
-  ennemis/ressources/reliques/animaux, TC à portée l'un de l'autre (admin-re
-  si TC aveugle), tuer un animal sans y prendre 35 de nourriture ; vol de
-  moutons/vaches/poules autorisé. Ailleurs : toutes formes de laming
-  autorisées.
-- **Pause** : pause autorisée uniquement pour un problème affectant la
-  capacité à jouer ; interruption obligatoire sur demande admin ; le
-  joueur qui pause relance (après accord adverse) ; pauses raisonnables.
-- **Settings** : settings normaux de ladder (référence : capture du
-  règlement original). **Map pool S5** : mod
-  https://www.ageofempires.com/mods/details/503568/ (22 maps listées dans
-  la source : African Reed Beds, African River, Arena, Bypass, Cliffbound,
-  CoastToMountain, Dzimbabwe, Dzong, Fernando de Noronha, Fortified
-  Clearing, Frigid Lake, Ishtmus, Land Madness, Morass, Nomad, Northern
-  Crossrings, Quebrada de Cafayate, Ring of Reeds, Slopes, Stranded,
-  Te Fiti…). **À DÉFINIR** : le map pool par saison est lu depuis le core
-  (`GameDataService`), jamais codé dans le mod.
-- **Streaming** : open stream ; n'importe quel streamer peut caster ;
-  « AOE Pong » dans le titre du stream exigé.
+- No restart except an **Admin Restart**: requestable within the
+  first 6 in-game minutes for a bugged map generation (missing
+  villagers/animals, > 50% of inaccessible ore/forage sides,
+  missing relics, trapped unit, non-conforming generation). After a
+  restart: same civilizations and colours.
+- **Laming** (forum-less maps, 3 villagers, up to 3 min in-game or
+  end of the treaty): forbidden to attack villagers/buildings/
+  animals, wall enemies/resources/relics/animals in, drop Town
+  Centers within range of each other (admin-re if a blind TC), kill
+  an animal without taking 35 food from it; stealing sheep/cows/
+  chickens allowed. Elsewhere: every form of laming allowed.
+- **Pause**: pausing allowed only for an issue affecting the ability
+  to play; interruption mandatory on admin request; the player who
+  paused resumes (after the opponent's agreement); reasonable pauses.
+- **Settings**: normal ladder settings (reference: the original
+  rulebook screenshot). **S5 map pool**: mod
+  https://www.ageofempires.com/mods/details/503568/ (22 maps listed
+  in the source: African Reed Beds, African River, Arena, Bypass,
+  Cliffbound, CoastToMountain, Dzimbabwe, Dzong, Fernando de Noronha,
+  Fortified Clearing, Frigid Lake, Ishtmus, Land Madness, Morass,
+  Nomad, Northern Crossrings, Quebrada de Cafayate, Ring of Reeds,
+  Slopes, Stranded, Te Fiti...). **TO BE DEFINED**: the per-season
+  map pool is read from the core (`GameDataService`), never
+  hard-coded in the mod.
+- **Streaming**: open stream; any streamer may cast; "AOE Pong" in
+  the stream title required.
 
-**Contacts (S5)** : Aramatu, Elhyar, Phare_Macie, Scramble (admins Discord).
+**Contacts (S5)**: Aramatu, Elhyar, Phare_Macie, Scramble (Discord
+admins).
