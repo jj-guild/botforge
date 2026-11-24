@@ -36,6 +36,7 @@ The standard file set (copy from `TEMPLATE/` when creating the mod):
 | Mod dir | Status | Note |
 | ------- | ------ | ---- |
 | `kingdoms/` | current | the active mod (Season II reference in `REFERENCE.md`) |
+| `pong/` | specified | montante/descendante 1v1 tournament mod on AoE2 (S5 règlement in `REFERENCE.md`) |
 | `TEMPLATE/` | scaffold | copied when creating a new mod |
 
 The old `ladder/` and `register/` doc sets were relics and have been deleted (2026-11-20).

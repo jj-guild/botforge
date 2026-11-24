@@ -1,5 +1,3 @@
-
-
 # Mod catalogue
 
 One page listing **every mod idea** on the platform, at its current maturity
