@@ -1,289 +1,353 @@
 # Pong — Mod test scenarios
 
-Liste des scénarios qui valident/sécurisent l'implémentation. **Chaque
-scénario a exactement un test automatisé**, écrit par l'agent dans
-`modules/mods/pong/tests/test_scenarios.py` (botforge-services), joué
-par la CI (`pytest tests modules/mods/pong/tests/test_scenarios.py`),
-et recoupé par la validation des docs (`validate_docs.py` échoue quand
-un scénario documenté n'a pas de test).
+The scenarios that validate and safeguard the implementation. **Every
+scenario has exactly one automated test**, written by the agent in
+`modules/mods/pong/tests/test_scenarios.py` (botforge-services), run
+by CI (`pytest tests modules/mods/pong/tests/test_scenarios.py`),
+and cross-checked by the docs validation (`validate_docs.py` fails
+when a documented scenario has no test).
 
-## Format de scénario
+## Scenario format
 
-- un id par scénario, `SC-PONG-NNN` ;
-- scénario dans le même PR que la règle et le test qui l'implémentent ;
-- le docstring du test porte l'id, pour que doc et code restent appariés.
+- one id per scenario, `SC-PONG-NNN`;
+- the scenario ships in the same PR as the rule and the test that
+  implement it;
+- the test's docstring carries the id, keeping doc and code paired.
 
 ## Scenarios
 
-### SC-PONG-001 — enregistrement joueur avec consentement
+### SC-PONG-001 — player registration with consent
 
-- **Given** un utilisateur Discord non enregistré, un profil AoE2
-  résolu par le core (steam_id, pays, elo)
-- **When** il fait `/register` et accepte la privacy gate
-- **Then** le joueur est enregistré (discord_id ↔ steam_id liés, données
-  AoE2 lues via le core, non dupliquées) et le rôle `pong_candidate`
-  lui est attribué
+- **Given** an unregistered Discord user, an AoE2 profile resolved by
+  the core (steam_id, country, elo)
+- **When** they run `/register` and accept the privacy gate
+- **Then** the player is registered (discord_id ↔ steam_id linked,
+  AoE2 data read through the core, not duplicated) and the
+  `candidate` role is granted
 
-Implémenté par `test_SC_PONG_001_register_with_consent` dans
+Implemented by `test_SC_PONG_001_register_with_consent` in
 `test_scenarios.py`.
 
-### SC-PONG-002 — enregistrement sans consentement refusé
+### SC-PONG-002 — registration without consent refused
 
-- **Given** un utilisateur non enregistré
-- **When** il fait `/register` et refuse la privacy gate
-- **Then** rien n'est persisté (aucune collection Mongo/Redis touchée)
+- **Given** an unregistered user
+- **When** they run `/register` and refuse the privacy gate
+- **Then** nothing is persisted (no Mongo/Redis collection touched)
 
-Implémenté par `test_SC_PONG_002_register_no_consent`.
+Implemented by `test_SC_PONG_002_register_no_consent`.
 
-### SC-PONG-003 — inscription à la saison : seed ladder + seed humain
+### SC-PONG-003 — season enrollment: ladder seed + human seed
 
-- **Given** un joueur enregistré (`pong_candidate`), la saison active
-- **When** il fait `/register_to_tournament` (« AOE Pong S<N> »)
-  avec `rules: True`, le déclaratif de disponibilités **et son
-  autodéclaration de niveau** (seed humain)
-- **Then** il est inscrit (trace de la version du règlement acceptée),
-  reçoit `pong_player`, son **seed elo** est calculé :
-  `(2 × Elo actuel + Elo max) / 3` (D-PONG-007) et son seed humain
-  enregistré (D-PONG-013) — aucun des deux n'est jamais affiché au
-  joueur
+- **Given** a registered player (`candidate`), the active season
+- **When** they run `/register_to_tournament` ("AOE Pong S<N>")
+  with `rules: True`, the availability statement **and their level
+  self-declaration** (human seed)
+- **Then** they are enrolled (trace of the accepted rulebook version),
+  granted `member`, their **elo seed** is computed:
+  `(2 × current Elo + max Elo) / 3` (D-PONG-007) and their human
+  seed stored (D-PONG-013); neither is ever displayed to the player
 
-Implémenté par `test_SC_PONG_003_register_to_tournament`.
+Implemented by `test_SC_PONG_003_register_to_tournament`.
 
-### SC-PONG-004 — ouverture de ronde : salons neutres + ban civs
+### SC-PONG-004 — round open: neutral channels + civ ban
 
-- **Given** une saison active avec N tables et des joueurs répartis
-- **When** un admin lance l'op console d'ouverture de ronde
-- **Then** chaque table a son salon provisionné (panneau : joueur A
-  premier emplacement, B l'autre, rappel A host des deux drafts), le ban
-  civs automatisé laisse exactement `civs_remaining` (15) civs
-  disponibles **par table** (seed persistée ronde+table pour audit),
-  le preset draft-civ par table est affiché, et l'annonce du mercredi
-  est postée — **noms de tables neutres, aucune position ni
-  montée/descente dans les messages joueurs, liste non ordonnée**
-  (D-PONG-014, RG-TAB-5)
+- **Given** an active season with N tables and players distributed
+- **When** an admin runs the round-open console op
+- **Then** every table has its provisioned channel (panel: player A
+  in the first slot, B in the other, reminder that A hosts both
+  drafts), the automated civ ban leaves exactly `civs_remaining`
+  (15) civs available **per table** (seed persisted round+table for
+  audit), the per-table draft-civ preset is displayed, and the
+  Wednesday announcement is posted; **neutral table names, no
+  position and no move up/down in player messages, unordered
+  list** (D-PONG-014, RG-TAB-5); round 1 pairs seed-adjacent
+  (1v2, 3v4, ..., D-PONG-020)
 
-Implémenté par `test_SC_PONG_004_open_round`.
+Implemented by `test_SC_PONG_004_open_round`.
 
-### SC-PONG-005 — mouvement classic après résultat validé
+### SC-PONG-005 — classic movement after a validated result
 
-- **Given** des tables 1..N, `move_policy: classic`, un résultat
-  validé sur la table T (2 < T < N-1)
-- **When** la ronde suivante est calculée
-- **Then** le gagnant monte d'une table, le perdant descend d'une
-  table ; à la ronde suivante le montant occupe l'emplacement B et le
-  descendant l'emplacement A (D-PONG-007)
+- **Given** tables 1..N, `move_policy: classic`, a validated result
+  on table T (2 < T < N-1)
+- **When** the next round is computed
+- **Then** the winner moves up one table, the loser moves down one;
+  next round the climber holds slot B and the dropper slot A
+  (D-PONG-007)
 
-Implémenté par `test_SC_PONG_005_climb_fall_classic`.
+Implemented by `test_SC_PONG_005_climb_fall_classic`.
 
-### SC-PONG-006 — mouvement semi_blocked : groupes de 2 tables
+### SC-PONG-006 — semi_blocked movement: groups of 2 tables
 
-- **Given** `move_policy: semi_blocked`, 5 tables → groupes {T1,T2},
-  {T3,T4}, {T5} (le dernier groupe prend l'impair), un résultat
-  validé sur T3 et un sur T4
-- **When** la ronde suivante est calculée
-- **Then** les mouvements se font au sein de chaque groupe uniquement :
-  gagnant de T3 reste en T3 (place B), perdant de T3 va en T4 (place
-  A), gagnant de T4 va en T3, perdant de T4 reste en T4 ; aucun
-  mouvement inter-groupe (D-PONG-006)
+- **Given** `move_policy: semi_blocked`, 5 tables → groups {T1,T2},
+  {T3,T4}, {T5} (the last group takes the odd one), a validated
+  result on T3 and one on T4
+- **When** the next round is computed
+- **Then** movements happen within each group only: T3's winner
+  stays in T3 (slot B), T3's loser goes to T4 (slot A), T4's winner
+  goes to T3, T4's loser stays in T4; no inter-group movement
+  (D-PONG-006)
 
-Implémenté par `test_SC_PONG_006_move_semi_blocked_groups`.
+Implemented by `test_SC_PONG_006_move_semi_blocked_groups`.
 
-### SC-PONG-007 — déclaration de résultat valide
+### SC-PONG-007 — valid result declaration
 
-- **Given** une ronde ouverte, la table T avec joueurs A et B
-- **When** le joueur A fait `/add_result` avec « 3-2 »
-- **Then** le résultat est créé `PENDING` ; le joueur B est invité à
-  valider ou contester
+- **Given** an open round, table T with players A and B
+- **When** player A runs `/add_result` with "3-2"
+- **Then** the result is created `PENDING`; player B is prompted to
+  validate or contest
 
-Implémenté par `test_SC_PONG_007_add_result`.
+Implemented by `test_SC_PONG_007_add_result`.
 
-### SC-PONG-008 — score hors format refusé
+### SC-PONG-008 — off-format score refused
 
 - **Given** `bo_format` = 5 (BO5)
-- **When** un joueur déclare « 4-2 » (X+Y > 5)
-- **Then** la déclaration est refusée avec le motif (hors format BO5),
-  rien n'est persisté
+- **When** a player declares "4-2" (X+Y > 5)
+- **Then** the declaration is refused with the reason (off BO5
+  format), nothing is persisted
 
-Implémenté par `test_SC_PONG_008_bad_score`.
+Implemented by `test_SC_PONG_008_bad_score`.
 
-### SC-PONG-009 — validation et contestation
+### SC-PONG-009 — validation and contest
 
-- **Given** un résultat `PENDING`
-- **When** le second joueur fait `/validate_score`
-- **Then** le résultat passe `VALIDATED`, les vues de ronde se mettent
-  à jour, le récap personnel du joueur est alimenté (D-PONG-014), et
-  la re-validation est idempotente (log sans effet)
-- **When** le second joueur fait `/contest_score`
-- **Then** le résultat passe `CONTESTED` et les admins sont taggés
+- **Given** a `PENDING` result
+- **When** the second player runs `/validate_score`
+- **Then** the result becomes `VALIDATED`, the round views update,
+  the player's personal recap is fed (D-PONG-014), and
+  re-validation is idempotent (logged, no effect)
+- **When** the second player runs `/contest_score`
+- **Then** the result becomes `CONTESTED` and the admins are tagged
 
-Implémenté par `test_SC_PONG_009_validate_contest`.
+Implemented by `test_SC_PONG_009_validate_contest`.
 
-### SC-PONG-010 — étranger à la table refusé
+### SC-PONG-010 — table outsider refused
 
-- **Given** une table T et le joueur X, étranger (ni A ni B)
-- **When** le joueur X tente `/add_result` sur T
-- **Then** refus (garde : auteur ∈ {A, B} de la table, ronde ouverte)
+- **Given** table T and player X, an outsider (neither A nor B)
+- **When** player X tries `/add_result` on T
+- **Then** refused (guard: author ∈ {A, B} of the table, round open)
 
-Implémenté par `test_SC_PONG_010_outsider`.
+Implemented by `test_SC_PONG_010_outsider`.
 
-### SC-PONG-011 — preset civ dérivé du base_preset
+### SC-PONG-011 — civ preset derived from the base_preset
 
-- **Given** le `civ_draft_base_preset` de la saison et une table ouverte
-- **When** le mod génère le preset draft-civ de la table
-  (D-PONG-009 : dérivation depuis le base_preset)
-- **Then** le preset affiché ne contient que `civs_remaining` (15)
-  civs, cohérentes avec le ban automatisé au seed persisté (la
-  génération est re-traçable : même ronde+table ⇒ même preset)
+- **Given** the season's `civ_draft_base_preset` and an open table
+- **When** the mod generates the table's draft-civ preset
+  (D-PONG-009: derivation from the base preset)
+- **Then** the displayed preset contains only `civs_remaining`
+  (15) civs, consistent with the automated ban at the persisted
+  seed (generation is re-traceable: same round+table ⇒ same preset)
 
-Implémenté par `test_SC_PONG_011_civ_preset_derivation`.
+Implemented by `test_SC_PONG_011_civ_preset_derivation`.
 
-### SC-PONG-012 — map neutre première jouée
+### SC-PONG-012 — neutral map played first
 
-- **Given** une draft map terminée sur la table T (aeo2cm, externe)
-- **When** la série commence
-- **Then** la dernière map choisie dans la draft est affichée comme
-  map neutre, première jouée (RG-MDRAFT-1)
+- **Given** a finished map draft on table T (aeo2cm, external)
+- **When** the series starts
+- **Then** the last map picked in the draft is displayed as the
+  neutral map, played first (RG-MDRAFT-1)
 
-Implémenté par `test_SC_PONG_012_neutral_map`.
+Implemented by `test_SC_PONG_012_neutral_map`.
 
-### SC-PONG-013 — contester un preset de civs
+### SC-PONG-013 — reporting a civ preset
 
-- **Given** le panneau de table avec bouton de signalement
-- **When** un joueur signale « preset avec > 2 civs non possédées »
-- **Then** les admins sont taggés avec la table et le preset (le mod
-  constate, la relance est une décision admin)
+- **Given** the table panel with a report button
+- **When** a player reports "preset with > 2 unowned civs"
+- **Then** the admins are tagged with the table and the preset (the
+  mod states the facts, the regen is an admin decision)
 
-Implémenté par `test_SC_PONG_013_report_preset`.
+Implemented by `test_SC_PONG_013_report_preset`.
 
-### SC-PONG-014 — clôture de ronde et fermeture des salons
+### SC-PONG-014 — round close and channel archival
 
-- **Given** la fenêtre de ronde écoulée (mercredi → mardi)
-- **When** la passe de clôture tourne
-- **Then** les salons de tables sont fermés/archivés
-  (`close_tables`), les résultats `PENDING` restants sont listés dans
-  un fil de faits pour arbitrage admin, et le rapport de passe est
-  posté (jamais en log seul)
+- **Given** the round window elapsed (Wednesday to Tuesday)
+- **When** the closing pass runs
+- **Then** the table channels are closed/archived
+  (`close_tables`), the remaining `PENDING` results are listed in
+  a fact thread for admin arbitration, and the pass report is
+  posted (never log-only)
 
-Implémenté par `test_SC_PONG_014_close_round`.
+Implemented by `test_SC_PONG_014_close_round`.
 
-### SC-PONG-015 — self-heal des salons et pins au boot
+### SC-PONG-015 — boot self-heal of channels and pins
 
-- **Given** un salon de table supprimé pendant une ronde ouverte
-- **When** la passe de boot s'exécute
-- **Then** le salon est recréé, le pin `menu:mod:pong:home` rétabli,
-  sans exception non rendue (rapport posté dans `pong:announcements`)
+- **Given** a table channel deleted during an open round
+- **When** the boot pass runs
+- **Then** the channel is recreated, the `menu:mod:pong:home` pin
+  restored, with no unrendered exception (report posted in
+  `pong:announcements`)
 
-Implémenté par `test_SC_PONG_015_selfheal`.
+Implemented by `test_SC_PONG_015_selfheal`.
 
-### SC-PONG-016 — forfait déclaré et validé
+### SC-PONG-016 — forfeit declared and validated
 
-- **Given** une ronde ouverte, la table T ; le joueur A prévient qu'il
-  est forfait sur la discussion de sa table
-- **When** il saisit le résultat forfait (« perdu ») et que le joueur B
-  valide (`/validate_score`)
-- **Then** le résultat est **validé sans manipulation du score**
-  (D-PONG-011 cas 1), le mouvement RG-TAB s'applique
+- **Given** an open round, table T; player A warns they forfeit in
+  their table discussion
+- **When** they enter the forfeit result ("lost") and player B
+  validates (`/validate_score`)
+- **Then** the result is **validated with no score manipulation**
+  (D-PONG-011 case 1), the RG-TAB movement applies
 
-Implémenté par `test_SC_PONG_016_forfeit`.
+Implemented by `test_SC_PONG_016_forfeit`.
 
-### SC-PONG-017 — abandon en cours de set
+### SC-PONG-017 — in-set abandon
 
-- **Given** un BO5 partiellement joué (ex. 1-1), le joueur A abandonne
-  le set
-- **When** le résultat est saisi avec les victoires restantes données
-  à l'adversaire (ex. 1-3) et validé
-- **Then** le résultat est accepté (D-PONG-011 cas 3 : les abandons en
-  cours de set sont autorisés, les victoires restantes vont à
-  l'adversaire)
+- **Given** a partially played BO5 (e.g. 1-1), player A abandons the
+  set
+- **When** the result is entered with the remaining wins granted to
+  the opponent (e.g. 1-3) and validated
+- **Then** the result is accepted (D-PONG-011 case 3: in-set
+  abandons are allowed, the remaining wins go to the opponent)
 
-Implémenté par `test_SC_PONG_017_mid_set_abandon`.
+Implemented by `test_SC_PONG_017_mid_set_abandon`.
 
-### SC-PONG-018 — pas de rdv trouvé : arbitrage admin
+### SC-PONG-018 — no date found: admin arbitration
 
-- **Given** une table sans planification possible à la clôture de
-  ronde (aucun résultat, topic de planification vide)
-- **When** la clôture liste les faits et l'admin applique un admin win
-  via la console
-- **Then** le résultat admin est persisté avec l'auteur de la décision
-  (D-PONG-011 cas 2 : trancher est réservé à l'admin, jamais au bot)
+- **Given** a table with no possible scheduling at round close (no
+  result, empty planning thread)
+- **When** the closing pass lists the facts and the admin applies an
+  admin win via the console
+- **Then** the admin result is persisted with the decision's author
+  (D-PONG-011 case 2: settling is reserved to the admin, never the
+  bot)
 
-Implémenté par `test_SC_PONG_018_admin_no_schedule`.
+Implemented by `test_SC_PONG_018_admin_no_schedule`.
 
-### SC-PONG-019 — inscription après clôture : file d'attente
+### SC-PONG-019 — enrollment after close: waitlist
 
-- **Given** la ronde 1 ouverte (fenêtre d'inscription fermée), un
-  joueur `pong_candidate` qui fait `/register_to_tournament`
-- **When** la commande est traitée
-- **Then** l'inscription à la saison est refusée avec un message
-  explicite, le joueur passe en **`waitlist`** (rôle `pong_waitlist`,
-  D-PONG-015) ; aucun joueur actif n'est modifié
+- **Given** round 1 open (enrollment window closed), a `candidate`
+  player running `/register_to_tournament`
+- **When** the command is processed
+- **Then** season enrollment is refused with an explicit message,
+  the player goes to **`waitlist`** (role `pong_waitlist`,
+  D-PONG-015); no active player is modified
 
-Implémenté par `test_SC_PONG_019_waitlist`.
+Implemented by `test_SC_PONG_019_waitlist`.
 
-### SC-PONG-020 — insertion d'un duo (« table et-demi », D-PONG-016)
+### SC-PONG-020 — duo insertion ("half table", D-PONG-016)
 
-- **Given** deux candidats en `waitlist` binômés par l'admin, une
-  ronde en cours, une chaîne de tables avec `chain_position`
-- **When** le bot propose le point d'insertion et l'admin le valide
-  (console, confirm card)
-- **Then** le duo joue **entre lui** dès la ronde en cours (aucune
-  autre table modifiée), la table prend sa place dans la chaîne à la
-  ronde suivante avec **renumérotation automatique** ; seuls les
-  voisins directs changent d'interlocuteur de mouvement ; l'opération
-  est loggée
+- **Given** two `waitlist` candidates paired by the admin, a
+  running round, a table chain with `chain_position`
+- **When** the bot proposes the insertion point and the admin
+  validates it (console, confirm card)
+- **Then** the duo plays **itself** from the running round (no other
+  table modified), the table takes its place in the chain next round
+  with **automatic renumbering**; only the direct neighbours change
+  their movement counterpart; the operation is logged
 
-Implémenté par `test_SC_PONG_020_duo_insertion`.
+Implemented by `test_SC_PONG_020_duo_insertion`.
 
-### SC-PONG-021 — départ comblé au créneau exact (D-PONG-017)
+### SC-PONG-021 — departure filled at the exact slot (D-PONG-017)
 
-- **Given** un joueur qui quitte entre deux rondes, un volontaire en
-  `waitlist`, des résultats déjà validés impliquant le partant
-- **When** l'admin valide le retrait en console (dossier de faits)
-- **Then** le partant passe `departed` (récap clôturé), **ses
-  résultats validés restent acquis** aux adversaires, et le
-  volontaire prend **le créneau exact** dans la chaîne (`replacing`) :
-  aucune autre table n'est re-shufflée
+- **Given** a player leaving between rounds, a `waitlist`
+  volunteer, validated results already involving the leaver
+- **When** the admin validates the withdrawal in the console (facts
+  dossier)
+- **Then** the leaver becomes `departed` (recap closed), **their
+  validated results stay acquired** for the opponents, and the
+  volunteer takes **the exact slot** in the chain (`replacing`):
+  no other table is re-shuffled
 
-Implémenté par `test_SC_PONG_021_departure_slot_swap`.
+Implemented by `test_SC_PONG_021_departure_slot_swap`.
 
-### SC-PONG-022 — orphelin sans remplaçant : match volontaire recap-only (D-PONG-018/019)
+### SC-PONG-022 — orphan with no replacement: recap-only voluntary match (D-PONG-018/019)
 
-- **Given** un départ validé sans volontaire en `waitlist`, les
-  joueurs des tables voisines
-- **When** le bot propose un match d'appoint et un voisin accepte
-- **Then** le match est joué et validé **récap-only** : il compte
-  dans les récaps des deux joueurs, **aucun mouvement de table** ne
-  s'applique (RG-TAB-1) ; l'orphelin reste à sa place ; dernier
-  recours fusible : volontaire de la file, puis admin
+- **Given** a validated departure with no `waitlist` volunteer,
+  the players of the neighbouring tables
+- **When** the bot offers a make-up match and a neighbour accepts
+- **Then** the match is played and validated **recap-only**: it
+  counts in both players' recaps, **no table movement** applies
+  (RG-TAB-1); the orphan keeps their slot; last-resort fuse: a
+  waitlist volunteer, then the admin
 
-Implémenté par `test_SC_PONG_022_orphan_volunteer_match`.
+Implemented by `test_SC_PONG_022_orphan_volunteer_match`.
 
-### SC-PONG-023 — grâce ±3 jours : mouvement différé (D-PONG-012)
+### SC-PONG-023 — ±3-day grace: deferred movement (D-PONG-012)
 
-- **Given** une ronde à l'échéance avec un résultat `PENDING`, et la
-  ronde suivante appariée sur les résultats validés
-- **When** le match est joué pendant la grâce et validé
-- **Then** le récap des joueurs est mis à jour immédiatement, et le
-  mouvement de table s'applique **à la ronde suivante** (différé
-  d'une ronde : le montant/descendant bouge un cycle plus tard)
+- **Given** a round at its deadline with a `PENDING` result, and
+  the next round paired on the validated results
+- **When** the match is played during the grace and validated
+- **Then** the players' recap updates immediately, and the table
+  movement applies **from the next round** (deferred by one round:
+  the climber/dropper moves one cycle later)
 
-Implémenté par `test_SC_PONG_023_grace_deferred_move`.
+Implemented by `test_SC_PONG_023_grace_deferred_move`.
 
-### SC-PONG-024 — récap personnel : ephemeral à la demande, DM à la clôture (D-PONG-014)
+### SC-PONG-024 — personal recap: ephemeral on demand, DM at close (D-PONG-014)
 
-- **Given** une saison avec des résultats validés, un joueur
-- **When** le joueur fait `/recap` (à tout moment de la saison)
-- **Then** la réponse est **`ephemeral`** : visible uniquement de lui
-  (sets disputés, W/L, adversaires, parcours de tables)
-- **When** la saison se clôture (ou le joueur quitte, D-PONG-017)
-- **Then** le récap final complet est envoyé **en DM privé** ; **aucun
-  classement global, tableau comparatif ou podium n'est publié** sur
-  le serveur ; les tables sont listées sans ordre de niveau
-  (RG-TAB-5)
+- **Given** a season with validated results, a player
+- **When** the player runs `/recap` (anytime in the season)
+- **Then** the reply is **`ephemeral`**: visible only to them (sets
+  played, W/L, opponents, table history)
+- **When** the season closes (or the player leaves, D-PONG-017)
+- **Then** the full final recap is sent **as a private DM**, with an
+  ephemeral notice + resend button in `pong:bot-commands` when the
+  DM cannot be delivered (D-PONG-021); **no global standings,
+  comparative table or podium is ever published** on the server;
+  tables are listed with no level order (RG-TAB-5)
 
-Implémenté par `test_SC_PONG_024_personal_recap`.
+Implemented by `test_SC_PONG_024_personal_recap`.
 
-> Les records auto (D-PONG-010, phase 2 — provider de zip sans spoiler)
-> arrivent avec leur scénario dans le PR qui les implémente. Chaque
-> nouvelle règle automatisable ajoutée à RULES.md arrive avec son
-> scénario dans le même PR.
+### SC-PONG-025 — self-withdrawal mid-round: deferred forfeit (D-PONG-023)
+
+- **Given** an open round, a player with a pending match on their
+  table
+- **When** the player runs `/unregister_from_tournament`
+- **Then** the withdrawal is recorded and the admins are notified;
+  the pending match **stays playable**, and if it goes unplayed the
+  withdrawing player's result becomes a **forfeit at round close**;
+  the opponent follows the normal end-of-round placement
+
+Implemented by `test_SC_PONG_025_self_withdrawal`.
+
+### SC-PONG-026 — admin removal of a player (D-PONG-023)
+
+- **Given** an enrolled player, an admin
+- **When** the admin runs the console op `remove_player` (confirm
+  card)
+- **Then** the player is withdrawn with the same semantics as
+  SC-PONG-025 (mid-round match plays out, forfeit at round close),
+  the operation is logged with its author, and the player is
+  notified
+
+Implemented by `test_SC_PONG_026_admin_removal`.
+
+### SC-PONG-027 — guild leave: automatic withdrawal and immediate forfeit (D-PONG-024)
+
+- **Given** a member enrolled in an active season with a pending
+  match, a waitlist with a volunteer
+- **When** the member leaves the Discord server
+- **Then** they are automatically withdrawn from every active season
+  with an **immediate forfeit** on the pending match (unlike
+  D-PONG-023, the match does not play out), the freed slot is
+  offered first to the waitlist **at the exact slot**, their
+  player profile is **kept** (re-enrollment free on return), and
+  the admins are notified
+
+Implemented by `test_SC_PONG_027_guild_leave_forfeit`.
+
+### SC-PONG-028 — caster event announced at start (D-PONG-025)
+
+- **Given** a season with a caster-events announcement channel set,
+  a Discord event planned by a `pong_caster`
+- **When** the event starts
+- **Then** the bot posts an automatic announcement in the configured
+  channel; manual cast announcements in `pong:casting` are
+  unaffected
+
+Implemented by `test_SC_PONG_028_caster_event_announcement`.
+
+### SC-PONG-029 — events channel optional, feature can be off (D-PONG-025)
+
+- **Given** the season-creation view
+- **When** the admin sets the caster-events channel to an existing
+  channel, a channel to create, or **off**
+- **Then** respectively: announcements land in that channel; the
+  channel is provisioned by the view and announcements land in it;
+  the feature is **disabled** and no automatic announcement is ever
+  posted for that season
+
+Implemented by `test_SC_PONG_029_events_channel_options`.
+
+> Auto records (D-PONG-010, phase 2, spoiler-free zip provider)
+> arrive with their scenario in the PR that implements them. Every
+> new automatable rule added to RULES.md arrives with its scenario
+> in the same PR.
