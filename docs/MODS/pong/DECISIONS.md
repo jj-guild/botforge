@@ -162,14 +162,18 @@ mod owner.
   **not** the JeanJack ladder mod and will be **renamed** when its
   spec lands (spec to come from the mod owner); the ladder mod keeps
   its own perimeter (D-PONG-001).
-- **D-PONG-023 — Withdrawals: self-service and admin-initiated.** A
-  player can self-withdraw from the season
-  (`/unregister_from_tournament`, the admins are notified);
-  an admin can remove a player (console op `remove_player`). A
-  mid-round match **plays out**: the withdrawing player's pending
-  match becomes a **forfeit at round close**, the opponent follows
-  the normal end-of-round placement (waitlist fuse first, admin
-  last). Outside a round, the withdrawal is immediate.
+- **D-PONG-023 — Withdrawals: self-service and admin-initiated, in two
+  modes (revised 2026-11-24).** A player can self-withdraw from the
+  season (`/unregister_from_tournament`); an admin can remove a
+  player (console op `remove_player`). Both pick one of two modes:
+  1. **scheduled** — the withdrawal takes effect from the next round;
+     the current-round match **plays out to the end, its result counts
+     normally and no forfeit applies**;
+  2. **immediate** — forfeit on the running-round match and a
+     replacement attempt through the parity chain (waitlist at the
+     exact slot → voluntary match → fuse).
+  In both modes the admins are notified and the player keeps their
+  validated results (D-PONG-017).
 - **D-PONG-024 — Guild leave: automatic withdrawal and immediate
   forfeit.** A member leaving the Discord server is automatically
   withdrawn from every active season, with an **immediate forfeit**
@@ -185,6 +189,39 @@ mod owner.
   from the view, or **off** (the feature is then disabled for that
   season). Caster streams remain freely announced by hand in
   `pong:casting` regardless.
+
+## 2026-11-24 — Session 4: tournament wizard, roles scope, caster access, roster export
+
+- **D-PONG-026 — v1 roles stay mod-level.** The role set declared by
+  the mod (standard trio `candidate`/`member`/`admin` + extras
+  `pong_waitlist`/`pong_caster`) applies in v1; per-tournament roles
+  are the v2 multi-tournament pattern. The tournament-creation view
+  works with the mod roles (e.g. assigning the tournament admin into
+  the mod's `admin` role) and never creates new roles in v1.
+- **D-PONG-027 — Casters get read+write on table channels; roster
+  export is staff-only.** Casters (`pong_caster`) may read **and
+  post** in the table channels (they need to interact to organize
+  casts). The admin-initiated export of the enrolled roster (Discord
+  nickname, in-game nickname, 1v1/max Elo, tournament seed) may only
+  target **staff-restricted channels**: seeds are never
+  player-facing (D-PONG-013/014).
+- **D-PONG-028 — Tournament-creation view (wizard).** The admin
+  creates a tournament by selecting its type (pong only in v1) and
+  providing: the admin role assignment (an admin user must be set),
+  the caster role (optional; when absent, caster **events** are
+  disabled), the player role mapping (v1: the mod `member` role);
+  non-blocking, editable-later extras: the map draft preset, the civ
+  draft base preset (pong), the tournament logo URL, and the
+  caster-events announcement channel (an existing channel, one to
+  create, or off, D-PONG-025). A separate edit view and an info view
+  (roster, rounds/matches played and missing, per-round results)
+  complete the surface.
+- **D-PONG-029 — On-demand admin draft at a chosen format.** The
+  console op `redraft_preset` gains a format parameter: an admin can
+  generate a fresh BO1/BO3/BO5 draft (map + civ preset) on request,
+  e.g. for players in trouble; the generated link is hand-delivered
+  by the admin. Same generation rules as the season presets
+  (RG-CDRAFT-1).
 
 ## Open
 

@@ -33,8 +33,11 @@ rulebook ([REFERENCE.md](REFERENCE.md)) and the decisions
 | `close_tables` | bool | Close the table channels at round close; default true |
 | `planning_requirement` | str | Declarative enrollment requirement: "two 3-hour consecutive windows within 17:00-23:00" (FR timezone), captured at enrollment |
 | `records_provider` | ref | **Phase 2 (D-PONG-010)**: provider generating the records zip from the players' games (lead: https://replaypacker.zeta-two.com) |
-| `withdrawal` | dict | Self-service withdrawal (`/unregister_from_tournament`) and admin removal (console op `remove_player`), both notifying the admins (D-PONG-023): a mid-round match plays out and the withdrawing player forfeits at round close; leaving the Discord server = automatic withdrawal + **immediate forfeit**, replacement attempt at the exact slot, player profile kept, re-enrollment free (D-PONG-024) |
+| `withdrawal` | dict | Self-service withdrawal (`/unregister_from_tournament`) and admin removal (console op `remove_player`), both notifying the admins, in two modes (D-PONG-023): **scheduled** (effective next round, the running match plays out and its result counts) or **immediate** (forfeit + replacement attempt at the exact slot); leaving the Discord server = automatic withdrawal + **immediate forfeit**, profile kept, re-enrollment free (D-PONG-024) |
 | `caster_events` | dict | Automatic announcement of caster-planned Discord events when they start (D-PONG-025); target channel chosen in the season-creation view: an existing channel, a channel to create, or **off** (feature disabled) |
+| `roster_export` | dict | Admin-initiated export of the enrolled roster (Discord nickname, in-game nickname, 1v1/max Elo, tournament seed); the target channel MUST be staff-restricted (seeds are never player-facing, D-PONG-027) |
+| `logo_url` | url | Tournament logo URL, cosmetic, editable after creation (D-PONG-028) |
+| `caster_table_access` | str | Caster access to table channels; default `read_write` (D-PONG-027) |
 
 ## Player state (lifecycle)
 
@@ -80,7 +83,9 @@ platform category here.
 
 The role trio uses the platform's standard keys (`candidate`,
 `member`, `admin`, like the kingdoms mod), with mod-specific
-extras for the waitlist and casters.
+extras for the waitlist and casters. The trio stays
+mod-level in v1; per-tournament roles are the v2 multi-tournament
+pattern (D-PONG-026).
 
 | Key | Display name | What it gates |
 | --- | --------------- | --------------- |
