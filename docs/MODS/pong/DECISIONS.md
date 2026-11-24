@@ -284,6 +284,21 @@ mod owner.
   kindness reminder (fun-first, no-pressure frame, D-PONG-014). One
   message, pinned, bot-edited on replacement/withdrawal.
 
+## 2026-11-24 — Session 6: registration surface alignment (platform review)
+
+- **D-PONG-036 — No `/register` slash command in the pong perimeter.**
+  The platform core has had no `/register` slash command since
+  2026-10-16: the identity link (steam_id ↔ discord_id + AoE2 data)
+  is the core's `/home` > Profil flow, and the mod reads it through
+  the core profile route. The pong registration surface is the
+  `register-as-a-player` front door (channel `pong:register_player`,
+  button `pong:register:<discord_id>`, consent gate before any
+  persistence, RG-REG-1); season enrollment keeps its own mod
+  command (`/register_to_tournament`, RG-REG-2). SC-PONG-001/002
+  follow this surface. Platform rectificatif of 2026-11-24 (Merlin
+  pair review) applied to RULES/TESTS/README/ENVIRONMENT/ARCHITECTURE
+  in the same PR.
+
 ## Open
 
 - (none — Q-PONG-001..007 are resolved by D-PONG-005..011,

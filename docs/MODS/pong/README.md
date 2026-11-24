@@ -55,7 +55,7 @@ Channels:
   `pong:ladder`: round open/close announcements, Wednesday table
   list and presets;
 - `pong:bot-commands` ("bot-commands", text): mod slash commands
-  (`/register`, `/register_to_tournament`, ...);
+  (`/register_to_tournament`, ...);
 - `pong:planning` ("planification", text, one thread per match):
   scheduling, date/time fixes and admin heads-up;
 - `pong:records` ("records", text): standardised result posts +
@@ -176,8 +176,10 @@ D-PONG-023); every op is logged (confirm card + mutation log).
 
 ## Player / admin / bot interactions
 
-- **player**: `/register` then `/register_to_tournament`
-  (RG-REG-1/2, consent and availability modals); checks their table
+- **player**: links their identity through the core
+  (`/home` > Profil), registers via the `register-as-a-player`
+  front door (consent gate, RG-REG-1), then `/register_to_tournament`
+  (RG-REG-2, availability modal); checks their table
   panel (A/B, host, preset, neutral map); declares the result on
   their table (`/add_result`, guard: author = player A or B of the
   table, round open, X-X score format); validates or contests their
@@ -209,7 +211,8 @@ D-PONG-023); every op is logged (confirm card + mutation log).
 ## Usage
 
 ```text
-/register                     # player registration (consent required)
+/home > Profil                # core identity link (steam <-> discord, AoE2 profile)
+pong:register (front door)    # player registration (consent required)
 /register_to_tournament       # enroll in the active season (rules: True)
 /unregister_from_tournament   # self-withdraw from the season (admins notified)
 /add_result                   # declare a result on the table (X-X)

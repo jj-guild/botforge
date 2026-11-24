@@ -12,11 +12,16 @@ D-PONG-001..025).
 
 ### RG-REG-1 — Player registration
 
-`/register` (channel `pong:bot-commands`) registers the player:
-linking `steam_id` ↔ `discord_id` plus the core's AoE2 data
-(country, elo) **read through the game profile, never copied into
-the mod's collections**. The command requires explicit consent
-(privacy gate) before persistence; without consent, refused.
+The registration front door is the `register-as-a-player` channel
+(`pong:register_player`, button `pong:register:<discord_id>`,
+D-PONG-030). The identity link (`steam_id` ↔ `discord_id` plus
+country, elo) is resolved through the **core profile route**
+(`/home` > Profil — the platform has had no `/register` command
+since 2026-10-16) and is **read through the game profile, never
+copied into the mod's collections**. The registration requires
+explicit consent (privacy gate) before persistence; without
+consent, refused and nothing is persisted. On success the
+`candidate` role is granted.
 
 - **Edge cases**: discord_id already registered → offer to link to
   the existing profile; steam_id already taken by another player →

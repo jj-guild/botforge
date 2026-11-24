@@ -80,7 +80,7 @@ platform category here.
 | `pong:announcements` | annonces-pong | ladder | text | players (read), admins (post); table list **without any level order** (D-PONG-014) |
 | `pong:bot-commands` | bot-commands | ladder | text | players (commands, including `/recap` as an ephemeral reply) |
 | `pong:tutorial` | tutoriel | ladder | text | public read; pinned how-to (registration, enrollment, caster signup) (D-PONG-030) |
-| `pong:register_player` | register-as-a-player | ladder | text | public read; guided `/register` front door (D-PONG-030) |
+| `pong:register_player` | register-as-a-player | ladder | text | public read; guided registration front door (`pong:register` button; identity via the core `/home` > Profil route) (D-PONG-030) |
 | `pong:register_caster` | register-as-a-caster | ladder | text | public read; caster signup, cumulable with the player role (D-PONG-027, US-043) |
 | `pong:infos` | infos | ladder | text | wizard-edited tournament info (audience, base preset links, map pack, handbook) (D-PONG-030) |
 | `pong:media_kit` | media-kit | ladder | text | logo and tournament graphics (D-PONG-028/030) |
@@ -103,7 +103,7 @@ pattern (D-PONG-026).
 
 | Key | Display name | What it gates |
 | --- | --------------- | --------------- |
-| `candidate` | Pong Candidat | `/register` done, not yet enrolled in the season |
+| `candidate` | Pong Candidat | registration done (front-door consent, RG-REG-1), not yet enrolled in the season |
 | `member` | Pong Joueur | enrolled player of the season (ladder + tables channels) |
 | `pong_waitlist` | Pong Waitlist | candidate enrolled after the enrollment window closed (D-PONG-015); waiting for a pair (RG-TAB-3/4) |
 | `admin` | Pong Admin | staff category, mod console, admin ops |

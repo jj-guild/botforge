@@ -20,10 +20,12 @@ when a documented scenario has no test).
 
 - **Given** an unregistered Discord user, an AoE2 profile resolved by
   the core (steam_id, country, elo)
-- **When** they run `/register` and accept the privacy gate
-- **Then** the player is registered (discord_id ↔ steam_id linked,
-  AoE2 data read through the core, not duplicated) and the
-  `candidate` role is granted
+- **When** they use the registration front door (`pong:register_player`,
+  button `pong:register:<discord_id>`) and accept the privacy gate
+- **Then** the player is registered (discord_id ↔ steam_id linked
+  through the core profile route (`/home` > Profil), AoE2 data read
+  through the core, not duplicated) and the `candidate` role is
+  granted
 
 Implemented by `test_SC_PONG_001_register_with_consent` in
 `test_scenarios.py`.
@@ -31,7 +33,8 @@ Implemented by `test_SC_PONG_001_register_with_consent` in
 ### SC-PONG-002 — registration without consent refused
 
 - **Given** an unregistered user
-- **When** they run `/register` and refuse the privacy gate
+- **When** they use the registration front door and refuse the
+  privacy gate
 - **Then** nothing is persisted (no Mongo/Redis collection touched)
 
 Implemented by `test_SC_PONG_002_register_no_consent`.

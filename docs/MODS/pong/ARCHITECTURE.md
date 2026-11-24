@@ -25,7 +25,7 @@ permissions, the per-round lifecycle, and usage rules. Complements
 ```
 🏓 AOE PONG (ladder group — visible to players)       [pong:ladder]
 ├─ 📖 tutoriel              pong:tutorial          (text, pinned how-to)
-├─ 🏓 register-as-a-player  pong:register_player  (text, /register front door)
+├─ 🏓 register-as-a-player  pong:register_player  (text, registration front door)
 ├─ 🎙️ register-as-a-caster  pong:register_caster  (text, caster signup)
 ├─ 📣 annonces-pong         pong:announcements    (text, news)
 ├─ 🔊 cast-studio           pong:cast_studio      (voice, optional, D-PONG-034)
@@ -64,7 +64,7 @@ permissions, the per-round lifecycle, and usage rules. Complements
 | `register-as-a-player` | cmd + post | read | read | read | write | no |
 | `register-as-a-caster` | cmd + post | read | read | read | write | no |
 | `annonces-pong` | read | read | read | read | write | no |
-| `bot-commands` | `/register` cmd | waitlist-enroll cmd | all cmds | — | all cmds | no |
+| `bot-commands` | enroll cmd | waitlist-enroll cmd | all cmds | — | all cmds | no |
 | `infos` | read | read | read | read | write | no |
 | `media-kit` | read | read | read | read | write | no |
 | `register` | write | write | write | read | write | no |
