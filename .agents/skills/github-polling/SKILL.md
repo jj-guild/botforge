@@ -80,3 +80,22 @@ outcome, including:
 **Never** answer the human with a result inferred from elapsed time
 ("8 minutes passed, it must be done") — only a terminal status read
 from GitHub counts.
+
+## Degraded mode — incidents and rate limitors: NEVER hammer
+
+The poll loop is a guest on GitHub's porch: during a platform
+incident (check https://www.githubstatus.com — degraded PRs, Actions,
+rate limits) a 10–30 s cadence becomes a DOS on a wounded service.
+The rule (owner 2026-11-25):
+
+- **Floor during an incident: 5 minutes** between polls — "je ne suis
+  pas pressé, demande-leur toutes les 5 minutes maximum".
+- **A 429 / "rate limit" answer is NOT a retry signal** — it is a
+  Fibonacci backoff: stop everything, wait 8 minutes, retry; still
+  limited → 13, then 21, 34, 55... minutes between attempts. The
+  sequence resets only after a clean reply.
+- **Never stack pollers**: one poll per thing, one agent at a time —
+  several sessions polling the same PR multiply the load ("dis à tes
+  potes agents qu'ils arrêtent de bombarder").
+- Silence is a valid state: park politely, and when the incident
+  clears, the ordinary caddence returns (10–30 s).
