@@ -20,16 +20,34 @@ pr="${2:?usage: pr_checks_wait.sh <owner/repo> <pr-number> [interval-s] [max-min
 interval="${3:-15}"
 cap_minutes="${4:-30}"
 
+# A rate-limited or degraded GitHub NEVER gets hammered (owner 2026-11-25):
+# a 429 backs off the Fibonacci minutes (8, 13, 21, 34, 55...) and the
+# sequence resets only on a clean reply. The deadline still caps the
+# wait - a rate limit is a diagnosis, not a reason to spin.
+backoff_a=480   # 8 minutes
+backoff_b=780   # 13 minutes
+
 deadline=$(( $(date +%s) + cap_minutes * 60 ))
 while :; do
-    head="$(gh pr view "$pr" --repo "$repo" --json headRefOid --jq '.headRefOid' 2>/dev/null)" || { echo "gh error" >&2; exit 2; }
+    head="$(gh pr view "$pr" --repo "$repo" --json headRefOid --jq '.headRefOid' 2>/dev/null)" \
+        || if gh pr view "$pr" --repo "$repo" --json headRefOid --jq '.headRefOid' 2>&1 | grep -qi "rate limit"; then
+            echo "rate limited — Fibonacci backoff: sleeping ${backoff_a}s (be a polite guest)"; sleep "$backoff_a"
+            next=$((backoff_a + backoff_b)); backoff_a=$backoff_b; backoff_b=$next; continue
+        else echo "gh error" >&2; exit 2; fi
     summary="$(gh api "repos/${repo}/commits/${head}/check-runs" --jq 'reduce .check_runs[] as $c (
         {pass: 0, fail: 0, pending: 0, other: 0};
         if $c.status != "completed" then .pending += 1
         elif $c.conclusion == "success" then .pass += 1
         elif ($c.conclusion == "failure" or $c.conclusion == "cancelled" or $c.conclusion == "timed_out") then .fail += 1
         else .other += 1 end
-    ) | "\(.pass)/\(.fail)/\(.pending)/\(.other)"' 2>/dev/null)" || { echo "gh error" >&2; exit 2; }
+    ) | "\(.pass)/\(.fail)/\(.pending)/\(.other)"' 2>/dev/null)" \
+        || if gh api "repos/${repo}/commits/${head}/check-runs" 2>&1 | grep -qi "rate limit"; then
+            echo "rate limited — Fibonacci backoff: sleeping ${backoff_a}s (be a polite guest)"; sleep "$backoff_a"
+            next=$((backoff_a + backoff_b)); backoff_a=$backoff_b; backoff_b=$next; continue
+        else echo "gh error" >&2; exit 2; fi
+    # a clean reply resets the backoff (8, 13, 21...)
+    backoff_a=480
+    backoff_b=780
     IFS='/' read -r pass fail pending other <<<"$summary"
     total=$(( pass + fail + pending + other ))
     echo "head ${head:0:7} checks: pass=$pass fail=$fail pending=$pending neutral=$other"
