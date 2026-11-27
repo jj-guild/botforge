@@ -24,6 +24,12 @@ of truth.
    It determines the **current lot** — the first unfinished `Lot N`
    milestone, i.e. the lowest N with open issues — and prints that lot's
    issues in work order.
+
+   **Lot = milestone, always.** When the human says "lot 3", "lot
+   suivant", "this is lot 4", they mean the GitHub milestone
+   (`Lot N — …`) — assign it via the issue's milestone field, never as
+   a title prefix, never as a label. See CONVENTIONS.md ("Lot N" IS the
+   milestone).
 2. Report the table to the human. The first cell carries the links on two
    lines (`issue: #322` / `PR: #306`, `PR: —` when none); then the priority
    label with its plain-language gloss, a short summary, the details

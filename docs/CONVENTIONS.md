@@ -610,6 +610,16 @@ understand the choices and their reasons without asking anyone.
   unroll order (`Lot 1 — Structural (core, platform, changelog)` is
   taken); `v1.0.0 — Public release` is the only non-Lot working
   milestone. No version-numbered intermediate milestones.
+- **"Lot N" IS the milestone — never a title prefix.** When the human
+  says "this is lot 4" or "put it in the next lot", they mean the
+  **milestone** (`Lot N — …`), assigned via the issue's milestone field
+  (`gh issue edit <n> --milestone "Lot 4 — …"`). Never encode the lot in
+  the title (`[lot 4] …` is wrong and confusing to every reader), never
+  invent a parallel tracking: the milestone is the single source of the
+  lot assignment, the roadmap and the dependency graph read it. In a
+  repo where the lot's milestone does not exist yet, create the sibling
+  milestone first (`Lot N — Title (<repo>)`) — the generator displays it
+  in the same lot row.
 
 ## Checks must pass everywhere
 
