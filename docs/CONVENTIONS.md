@@ -563,6 +563,14 @@ understand the choices and their reasons without asking anyone.
   `botforge-infra`; `## Summary`, `## Details` in `botforge`). A
   "Validate issue" workflow labels non-compliant issues `invalid` —
   recreate them properly rather than editing around the flag.
+- **The section headings match literally.** The validator compares the
+  whole `## ` heading (lowercased): `## Context — the incident` and
+  `## Goal` do NOT count. Write the exact required sections and put
+  every nuance in the body. The `invalid` flag is removed automatically
+  once the sections are fixed (the workflow re-validates on edit):
+  fix in place, never delete and recreate. The full craft (templates,
+  labels, Lot = milestone) is the `issue-craft` skill — read it before
+  creating an issue.
 - **Off-roadmap labels** (`arch-discussion`, `poc` — see
   `OFF_ROADMAP_LABELS` in `.github/workflows/scripts/sync_dependencies.py`):
   an issue carrying one is **pre-roadmap** — committee discussions, proofs

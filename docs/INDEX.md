@@ -22,6 +22,8 @@ page routes you to the answer. Read this page, not the whole docs tree.
 | How do I release / cut a version? | [PROCESS.md](PROCESS.md) §Release + the `release-flow` [skill](../.agents/skills/release-flow/SKILL.md) |
 | I want to flag an arch discussion / POC (pre-roadmap, committee territory) | Label it `arch-discussion` (or `poc`) — excluded from the lots, listed in the roadmap's "Pre-roadmap" section; see [CONVENTIONS.md](CONVENTIONS.md) *Off-roadmap labels* |
 | How do I shape a game-designer idea into an issue? | the `shape-game-designer-idea` [skill](../.agents/skills/shape-game-designer-idea/SKILL.md) |
+| How do I create/edit an issue that passes validation? | the `issue-craft` [skill](../.agents/skills/issue-craft/SKILL.md) — the mandatory templates, the exact sections, the labels, Lot = milestone |
+| How do PRs and the PR-comment ops work (`/deploy`, `/console`, cowboy…)? | the `pull-request-ops` [skill](../.agents/skills/pull-request-ops/SKILL.md) — the PR lifecycle, the ops commands, cowboy mode |
 | What is the architecture? Why was X decided? | [ARCHITECTURE.md](ARCHITECTURE.md) + [DECISIONS/](DECISIONS/README.md) (ADRs) |
 | What is the long-term infra vision / hosting plan? When does the architecture committee meet? | [architecture/committee.md](architecture/committee.md) — the committee home, its kickoff inventory & surface map, plus [vision.md](architecture/vision.md), [topology.md](architecture/topology.md), [capacity.md](architecture/capacity.md) |
 | How are salons/pinned menus/admin panels managed at runtime? | [architecture/channels.md](architecture/channels.md) — id-based resolution, pinned-view contract, mod types & admin surfaces, core/mods split |
