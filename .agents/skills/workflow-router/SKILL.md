@@ -12,15 +12,31 @@ Advanced users (dev, ops, maintainers per the roster) may take
 liberties — a maintainer asking for a direct push is not routed
 through the bug workflow; apply judgment, not bureaucracy.
 
+## The reading path (what to read, and when)
+
+Each piece of knowledge has ONE home; nothing is read end to end:
+
+1. **Session start**: the repo's `AGENTS.md` (the read-first block) +
+   the roster entry in `CONTRIBUTORS.md` (the P0 identity protocol).
+2. **On a new request**: the route table below picks the workflow and
+   its skill — the skill loads, nothing else.
+3. **The norms live in the docs**, read by section when the task
+   touches them, never front to back: `CONVENTIONS.md` (language,
+   secrets, PR/branch lifecycle, issues, checks — the binding rules),
+   `MODES.md` (sandbox/pro/cowboy and the agent rules),
+   `WORKFLOWS.md` (the workflows' how).
+4. **Skills are procedures** that point at the norms; if a fact seems
+   to live in two places, the doc is the norm and the skill links it.
+
 ## The route table
 
 | The human says | The workflow | Entry point |
 | -------------- | ------------ | ----------- |
-| "I want to report a bug" | Bug intake | Issue with the bug template (auto-triage labels it), then a fix branch/PR once confirmed |
-| "I have an idea / I want a feature" | Feature shaping | [shape-game-designer-idea](../shape-game-designer-idea/SKILL.md) — challenge, scope, acceptance criteria, then the issue |
+| "I want to report a bug" | Bug intake | The [issue-craft](../issue-craft/SKILL.md) skill — the bug template, then a fix branch/PR once confirmed |
+| "I have an idea / I want a feature" | Feature shaping | [shape-game-designer-idea](../shape-game-designer-idea/SKILL.md) — challenge, scope, acceptance criteria, then the issue via [issue-craft](../issue-craft/SKILL.md) |
 | "I want to create a mod" | Mod bootstrap | Feature branch `vibe/<slug>` + draft PR to `main`, personal env via `/deploy` ([MODES.md](../../../docs/MODES.md)) |
 | "I want to work on my mod" | Sandbox mode | Push commits on the `vibe/<slug>` feature branch, the PR's checks re-run, deploy on the personal env (`/deploy`). The [mod-lore](../mod-lore/SKILL.md) skill loads for ANY mod: it reads `docs/MODS/<mod>/` (or says the mod has no docs and scaffolds them), then proposes the next moves |
-| "I want to fix a bug in the platform" / "I want to add a platform feature" | Pro mode | Feature branch per subject → PR → CODEOWNERS review → [deploy-and-validate](../deploy-and-validate/SKILL.md) |
+| "I want to fix a bug in the platform" / "I want to add a platform feature" | Pro mode | Feature branch per subject → the [pull-request-ops](../pull-request-ops/SKILL.md) procedure → CODEOWNERS review → [deploy-and-validate](../deploy-and-validate/SKILL.md) |
 | "I want to document the project" | Docs change | `botforge` repo, PR (docs are code: same lifecycle, same checks) |
 | "I want to improve QoL (skills, scripts, tokens, CLI)" | Automation work | [automate-or-learn](../automate-or-learn/SKILL.md) — where the automation belongs, then the same PR lifecycle |
 | "Unroll the roadmap" / "what's next?" | Roadmap unrolling | The [roadmap-unroll](../roadmap-unroll/SKILL.md) skill — it runs `scripts/roadmap_next.py` (current lot, ordered work table) and reports status + next steps |
